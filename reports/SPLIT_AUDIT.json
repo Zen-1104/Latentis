@@ -1,0 +1,319 @@
+{
+  "timestamp": "2026-09-09T02:20:30.020329+00:00",
+  "seed": 20260930,
+  "total_lots": 40,
+  "total_parts": 6246,
+  "total_measurement_rows": 148159,
+  "disjointness_check": {
+    "train_calib_overlap": [],
+    "train_test_overlap": [],
+    "calib_test_overlap": [],
+    "is_lot_disjoint": true,
+    "gate_TEST_SPLIT_001": "PASSED"
+  },
+  "splits": {
+    "train": {
+      "lot_count": 24,
+      "part_count": 4202,
+      "measurement_row_count": 99642,
+      "lots": [
+        "L-2026-003",
+        "L-2026-004",
+        "L-2026-005",
+        "L-2026-007",
+        "L-2026-010",
+        "L-2026-011",
+        "L-2026-012",
+        "L-2026-013",
+        "L-2026-014",
+        "L-2026-016",
+        "L-2026-017",
+        "L-2026-018",
+        "L-2026-024",
+        "L-2026-026",
+        "L-2026-027",
+        "L-2026-028",
+        "L-2026-030",
+        "L-2026-031",
+        "L-2026-033",
+        "L-2026-034",
+        "L-2026-035",
+        "L-2026-036",
+        "L-2026-037",
+        "L-2026-038"
+      ]
+    },
+    "calib": {
+      "lot_count": 8,
+      "part_count": 1521,
+      "measurement_row_count": 36102,
+      "lots": [
+        "L-2026-002",
+        "L-2026-006",
+        "L-2026-008",
+        "L-2026-009",
+        "L-2026-015",
+        "L-2026-025",
+        "L-2026-029",
+        "L-2026-032"
+      ]
+    },
+    "test": {
+      "lot_count": 8,
+      "part_count": 523,
+      "measurement_row_count": 12415,
+      "lots": [
+        "L-2026-001",
+        "L-2026-019",
+        "L-2026-020",
+        "L-2026-021",
+        "L-2026-022",
+        "L-2026-023",
+        "L-2026-039",
+        "L-2026-040"
+      ]
+    }
+  },
+  "mondrian_calibration_groups": [
+    {
+      "component_type": "CMOS_LOGIC",
+      "parameter": "iddq_standby",
+      "n_cal": 159,
+      "attainable_alpha": 0.00625,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "CMOS_LOGIC",
+      "parameter": "leakage_input",
+      "n_cal": 159,
+      "attainable_alpha": 0.00625,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "CMOS_LOGIC",
+      "parameter": "prop_delay",
+      "n_cal": 159,
+      "attainable_alpha": 0.00625,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "CMOS_LOGIC",
+      "parameter": "vth_shift",
+      "n_cal": 159,
+      "attainable_alpha": 0.00625,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "CMOS_LOGIC",
+      "parameter": "icc_active",
+      "n_cal": 159,
+      "attainable_alpha": 0.00625,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "CMOS_LOGIC",
+      "parameter": "output_res",
+      "n_cal": 159,
+      "attainable_alpha": 0.00625,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "SRAM",
+      "parameter": "iddq_standby",
+      "n_cal": 159,
+      "attainable_alpha": 0.00625,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "SRAM",
+      "parameter": "leakage_input",
+      "n_cal": 159,
+      "attainable_alpha": 0.00625,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "SRAM",
+      "parameter": "prop_delay",
+      "n_cal": 159,
+      "attainable_alpha": 0.00625,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "SRAM",
+      "parameter": "vth_shift",
+      "n_cal": 159,
+      "attainable_alpha": 0.00625,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "SRAM",
+      "parameter": "icc_active",
+      "n_cal": 159,
+      "attainable_alpha": 0.00625,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "SRAM",
+      "parameter": "output_res",
+      "n_cal": 159,
+      "attainable_alpha": 0.00625,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "LDO_REG",
+      "parameter": "iddq_standby",
+      "n_cal": 448,
+      "attainable_alpha": 0.00223,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "LDO_REG",
+      "parameter": "leakage_input",
+      "n_cal": 448,
+      "attainable_alpha": 0.00223,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "LDO_REG",
+      "parameter": "prop_delay",
+      "n_cal": 448,
+      "attainable_alpha": 0.00223,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "LDO_REG",
+      "parameter": "vth_shift",
+      "n_cal": 448,
+      "attainable_alpha": 0.00223,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "LDO_REG",
+      "parameter": "icc_active",
+      "n_cal": 448,
+      "attainable_alpha": 0.00223,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "LDO_REG",
+      "parameter": "output_res",
+      "n_cal": 448,
+      "attainable_alpha": 0.00223,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "OPAMP",
+      "parameter": "iddq_standby",
+      "n_cal": 447,
+      "attainable_alpha": 0.00223,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "OPAMP",
+      "parameter": "leakage_input",
+      "n_cal": 447,
+      "attainable_alpha": 0.00223,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "OPAMP",
+      "parameter": "prop_delay",
+      "n_cal": 447,
+      "attainable_alpha": 0.00223,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "OPAMP",
+      "parameter": "vth_shift",
+      "n_cal": 447,
+      "attainable_alpha": 0.00223,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "OPAMP",
+      "parameter": "icc_active",
+      "n_cal": 447,
+      "attainable_alpha": 0.00223,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "OPAMP",
+      "parameter": "output_res",
+      "n_cal": 447,
+      "attainable_alpha": 0.00223,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "POWER_MOSFET",
+      "parameter": "iddq_standby",
+      "n_cal": 308,
+      "attainable_alpha": 0.00324,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "POWER_MOSFET",
+      "parameter": "leakage_input",
+      "n_cal": 308,
+      "attainable_alpha": 0.00324,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "POWER_MOSFET",
+      "parameter": "prop_delay",
+      "n_cal": 308,
+      "attainable_alpha": 0.00324,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "POWER_MOSFET",
+      "parameter": "vth_shift",
+      "n_cal": 308,
+      "attainable_alpha": 0.00324,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "POWER_MOSFET",
+      "parameter": "icc_active",
+      "n_cal": 308,
+      "attainable_alpha": 0.00324,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    },
+    {
+      "component_type": "POWER_MOSFET",
+      "parameter": "output_res",
+      "n_cal": 308,
+      "attainable_alpha": 0.00324,
+      "supports_nominal_alpha_0_05": true,
+      "mondrian_level_supported": 0
+    }
+  ]
+}

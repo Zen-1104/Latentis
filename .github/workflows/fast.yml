@@ -1,0 +1,81 @@
+name: fast
+
+on:
+  push:
+    branches:
+      - main
+      - "phase/**"
+      - "feat/**"
+      - "fix/**"
+      - "docs/**"
+      - "test/**"
+  pull_request:
+    branches:
+      - main
+      - "phase/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  fast:
+    name: Fast Quality Gate (<60s)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install dependencies from lockfile
+        run: uv sync --frozen
+
+      - name: Secret scan (Gate: INV-10)
+        run: |
+          chmod +x scripts/check_secrets.sh
+          ./scripts/check_secrets.sh
+
+      - name: Ruff linter
+        run: uv run ruff check
+
+      - name: Black formatting check
+        run: uv run black --check .
+
+      - name: Mypy static type check
+        run: |
+          python3 -c "import glob, subprocess, sys; dirs = [d for d in ['backend', 'datagen', 'scripts', 'tests'] if any(glob.glob(f'{d}/**/*.py', recursive=True))]; sys.exit(subprocess.run(['uv', 'run', 'mypy'] + dirs).returncode if dirs else 0)"
+
+      - name: Fast unit tests (<60s)
+        run: uv run pytest -m "fast"
+
+      - name: Traceability & test category gates (conditional)
+        run: |
+          if [ -f "scripts/check_traceability.py" ]; then
+            echo "Running scripts/check_traceability.py..."
+            uv run python scripts/check_traceability.py
+          fi
+          if [ -f "scripts/check_test_categories.py" ]; then
+            echo "Running scripts/check_test_categories.py..."
+            uv run python scripts/check_test_categories.py
+          fi
+
+      - name: Frontend checks (conditional)
+        if: hashFiles('frontend/package.json') != ''
+        run: |
+          cd frontend
+          npm ci
+          npm run lint
+          npm run typecheck

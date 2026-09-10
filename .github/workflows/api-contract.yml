@@ -1,0 +1,47 @@
+name: api-contract
+
+on:
+  push:
+    branches:
+      - main
+      - "phase/**"
+      - "feat/**"
+      - "fix/**"
+      - "docs/**"
+      - "test/**"
+  pull_request:
+    branches:
+      - main
+      - "phase/**"
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  drift:
+    name: OpenAPI + generated client drift (QG-API-01)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v5
+        with:
+          enable-cache: true
+          version: "latest"
+
+      - name: Set up Python
+        run: uv python install 3.11
+
+      - name: Install dependencies from lockfile
+        run: uv sync --frozen
+
+      - name: API drift gate (Gate: QG-API-01)
+        run: uv run python scripts/check_api_drift.py

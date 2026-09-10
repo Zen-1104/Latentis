@@ -1,0 +1,51 @@
+# .pre-commit-config.yaml — Pre-commit quality gates
+# Implements T-103 (Gate: INV-10, GIT_WORKFLOW.md § 7, CLAUDE.md § 1)
+#
+# Rules:
+# 1. Hooks are NEVER bypassed (--no-verify is prohibited per GIT_WORKFLOW.md § 4).
+# 2. Gate INV-10: Secret scanner runs on staged changes and HUMAN_ACTIONS.md.
+# 3. Linters, formatters, type checks, and fast tests must pass before commit.
+
+default_language_version:
+  python: python3.11
+
+repos:
+  - repo: local
+    hooks:
+      - id: check-secrets
+        name: Secret Scanner (INV-10)
+        entry: scripts/check_secrets.sh --staged
+        language: script
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: ruff-check
+        name: Ruff Linter
+        entry: uv run ruff check --fix
+        language: system
+        types: [python]
+        stages: [pre-commit]
+
+      - id: black
+        name: Black Formatter
+        entry: uv run black
+        language: system
+        types: [python]
+        stages: [pre-commit]
+
+      - id: mypy
+        name: Mypy Strict Type Check
+        entry: python3 -c "import glob, subprocess, sys; dirs = [d for d in ['backend', 'datagen', 'scripts', 'tests'] if any(glob.glob(f'{d}/**/*.py', recursive=True))]; sys.exit(subprocess.run(['uv', 'run', 'mypy'] + dirs).returncode if dirs else 0)"
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]
+
+      - id: pytest-fast
+        name: Fast Unit Tests (<60s)
+        entry: uv run pytest -m "fast"
+        language: system
+        pass_filenames: false
+        always_run: true
+        stages: [pre-commit]

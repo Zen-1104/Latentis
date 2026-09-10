@@ -1,0 +1,280 @@
+seed: 20260930
+profile: mil_std_883_like
+scale:
+  n_lots: 40
+  parts_per_lot:
+    dist: loguniform
+    low: 30
+    high: 500
+special_lots:
+  lot_shift: 2
+  unit_inconsistent: 2
+  single_part: 1
+  zero_iqr: 1
+  tiny_n: 1
+  tester_drift: 1
+class_mixture:
+  healthy_stable:
+    value: 0.62
+    provenance: assumed
+    source: null
+    rationale: dominant class in a mature process
+  healthy_noisy:
+    value: 0.12
+    provenance: assumed
+    source: null
+    rationale: FP pressure
+  gradual_drift:
+    value: 0.15
+    provenance: assumed
+    source: null
+    rationale: normal wear-in
+  accelerated_drift:
+    value: 0.04
+    provenance: assumed
+    source: null
+    rationale: part of the 3% defect budget
+  early_latent_defect:
+    value: 0.04
+    provenance: assumed
+    source: null
+    rationale: Module A target
+  sudden_failure:
+    value: 0.01
+    provenance: assumed
+    source: null
+    rationale: sanity stratum
+  intermittent:
+    value: 0.01
+    provenance: assumed
+    source: null
+    rationale: acknowledged hard case
+  sensor_noise_anomaly:
+    value: 0.01
+    provenance: assumed
+    source: null
+    rationale: attribution test
+physics:
+  k_boltzmann_ev_per_k:
+    value: 8.617333262e-05
+    provenance: cited
+    source: SI/CODATA
+    rationale: Boltzmann constant in eV/K
+  t_ref_c:
+    value: 125.0
+    provenance: cited
+    source: D-A-02
+    rationale: MIL-STD-883 reference burn-in temperature in Celsius
+  ea_ev:
+    iddq_standby:
+      value: 0.7
+      provenance: cited
+      source: D-B-01
+      rationale: common default; swept in sensitivity
+    leakage_input:
+      value: 0.7
+      provenance: assumed
+      source: null
+      rationale: within cited 0.3-0.7 eV range per D-B-01
+    prop_delay:
+      value: 0.5
+      provenance: assumed
+      source: null
+      rationale: NBTI-like; within cited 0.3-0.7 eV range per D-B-01
+    vth_shift:
+      value: 0.5
+      provenance: assumed
+      source: null
+      rationale: NBTI-like; within cited 0.3-0.7 eV range per D-B-01
+    icc_active:
+      value: 0.6
+      provenance: assumed
+      source: null
+      rationale: carrier mobility temperature dependence mechanism
+    output_res:
+      value: 0.9
+      provenance: assumed
+      source: null
+      rationale: package/interconnect mechanism per D-B-01
+process:
+  sigma_lot_ratio:
+    value: 0.4
+    provenance: assumed
+    source: null
+    rationale: ratio of sigma_lot to sigma_within per DQ-01; swept in sensitivity
+  iddq_nominal:
+    value: 11.0
+    provenance: derived
+    source: null
+    rationale: D-B-04 midpoint of 8-14 uA nominal range
+  leakage_nominal:
+    value: 3.0
+    provenance: derived
+    source: null
+    rationale: D-B-04 midpoint of 1-5 nA nominal range
+  prop_delay_nominal:
+    value: 10.0
+    provenance: derived
+    source: null
+    rationale: D-B-04 midpoint of 8-12 ns nominal range
+  vth_shift_nominal:
+    value: 0.0
+    provenance: derived
+    source: null
+    rationale: symmetric around 0.0 mV baseline
+  icc_nominal:
+    value: 25.0
+    provenance: derived
+    source: null
+    rationale: midpoint of 20-30 mA nominal range
+  output_res_nominal:
+    value: 50.0
+    provenance: derived
+    source: null
+    rationale: midpoint of 40-60 mOhm nominal range
+degradation:
+  shape_exponent_mean:
+    value: 0.5
+    provenance: derived
+    source: null
+    rationale: sub-linear degradation exponent n < 1 per D-B-03
+  shape_exponent_spread:
+    value: 0.05
+    provenance: derived
+    source: null
+    rationale: "narrow per-part shape variation per DATA_GENERATION_SPEC \xA7 3"
+  healthy_amplitude:
+    value: 0.01
+    provenance: assumed
+    source: null
+    rationale: negligible degradation amplitude for healthy parts
+  gradual_drift_amplitude:
+    value: 0.15
+    provenance: assumed
+    source: null
+    rationale: normal wear-in degradation amplitude
+  accelerated_drift_amplitude:
+    value: 0.85
+    provenance: assumed
+    source: null
+    rationale: accelerated drift amplitude targeting limit crossing near 168h
+  early_latent_defect_amplitude:
+    value: 0.35
+    provenance: assumed
+    source: null
+    rationale: elevated baseline outlier amplitude constrained inside limits
+  sudden_failure_step:
+    value: 2.5
+    provenance: assumed
+    source: null
+    rationale: multiplicative step jump crossing absolute limit
+  max_rejection_attempts: 100
+factors:
+  lambda_supply_iddq:
+    value: 0.7
+    provenance: derived
+    source: null
+    rationale: targets iddq-icc correlation rho ~ 0.65
+  lambda_supply_icc:
+    value: 0.75
+    provenance: derived
+    source: null
+    rationale: targets iddq-icc correlation rho ~ 0.65
+  lambda_supply_leakage:
+    value: 0.3
+    provenance: derived
+    source: null
+    rationale: targets iddq-leakage correlation rho ~ 0.25
+  lambda_leak_specific:
+    value: 0.6
+    provenance: derived
+    source: null
+    rationale: independent leakage path for joint-only anomaly detection
+  lambda_threshold_delay:
+    value: 0.65
+    provenance: derived
+    source: null
+    rationale: targets prop_delay-vth_shift correlation rho ~ 0.50
+  lambda_threshold_vth:
+    value: 0.6
+    provenance: derived
+    source: null
+    rationale: targets prop_delay-vth_shift correlation rho ~ 0.50
+  lambda_package_res:
+    value: 0.8
+    provenance: derived
+    source: null
+    rationale: independent package mechanism factor loading
+  joint_only_ratio:
+    value: 0.5
+    provenance: assumed
+    source: null
+    rationale: proportion of early_latent_defect parts that are joint-only anomalies
+temperature:
+  setpoint_c:
+    value: 125.0
+    provenance: cited
+    source: D-A-02
+    rationale: MIL-STD-883 oven setpoint in Celsius
+  zone_offset_std_c:
+    value: 3.0
+    provenance: derived
+    source: null
+    rationale: thermal zone Gaussian offset standard deviation
+  zone_offset_clip_c:
+    value: 8.0
+    provenance: derived
+    source: null
+    rationale: maximum thermal zone deviation clip limit (+/- 8 C)
+  jitter_std_c:
+    value: 0.5
+    provenance: derived
+    source: null
+    rationale: per-read thermocouple measurement jitter standard deviation
+setup_effects:
+  socket_offset_scale:
+    value: 0.05
+    provenance: derived
+    source: null
+    rationale: D-I-03/D-CD-04 socket contact resistance variation scale
+  tester_drift_slope:
+    value: 0.001
+    provenance: assumed
+    source: null
+    rationale: linear measurement drift rate per hour
+  measurement_noise_scale:
+    value: 0.02
+    provenance: derived
+    source: null
+    rationale: base measurement error standard deviation
+  heteroscedasticity_exponent:
+    value: 0.5
+    provenance: derived
+    source: null
+    rationale: 'shot-noise scaling exponent: sigma proportional to sqrt(value)'
+imperfections:
+  missing_rate:
+    value: 0.015
+    provenance: assumed
+    source: null
+    rationale: "1.5% missing read-points per DATASET_SPEC \xA7 8"
+  below_lod_rate:
+    value: 0.005
+    provenance: assumed
+    source: null
+    rationale: "0.5% of leakage rows censored below LOD per DATASET_SPEC \xA7 8"
+  overrange_rate:
+    value: 0.002
+    provenance: assumed
+    source: null
+    rationale: "0.2% overrange readings per DATASET_SPEC \xA7 8"
+  duplicate_rate:
+    value: 0.003
+    provenance: assumed
+    source: null
+    rationale: "0.3% duplicate rows per DATASET_SPEC \xA7 8"
+  timestamp_jitter_rate:
+    value: 0.01
+    provenance: assumed
+    source: null
+    rationale: "1% timestamp jitter per DATASET_SPEC \xA7 8"

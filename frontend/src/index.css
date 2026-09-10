@@ -1,0 +1,339 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/**
+ * Local-only font binding (NFR-08 offline-first).
+ *
+ * The design system specifies Inter and JetBrains Mono vendored into
+ * public/fonts/. Until those binaries are committed, `local()` picks the
+ * faces up when the operator already has them installed and resolves to
+ * nothing otherwise — no network request is ever made, and the fallback
+ * tails in tailwind.config.ts carry the design on a bare machine.
+ */
+@font-face {
+  font-family: "Inter";
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+  src: local("Inter var"), local("Inter"), local("Inter Regular");
+}
+
+@font-face {
+  font-family: "JetBrains Mono";
+  font-style: normal;
+  font-weight: 100 800;
+  font-display: swap;
+  src: local("JetBrains Mono"), local("JetBrainsMono-Regular");
+}
+
+:root {
+  /* Surface tokens (dark default per UI_DESIGN_SYSTEM § 1, 2) */
+  --surface-0: #0B0F14;
+  --surface-1: #11171F;
+  --surface-2: #18202B;
+  --surface-3: #202A38;
+  --border-1: #263241;
+  --border-2: #33445A;
+
+  /* Typography tokens */
+  --text-1: #E8EEF6;
+  --text-2: #A9B7C8;
+  --text-3: #6F8095;
+  --text-num: #F2F7FD;
+
+  /* Severity tokens */
+  --sev-nominal: #3FA46A;
+  --sev-elevated: #C9A227;
+  --sev-anomaly: #D97A25;
+  --sev-severe: #C8442E;
+  --sev-critical: #8E2B7A;
+
+  /* Evidence & Guard tokens */
+  --evidence-weak: #5B7C9E;
+  --guard-void: #B0432A;
+  --synthetic: #7A5CC4;
+
+  /* Chart tokens */
+  --baseline: #7C8899;
+  --bound-fill: rgba(63, 164, 106, 0.14);
+
+  /* Interaction chrome — achromatic, so focus/hover never reads as a verdict */
+  --accent: #DCE6F4;
+  --accent-fg: #0B0F14;
+  --accent-soft: rgba(220, 230, 244, 0.10);
+  --hover: rgba(220, 230, 244, 0.05);
+  --active: rgba(220, 230, 244, 0.10);
+  --focus-ring: #8FA6C2;
+  --overlay: rgba(5, 8, 11, 0.66);
+
+  /* Spacing tokens */
+  --sp-1: 4px;
+  --sp-2: 8px;
+  --sp-3: 12px;
+  --sp-4: 16px;
+  --sp-5: 20px;
+  --sp-6: 24px;
+  --sp-7: 28px;
+  --sp-8: 32px;
+  --sp-12: 48px;
+
+  /* Radius tokens */
+  --r-sm: 3px;
+  --r-md: 5px;
+  --r-lg: 8px;
+
+  /* Elevation tokens */
+  --sh-drawer: -4px 0 24px rgba(0, 0, 0, 0.4);
+  --sh-popover: 0 4px 16px rgba(0, 0, 0, 0.3);
+  --sh-sticky: 0 1px 0 rgba(0, 0, 0, 0.5);
+
+  /* Control geometry. The locked 4px scale has no half-steps, so controls
+     declare a height and centre their content instead of padding to size. */
+  --control-h-sm: 28px;
+  --control-h-md: 34px;
+  --control-h-lg: 40px;
+  --chip-h: 22px;
+
+  /* Layout geometry */
+  --w-sidebar: 264px;
+  --w-rail: 60px;
+  --sz-cell: 36px;
+  --h-header: 52px;
+
+  /* Table density (UI_DESIGN_SYSTEM § 9). Overridden by [data-density]. */
+  --row-h: 40px;
+  --cell-py: var(--sp-3);
+}
+
+[data-theme="light"] {
+  --surface-0: #F6F8FB;
+  --surface-1: #FFFFFF;
+  --surface-2: #EDF2F7;
+  --surface-3: #E2E8F0;
+  --border-1: #D2DCE6;
+  --border-2: #B0C0D2;
+
+  --text-1: #0F172A;
+  --text-2: #334155;
+  --text-3: #64748B;
+  --text-num: #090D16;
+
+  --sev-nominal: #2E7D4F;
+  --sev-elevated: #A17D16;
+  --sev-anomaly: #C0641A;
+  --sev-severe: #B33622;
+  --sev-critical: #7B2169;
+
+  --evidence-weak: #456482;
+  --guard-void: #9B341D;
+  --synthetic: #694CB5;
+
+  --baseline: #64748B;
+  --bound-fill: rgba(46, 125, 79, 0.14);
+
+  --accent: #16233A;
+  --accent-fg: #FFFFFF;
+  --accent-soft: rgba(22, 35, 58, 0.07);
+  --hover: rgba(15, 23, 42, 0.04);
+  --active: rgba(15, 23, 42, 0.08);
+  --focus-ring: #3B5878;
+  --overlay: rgba(15, 23, 42, 0.40);
+
+  --sh-drawer: -4px 0 24px rgba(15, 23, 42, 0.15);
+  --sh-popover: 0 4px 16px rgba(15, 23, 42, 0.12);
+  --sh-sticky: 0 1px 0 rgba(15, 23, 42, 0.1);
+}
+
+/* Very narrow viewports (<=359px): the header wraps to two rows. The token
+   moves with it so `top: var(--h-header)` sticky offsets stay aligned. */
+@media (max-width: 359px) {
+  :root {
+    --h-header: 92px;
+  }
+}
+
+/* Compact density: 28px rows for 500-part lots (UI_DESIGN_SYSTEM § 9) */
+[data-density="compact"] {
+  --row-h: 28px;
+  --cell-py: var(--sp-1);
+  --control-h-sm: 24px;
+  --control-h-md: 30px;
+  --control-h-lg: 34px;
+}
+
+html {
+  background-color: var(--surface-0);
+  /* Keep the scrollbar gutter reserved so opening a drawer or switching
+     surfaces never shifts the layout sideways. */
+  scrollbar-gutter: stable;
+}
+
+body {
+  margin: 0;
+  background-color: var(--surface-0);
+  color: var(--text-1);
+  font-family: Inter, "Inter var", "SF Pro Text", system-ui, -apple-system,
+    "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+  font-size: 14px;
+  line-height: 20px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  /* Contextual alternates only; no discretionary ligatures in a UI that
+     renders part ids and formulas. */
+  font-feature-settings: "cv05" 1, "cv08" 1, "calt" 1;
+}
+
+/* Headings are set tight and balanced; the scale is locked, so hierarchy
+   comes from weight, tracking and space rather than from size jumps. */
+h1,
+h2,
+h3 {
+  margin: 0;
+  letter-spacing: -0.012em;
+  text-wrap: balance;
+}
+
+/* Long-form backend prose stays comfortable without a hard character cap
+   fighting the responsive grid. */
+p {
+  margin: 0;
+  text-wrap: pretty;
+}
+
+/* Visible keyboard focus everywhere (WCAG 2.4.7): one global rule so no
+   control depends on a per-component ring class being remembered.
+   Achromatic by charter — a green ring would read as a PASS verdict. */
+:focus-visible {
+  outline: 2px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: var(--r-sm);
+}
+
+/* Pointer interaction should not paint the keyboard ring. */
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+::selection {
+  background: var(--accent-soft);
+  color: var(--text-num);
+}
+
+/* Instrument-grade scrollbars: present enough to grab, quiet enough to
+   disappear into the surface behind them. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border-2) transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: var(--border-2);
+  border: 3px solid transparent;
+  border-radius: 9999px;
+  background-clip: content-box;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-3);
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* Numeric typography per UI_DESIGN_SYSTEM § 3: tabular lining numerals */
+.tnum,
+[data-tabular-nums="true"] {
+  font-variant-numeric: tabular-nums lining-nums;
+  font-family: "JetBrains Mono", "SF Mono", ui-monospace, "Cascadia Mono",
+    Consolas, "Roboto Mono", "Liberation Mono", monospace;
+}
+
+/* Eyebrow / section-label treatment. Small monospaced uppercase labels are
+   the app's structural signposts; tracking is what makes them legible at
+   12px rather than a larger size. */
+.eyebrow {
+  font-family: "JetBrains Mono", "SF Mono", ui-monospace, Consolas, monospace;
+  font-size: 12px;
+  line-height: 16px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+}
+
+/* Loading skeleton: a single sweep, no pulsing opacity on every block. */
+.skeleton {
+  position: relative;
+  overflow: hidden;
+  background-color: var(--surface-2);
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    var(--hover) 50%,
+    transparent 100%
+  );
+  animation: shimmer 1.4s ease-in-out infinite;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .skeleton::after {
+    display: none;
+  }
+}
+
+/* Native form controls inherit the instrument's type, not the platform's. */
+input,
+select,
+textarea,
+button {
+  font: inherit;
+  color: inherit;
+}
+
+/* The select chevron is drawn from tokens so it tracks the theme. */
+select.token-select {
+  appearance: none;
+  background-image: linear-gradient(45deg, transparent 50%, var(--text-3) 50%),
+    linear-gradient(135deg, var(--text-3) 50%, transparent 50%);
+  background-position:
+    calc(100% - 15px) calc(50% + 1px),
+    calc(100% - 10px) calc(50% + 1px);
+  background-size: 5px 5px, 5px 5px;
+  background-repeat: no-repeat;
+}
+
+/* Sticky table headers need a hairline once rows scroll beneath them. */
+.sticky-head th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  box-shadow: var(--sh-sticky);
+}

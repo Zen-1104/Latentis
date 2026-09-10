@@ -1,0 +1,4156 @@
+{
+  "components": {
+    "schemas": {
+      "AbsoluteBlock": {
+        "description": "Absolute-limit verdict with profile-config echoes (allow-list A1).",
+        "properties": {
+          "limit_high": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit High"
+          },
+          "limit_low": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Limit Low"
+          },
+          "limit_unit": {
+            "title": "Limit Unit",
+            "type": "string"
+          },
+          "margin": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Margin"
+          },
+          "margin_pct": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Margin Pct"
+          },
+          "verdict": {
+            "title": "Verdict",
+            "type": "string"
+          }
+        },
+        "required": [
+          "limit_unit",
+          "verdict"
+        ],
+        "title": "AbsoluteBlock",
+        "type": "object"
+      },
+      "AttributionOut": {
+        "description": "Part vs setup verdict with structured evidence (ANOMALY_SPEC sec 7).",
+        "properties": {
+          "evidence": {
+            "anyOf": [
+              {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Evidence"
+          },
+          "refusal_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refusal Code"
+          },
+          "verdict": {
+            "title": "Verdict",
+            "type": "string"
+          },
+          "warning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warning"
+          }
+        },
+        "required": [
+          "verdict"
+        ],
+        "title": "AttributionOut",
+        "type": "object"
+      },
+      "Body_post_datasets_api_v1_datasets_post": {
+        "properties": {
+          "file": {
+            "contentMediaType": "application/octet-stream",
+            "title": "File",
+            "type": "string"
+          }
+        },
+        "required": [
+          "file"
+        ],
+        "title": "Body_post_datasets_api_v1_datasets_post",
+        "type": "object"
+      },
+      "CodeInfo": {
+        "description": "Runtime-computed code identity (never a committed literal).",
+        "properties": {
+          "dirty": {
+            "title": "Dirty",
+            "type": "boolean"
+          },
+          "git_sha": {
+            "minLength": 1,
+            "title": "Git Sha",
+            "type": "string"
+          }
+        },
+        "required": [
+          "git_sha",
+          "dirty"
+        ],
+        "title": "CodeInfo",
+        "type": "object"
+      },
+      "CohortInfo": {
+        "description": "Reference population identity (always reported with the answer).",
+        "properties": {
+          "n": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "N",
+            "type": "integer"
+          },
+          "scope": {
+            "default": "",
+            "title": "Scope",
+            "type": "string"
+          }
+        },
+        "title": "CohortInfo",
+        "type": "object"
+      },
+      "ComponentIdentity": {
+        "description": "Static component metadata (no decision content).",
+        "properties": {
+          "board_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Board Id"
+          },
+          "component_id": {
+            "title": "Component Id",
+            "type": "string"
+          },
+          "component_type": {
+            "title": "Component Type",
+            "type": "string"
+          },
+          "lot_id": {
+            "title": "Lot Id",
+            "type": "string"
+          },
+          "socket_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Socket Id"
+          },
+          "tester_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Tester Id"
+          },
+          "thermal_zone": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Thermal Zone"
+          }
+        },
+        "required": [
+          "component_id",
+          "lot_id",
+          "component_type"
+        ],
+        "title": "ComponentIdentity",
+        "type": "object"
+      },
+      "ConformalBound": {
+        "description": "One-sided upper bound with its ladder identity (CONFORMAL_SPEC).",
+        "properties": {
+          "alpha": {
+            "title": "Alpha",
+            "type": "number"
+          },
+          "attainable_alpha": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Attainable Alpha"
+          },
+          "bound_finite": {
+            "default": false,
+            "title": "Bound Finite",
+            "type": "boolean"
+          },
+          "coverage_target": {
+            "title": "Coverage Target",
+            "type": "number"
+          },
+          "k_order_statistic": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "K Order Statistic"
+          },
+          "mondrian_group": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mondrian Group"
+          },
+          "mondrian_level": {
+            "default": 0,
+            "title": "Mondrian Level",
+            "type": "integer"
+          },
+          "n_cal": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "N Cal"
+          },
+          "q_hat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Q Hat"
+          },
+          "refusal_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refusal Code"
+          },
+          "upper_168h": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Upper 168H"
+          },
+          "warning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warning"
+          }
+        },
+        "required": [
+          "alpha",
+          "coverage_target"
+        ],
+        "title": "ConformalBound",
+        "type": "object"
+      },
+      "ContributionItem": {
+        "description": "Exact Mahalanobis contribution share (allow-list A2).",
+        "properties": {
+          "contribution": {
+            "title": "Contribution",
+            "type": "number"
+          },
+          "parameter": {
+            "title": "Parameter",
+            "type": "string"
+          },
+          "share": {
+            "title": "Share",
+            "type": "number"
+          }
+        },
+        "required": [
+          "parameter",
+          "contribution",
+          "share"
+        ],
+        "title": "ContributionItem",
+        "type": "object"
+      },
+      "CusumOut": {
+        "description": "Advisory persistent-shift evidence (D-038; never a verdict).",
+        "properties": {
+          "advisory_note": {
+            "default": "CUSUM is advisory and cannot change a verdict (D-038).",
+            "title": "Advisory Note",
+            "type": "string"
+          },
+          "first_crossing_high": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Crossing High"
+          },
+          "first_crossing_low": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "First Crossing Low"
+          },
+          "n_gaps": {
+            "default": 0,
+            "title": "N Gaps",
+            "type": "integer"
+          },
+          "n_observations": {
+            "default": 0,
+            "title": "N Observations",
+            "type": "integer"
+          },
+          "refusal_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refusal Code"
+          },
+          "s_high": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "S High"
+          },
+          "s_low": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "S Low"
+          },
+          "signal_high": {
+            "default": false,
+            "title": "Signal High",
+            "type": "boolean"
+          },
+          "signal_low": {
+            "default": false,
+            "title": "Signal Low",
+            "type": "boolean"
+          },
+          "warning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warning"
+          }
+        },
+        "title": "CusumOut",
+        "type": "object"
+      },
+      "DataProvenance": {
+        "description": "Dataset provenance. Exactly one member by design (INV-3).",
+        "enum": [
+          "SYNTHETIC"
+        ],
+        "title": "DataProvenance",
+        "type": "string"
+      },
+      "DispositionRecord": {
+        "description": "Stored disposition row with its evidence snapshot reference.",
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "actor": {
+            "title": "Actor",
+            "type": "string"
+          },
+          "component_id": {
+            "title": "Component Id",
+            "type": "string"
+          },
+          "created_at": {
+            "title": "Created At",
+            "type": "string"
+          },
+          "disposition_id": {
+            "title": "Disposition Id",
+            "type": "string"
+          },
+          "profile_ref": {
+            "title": "Profile Ref",
+            "type": "string"
+          },
+          "reason": {
+            "title": "Reason",
+            "type": "string"
+          }
+        },
+        "required": [
+          "disposition_id",
+          "component_id",
+          "action",
+          "reason",
+          "actor",
+          "profile_ref",
+          "created_at"
+        ],
+        "title": "DispositionRecord",
+        "type": "object"
+      },
+      "DispositionRequest": {
+        "description": "Inspector disposition (system recommends; human disposes).",
+        "properties": {
+          "action": {
+            "pattern": "^(CONCUR|OVERRIDE|DEFER)$",
+            "title": "Action",
+            "type": "string"
+          },
+          "actor": {
+            "default": "operator",
+            "title": "Actor",
+            "type": "string"
+          },
+          "reason": {
+            "default": "",
+            "title": "Reason",
+            "type": "string"
+          },
+          "run_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Run Id"
+          }
+        },
+        "required": [
+          "action"
+        ],
+        "title": "DispositionRequest",
+        "type": "object"
+      },
+      "DpatBlock": {
+        "description": "DPAT limits and robust distance (ANOMALY_SPEC section 4.1).",
+        "properties": {
+          "k": {
+            "title": "K",
+            "type": "number"
+          },
+          "limit_high": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "limit_low": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verdict"
+          },
+          "z": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "k"
+        ],
+        "title": "DpatBlock",
+        "type": "object"
+      },
+      "DriftBlock": {
+        "description": "Forecast, bound, slopes, margin, band (DRIFT_SPEC section 8).",
+        "properties": {
+          "band": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Band"
+          },
+          "baseline_linear": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Baseline Linear"
+          },
+          "bound": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/ConformalBound"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "censored": {
+            "default": false,
+            "title": "Censored",
+            "type": "boolean"
+          },
+          "margin": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MarginBlock"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "phi_168": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "phi_family": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phi Family"
+          },
+          "phi_n_used": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phi N Used"
+          },
+          "phi_warning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Phi Warning"
+          },
+          "point": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Point"
+          },
+          "refusal_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refusal Code"
+          },
+          "residual_applied": {
+            "default": false,
+            "title": "Residual Applied",
+            "type": "boolean"
+          },
+          "residual_correction": {
+            "default": 0.0,
+            "title": "Residual Correction",
+            "type": "number"
+          },
+          "residual_decision": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Residual Decision"
+          },
+          "safety_refusal": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Safety Refusal"
+          },
+          "safety_warning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Safety Warning"
+          },
+          "shape_point": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Shape Point"
+          },
+          "slopes": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SlopesBlock"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "warning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warning"
+          }
+        },
+        "title": "DriftBlock",
+        "type": "object"
+      },
+      "Envelope_ComponentIdentity_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/ComponentIdentity"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[ComponentIdentity]",
+        "type": "object"
+      },
+      "Envelope_DispositionRecord_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/DispositionRecord"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[DispositionRecord]",
+        "type": "object"
+      },
+      "Envelope_HealthData_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/HealthData"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[HealthData]",
+        "type": "object"
+      },
+      "Envelope_IngestReport_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/IngestReport"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[IngestReport]",
+        "type": "object"
+      },
+      "Envelope_InvestigationData_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/InvestigationData"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[InvestigationData]",
+        "type": "object"
+      },
+      "Envelope_VersionData_": {
+        "properties": {
+          "data": {
+            "$ref": "#/components/schemas/VersionData"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[VersionData]",
+        "type": "object"
+      },
+      "Envelope_dict_str__Any__": {
+        "properties": {
+          "data": {
+            "additionalProperties": true,
+            "title": "Data",
+            "type": "object"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[dict[str, Any]]",
+        "type": "object"
+      },
+      "Envelope_list_LotSummary__": {
+        "properties": {
+          "data": {
+            "items": {
+              "$ref": "#/components/schemas/LotSummary"
+            },
+            "title": "Data",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[list[LotSummary]]",
+        "type": "object"
+      },
+      "Envelope_list_dict_str__Any___": {
+        "properties": {
+          "data": {
+            "items": {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            "title": "Data",
+            "type": "array"
+          },
+          "meta": {
+            "$ref": "#/components/schemas/Meta"
+          }
+        },
+        "required": [
+          "data",
+          "meta"
+        ],
+        "title": "Envelope[list[dict[str, Any]]]",
+        "type": "object"
+      },
+      "FindingRecord": {
+        "description": "One itemised validation finding (FR-106: action is required).",
+        "properties": {
+          "action": {
+            "minLength": 1,
+            "title": "Action",
+            "type": "string"
+          },
+          "affected_lots": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Affected Lots",
+            "type": "array"
+          },
+          "code": {
+            "minLength": 1,
+            "title": "Code",
+            "type": "string"
+          },
+          "column": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Column"
+          },
+          "count": {
+            "minimum": 0.0,
+            "title": "Count",
+            "type": "integer"
+          },
+          "detail": {
+            "minLength": 1,
+            "title": "Detail",
+            "type": "string"
+          },
+          "sample_rows": {
+            "items": {
+              "type": "integer"
+            },
+            "title": "Sample Rows",
+            "type": "array"
+          },
+          "severity": {
+            "pattern": "^(ERROR|WARNING)$",
+            "title": "Severity",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "severity",
+          "count",
+          "detail",
+          "action"
+        ],
+        "title": "FindingRecord",
+        "type": "object"
+      },
+      "FormulaRegistryInfo": {
+        "description": "Runtime-computed formula registry identity (PROVENANCE_SPEC \u00a7 8).",
+        "properties": {
+          "entries": {
+            "minimum": 0.0,
+            "title": "Entries",
+            "type": "integer"
+          },
+          "hash": {
+            "minLength": 1,
+            "title": "Hash",
+            "type": "string"
+          }
+        },
+        "required": [
+          "entries",
+          "hash"
+        ],
+        "title": "FormulaRegistryInfo",
+        "type": "object"
+      },
+      "FormulaUse": {
+        "description": "One registry entry referenced by the payload (T-506 appendix seed).",
+        "properties": {
+          "description": {
+            "default": "",
+            "title": "Description",
+            "type": "string"
+          },
+          "expression": {
+            "title": "Expression",
+            "type": "string"
+          },
+          "formula_id": {
+            "title": "Formula Id",
+            "type": "string"
+          },
+          "operands": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Operands",
+            "type": "array"
+          },
+          "parameters": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Parameters",
+            "type": "array"
+          },
+          "source_ref": {
+            "default": "",
+            "title": "Source Ref",
+            "type": "string"
+          },
+          "unit_rule": {
+            "default": "",
+            "title": "Unit Rule",
+            "type": "string"
+          }
+        },
+        "required": [
+          "formula_id",
+          "expression"
+        ],
+        "title": "FormulaUse",
+        "type": "object"
+      },
+      "GuardsOut": {
+        "description": "Degraded-state flags (persistent; never dismissible).",
+        "properties": {
+          "censored": {
+            "default": false,
+            "title": "Censored",
+            "type": "boolean"
+          },
+          "exchangeability": {
+            "default": "PASS",
+            "title": "Exchangeability",
+            "type": "string"
+          },
+          "guarantee_status": {
+            "default": "VALID",
+            "title": "Guarantee Status",
+            "type": "string"
+          },
+          "insufficient_data": {
+            "default": false,
+            "title": "Insufficient Data",
+            "type": "boolean"
+          },
+          "mondrian_level": {
+            "default": 0,
+            "title": "Mondrian Level",
+            "type": "integer"
+          },
+          "reduced_power": {
+            "default": false,
+            "title": "Reduced Power",
+            "type": "boolean"
+          }
+        },
+        "title": "GuardsOut",
+        "type": "object"
+      },
+      "HTTPValidationError": {
+        "properties": {
+          "detail": {
+            "items": {
+              "$ref": "#/components/schemas/ValidationError"
+            },
+            "title": "Detail",
+            "type": "array"
+          }
+        },
+        "title": "HTTPValidationError",
+        "type": "object"
+      },
+      "HealthData": {
+        "description": "System health payload.\n\nShape follows PROVENANCE_SPEC \u00a7 8 as far as T-501 can honestly fill it:\nfields without a backing store yet (dataset, models, profile) are\npresent-but-empty, named again in ``missing``, and drive ``status`` to\n``degraded``. T-502 (DuckDB) and T-401 (model registry) fill them in\nadditively. Never 500: even introspection failures degrade with a\nreason instead of raising.",
+        "properties": {
+          "code": {
+            "$ref": "#/components/schemas/CodeInfo"
+          },
+          "dataset_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset Hash"
+          },
+          "formula_registry": {
+            "$ref": "#/components/schemas/FormulaRegistryInfo"
+          },
+          "missing": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Missing",
+            "type": "array"
+          },
+          "models": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Models",
+            "type": "object"
+          },
+          "profile_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Profile Id"
+          },
+          "profile_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Profile Version"
+          },
+          "remediation": {
+            "minLength": 1,
+            "title": "Remediation",
+            "type": "string"
+          },
+          "status": {
+            "pattern": "^(ok|degraded)$",
+            "title": "Status",
+            "type": "string"
+          }
+        },
+        "required": [
+          "status",
+          "formula_registry",
+          "code",
+          "remediation"
+        ],
+        "title": "HealthData",
+        "type": "object"
+      },
+      "IngestReport": {
+        "description": "The T-502 ingest report: counts, four-class rejections, findings.",
+        "properties": {
+          "data_provenance": {
+            "default": "SYNTHETIC",
+            "title": "Data Provenance",
+            "type": "string"
+          },
+          "dataset_hash": {
+            "title": "Dataset Hash",
+            "type": "string"
+          },
+          "file_name": {
+            "title": "File Name",
+            "type": "string"
+          },
+          "file_sha256": {
+            "title": "File Sha256",
+            "type": "string"
+          },
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/FindingRecord"
+            },
+            "title": "Findings",
+            "type": "array"
+          },
+          "ingest_id": {
+            "title": "Ingest Id",
+            "type": "string"
+          },
+          "lots": {
+            "items": {
+              "$ref": "#/components/schemas/LotIngestSummary"
+            },
+            "title": "Lots",
+            "type": "array"
+          },
+          "profile_id": {
+            "title": "Profile Id",
+            "type": "string"
+          },
+          "profile_version": {
+            "title": "Profile Version",
+            "type": "integer"
+          },
+          "quality_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quality Score"
+          },
+          "rejection_classes": {
+            "additionalProperties": {
+              "type": "integer"
+            },
+            "title": "Rejection Classes",
+            "type": "object"
+          },
+          "rows_accepted": {
+            "title": "Rows Accepted",
+            "type": "integer"
+          },
+          "rows_rejected": {
+            "title": "Rows Rejected",
+            "type": "integer"
+          },
+          "rows_total": {
+            "title": "Rows Total",
+            "type": "integer"
+          },
+          "schema_version": {
+            "default": "long-v1",
+            "title": "Schema Version",
+            "type": "string"
+          }
+        },
+        "required": [
+          "ingest_id",
+          "dataset_hash",
+          "file_sha256",
+          "file_name",
+          "profile_id",
+          "profile_version",
+          "rows_total",
+          "rows_accepted",
+          "rows_rejected",
+          "rejection_classes",
+          "findings",
+          "lots",
+          "quality_score"
+        ],
+        "title": "IngestReport",
+        "type": "object"
+      },
+      "InvestigationData": {
+        "description": "Flagship composite payload (API_CONTRACT section 7.1).",
+        "properties": {
+          "component": {
+            "$ref": "#/components/schemas/ComponentIdentity"
+          },
+          "explanation": {
+            "additionalProperties": true,
+            "title": "Explanation",
+            "type": "object"
+          },
+          "guards": {
+            "$ref": "#/components/schemas/GuardsOut"
+          },
+          "parameters": {
+            "items": {
+              "$ref": "#/components/schemas/ParameterEvidence"
+            },
+            "title": "Parameters",
+            "type": "array"
+          },
+          "provenance": {
+            "$ref": "#/components/schemas/ProvenanceOut"
+          },
+          "recommendation": {
+            "$ref": "#/components/schemas/RecommendationOut"
+          },
+          "risk": {
+            "$ref": "#/components/schemas/RiskBlock"
+          },
+          "worst": {
+            "$ref": "#/components/schemas/WorstOut"
+          }
+        },
+        "required": [
+          "component",
+          "risk",
+          "recommendation",
+          "worst",
+          "provenance"
+        ],
+        "title": "InvestigationData",
+        "type": "object"
+      },
+      "LotIngestSummary": {
+        "description": "Per-lot outcome inside the ingest report (FR-104).",
+        "properties": {
+          "component_type": {
+            "title": "Component Type",
+            "type": "string"
+          },
+          "findings": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Findings",
+            "type": "array"
+          },
+          "lot_id": {
+            "title": "Lot Id",
+            "type": "string"
+          },
+          "n_parts": {
+            "title": "N Parts",
+            "type": "integer"
+          },
+          "quality_score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Quality Score"
+          },
+          "rows_accepted": {
+            "title": "Rows Accepted",
+            "type": "integer"
+          },
+          "rows_rejected": {
+            "title": "Rows Rejected",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "lot_id",
+          "component_type",
+          "n_parts",
+          "rows_accepted",
+          "rows_rejected",
+          "quality_score"
+        ],
+        "title": "LotIngestSummary",
+        "type": "object"
+      },
+      "LotStatistics": {
+        "description": "Leave-one-out lot statistics (ANOMALY_SPEC section 2).",
+        "properties": {
+          "estimator": {
+            "default": "",
+            "title": "Estimator",
+            "type": "string"
+          },
+          "fully_traced": {
+            "default": true,
+            "title": "Fully Traced",
+            "type": "boolean"
+          },
+          "iqr": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Iqr"
+          },
+          "mad": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Mad"
+          },
+          "median": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Median"
+          },
+          "n": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "N",
+            "type": "integer"
+          },
+          "native_unit": {
+            "default": "",
+            "title": "Native Unit",
+            "type": "string"
+          },
+          "q1": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Q1"
+          },
+          "q3": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Q3"
+          },
+          "reduced_power": {
+            "default": false,
+            "title": "Reduced Power",
+            "type": "boolean"
+          },
+          "robust_sigma": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Robust Sigma"
+          },
+          "scope": {
+            "default": "",
+            "title": "Scope",
+            "type": "string"
+          },
+          "zero_iqr": {
+            "default": false,
+            "title": "Zero Iqr",
+            "type": "boolean"
+          }
+        },
+        "title": "LotStatistics",
+        "type": "object"
+      },
+      "LotSummary": {
+        "description": "Directory entry for lot listings.",
+        "properties": {
+          "component_type": {
+            "title": "Component Type",
+            "type": "string"
+          },
+          "data_provenance": {
+            "default": "SYNTHETIC",
+            "title": "Data Provenance",
+            "type": "string"
+          },
+          "lot_id": {
+            "title": "Lot Id",
+            "type": "string"
+          },
+          "n_parts": {
+            "title": "N Parts",
+            "type": "integer"
+          }
+        },
+        "required": [
+          "lot_id",
+          "component_type",
+          "n_parts"
+        ],
+        "title": "LotSummary",
+        "type": "object"
+      },
+      "MahalanobisBlock": {
+        "description": "Joint detector state: traced D2 or an explicit skip reason.",
+        "properties": {
+          "d2": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "p_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "P Value"
+          },
+          "reason": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Reason"
+          },
+          "state": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "State"
+          },
+          "top_contributions": {
+            "items": {
+              "$ref": "#/components/schemas/ContributionItem"
+            },
+            "title": "Top Contributions",
+            "type": "array"
+          }
+        },
+        "title": "MahalanobisBlock",
+        "type": "object"
+      },
+      "MarginBlock": {
+        "description": "Margins from configuration (DRIFT_SPEC section 6.2).",
+        "properties": {
+          "predicted_margin": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Predicted Margin"
+          },
+          "predicted_margin_pct": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Predicted Margin Pct"
+          },
+          "safe_threshold": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Safe Threshold"
+          },
+          "usable_margin": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Usable Margin"
+          }
+        },
+        "title": "MarginBlock",
+        "type": "object"
+      },
+      "MemberVerdict": {
+        "description": "One ensemble member position (no invented thresholds).",
+        "properties": {
+          "position": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Position"
+          },
+          "verdict": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Verdict"
+          }
+        },
+        "title": "MemberVerdict",
+        "type": "object"
+      },
+      "MembersBlock": {
+        "description": "Ensemble positions with unanimity reporting (ANOMALY_SPEC section 5).",
+        "properties": {
+          "adjusted_boxplot": {
+            "$ref": "#/components/schemas/MemberVerdict"
+          },
+          "cross_check": {
+            "additionalProperties": true,
+            "title": "Cross Check",
+            "type": "object"
+          },
+          "dpat": {
+            "$ref": "#/components/schemas/MemberVerdict"
+          },
+          "mahalanobis": {
+            "$ref": "#/components/schemas/MahalanobisBlock"
+          },
+          "members_fired": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Members Fired",
+            "type": "integer"
+          },
+          "members_total": {
+            "default": 0,
+            "minimum": 0.0,
+            "title": "Members Total",
+            "type": "integer"
+          },
+          "tukey": {
+            "$ref": "#/components/schemas/MemberVerdict"
+          }
+        },
+        "title": "MembersBlock",
+        "type": "object"
+      },
+      "Meta": {
+        "description": "Non-optional response metadata (API_CONTRACT \u00a7 1.1).",
+        "properties": {
+          "code_git_sha": {
+            "minLength": 1,
+            "title": "Code Git Sha",
+            "type": "string"
+          },
+          "computed_at": {
+            "minLength": 1,
+            "title": "Computed At",
+            "type": "string"
+          },
+          "data_provenance": {
+            "$ref": "#/components/schemas/DataProvenance",
+            "default": "SYNTHETIC"
+          },
+          "dataset_hash": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Dataset Hash"
+          },
+          "duration_ms": {
+            "minimum": 0.0,
+            "title": "Duration Ms",
+            "type": "number"
+          },
+          "model_versions": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Model Versions",
+            "type": "object"
+          },
+          "profile_id": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Profile Id"
+          },
+          "profile_version": {
+            "anyOf": [
+              {
+                "type": "integer"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Profile Version"
+          },
+          "request_id": {
+            "minLength": 1,
+            "title": "Request Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "request_id",
+          "computed_at",
+          "code_git_sha",
+          "duration_ms"
+        ],
+        "title": "Meta",
+        "type": "object"
+      },
+      "NarrativesOut": {
+        "description": "Explanation layers generated from deciding values (INV-5).",
+        "properties": {
+          "counterfactuals": {
+            "additionalProperties": true,
+            "title": "Counterfactuals",
+            "type": "object"
+          },
+          "layers": {
+            "items": {
+              "type": "string"
+            },
+            "title": "Layers",
+            "type": "array"
+          },
+          "texts": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ]
+            },
+            "title": "Texts",
+            "type": "object"
+          }
+        },
+        "title": "NarrativesOut",
+        "type": "object"
+      },
+      "ParameterEvidence": {
+        "description": "One parameter slice of the investigation (API_CONTRACT section 7.1).",
+        "properties": {
+          "absolute": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AbsoluteBlock"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "attribution": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/AttributionOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "band": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Band"
+          },
+          "cohort": {
+            "$ref": "#/components/schemas/CohortInfo"
+          },
+          "cusum": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/CusumOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "dpat": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DpatBlock"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "drift": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/DriftBlock"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "fully_traced": {
+            "title": "Fully Traced",
+            "type": "boolean"
+          },
+          "guard_detail": {
+            "additionalProperties": true,
+            "title": "Guard Detail",
+            "type": "object"
+          },
+          "guards": {
+            "$ref": "#/components/schemas/GuardsOut"
+          },
+          "lot_statistics": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/LotStatistics"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "members": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/MembersBlock"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "narratives": {
+            "$ref": "#/components/schemas/NarrativesOut"
+          },
+          "native_unit": {
+            "title": "Native Unit",
+            "type": "string"
+          },
+          "parameter": {
+            "title": "Parameter",
+            "type": "string"
+          },
+          "quality": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/QualityOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "readings": {
+            "items": {
+              "$ref": "#/components/schemas/ReadingValue"
+            },
+            "title": "Readings",
+            "type": "array"
+          },
+          "recommendation": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RecommendationOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "risk": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/RiskBlock"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "severity": {
+            "default": "NOMINAL",
+            "title": "Severity",
+            "type": "string"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "parameter",
+          "unit",
+          "native_unit",
+          "fully_traced"
+        ],
+        "title": "ParameterEvidence",
+        "type": "object"
+      },
+      "ProfileUpdateRequest": {
+        "description": "Full profile document for a new version (fields mirror ScreeningProfile).",
+        "properties": {
+          "alpha": {
+            "exclusiveMaximum": 1.0,
+            "exclusiveMinimum": 0.0,
+            "title": "Alpha",
+            "type": "number"
+          },
+          "horizon_hours": {
+            "exclusiveMinimum": 0.0,
+            "title": "Horizon Hours",
+            "type": "number"
+          },
+          "k": {
+            "exclusiveMinimum": 0.0,
+            "title": "K",
+            "type": "number"
+          },
+          "limits": {
+            "additionalProperties": true,
+            "title": "Limits",
+            "type": "object"
+          },
+          "margin_fraction": {
+            "exclusiveMaximum": 1.0,
+            "minimum": 0.0,
+            "title": "Margin Fraction",
+            "type": "number"
+          },
+          "n_min_zone": {
+            "default": 20,
+            "minimum": 3.0,
+            "title": "N Min Zone",
+            "type": "integer"
+          },
+          "pda_limit_pct": {
+            "exclusiveMinimum": 0.0,
+            "title": "Pda Limit Pct",
+            "type": "number"
+          },
+          "readpoint_grid": {
+            "items": {
+              "type": "integer"
+            },
+            "minItems": 1,
+            "title": "Readpoint Grid",
+            "type": "array"
+          },
+          "risk_weights": {
+            "anyOf": [
+              {
+                "additionalProperties": {
+                  "type": "number"
+                },
+                "type": "object"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Risk Weights"
+          }
+        },
+        "required": [
+          "k",
+          "alpha",
+          "margin_fraction",
+          "horizon_hours",
+          "pda_limit_pct",
+          "readpoint_grid",
+          "limits"
+        ],
+        "title": "ProfileUpdateRequest",
+        "type": "object"
+      },
+      "ProvenanceOut": {
+        "description": "Decision provenance travelling with the payload (PROVENANCE_SPEC).",
+        "properties": {
+          "calibration_dataset": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Calibration Dataset"
+          },
+          "code_git_sha": {
+            "title": "Code Git Sha",
+            "type": "string"
+          },
+          "data_provenance": {
+            "default": "SYNTHETIC",
+            "title": "Data Provenance",
+            "type": "string"
+          },
+          "dataset_hash": {
+            "title": "Dataset Hash",
+            "type": "string"
+          },
+          "formulas_used": {
+            "items": {
+              "$ref": "#/components/schemas/FormulaUse"
+            },
+            "title": "Formulas Used",
+            "type": "array"
+          },
+          "model_versions": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "title": "Model Versions",
+            "type": "object"
+          },
+          "profile_ref": {
+            "title": "Profile Ref",
+            "type": "string"
+          }
+        },
+        "required": [
+          "dataset_hash",
+          "profile_ref",
+          "code_git_sha"
+        ],
+        "title": "ProvenanceOut",
+        "type": "object"
+      },
+      "QualityFindingOut": {
+        "description": "One itemised data-quality deduction (FR-104).",
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "code": {
+            "title": "Code",
+            "type": "string"
+          },
+          "count": {
+            "title": "Count",
+            "type": "integer"
+          },
+          "detail": {
+            "title": "Detail",
+            "type": "string"
+          }
+        },
+        "required": [
+          "code",
+          "count",
+          "detail",
+          "action"
+        ],
+        "title": "QualityFindingOut",
+        "type": "object"
+      },
+      "QualityOut": {
+        "description": "Per-series evidential weakness (never part badness).",
+        "properties": {
+          "findings": {
+            "items": {
+              "$ref": "#/components/schemas/QualityFindingOut"
+            },
+            "title": "Findings",
+            "type": "array"
+          },
+          "n_censored": {
+            "default": 0,
+            "title": "N Censored",
+            "type": "integer"
+          },
+          "n_total": {
+            "default": 0,
+            "title": "N Total",
+            "type": "integer"
+          },
+          "n_valid": {
+            "default": 0,
+            "title": "N Valid",
+            "type": "integer"
+          },
+          "refusal_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refusal Code"
+          },
+          "score": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Score"
+          },
+          "warning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warning"
+          }
+        },
+        "title": "QualityOut",
+        "type": "object"
+      },
+      "ReadingValue": {
+        "description": "One read-point: traced value plus auditable conversion echoes.",
+        "properties": {
+          "elapsed_hours": {
+            "title": "Elapsed Hours",
+            "type": "integer"
+          },
+          "original_unit": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Original Unit"
+          },
+          "original_value": {
+            "anyOf": [
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Original Value"
+          },
+          "status": {
+            "title": "Status",
+            "type": "string"
+          },
+          "value": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          }
+        },
+        "required": [
+          "elapsed_hours",
+          "status"
+        ],
+        "title": "ReadingValue",
+        "type": "object"
+      },
+      "RecommendationOut": {
+        "description": "System recommendation with its trigger (human disposes).",
+        "properties": {
+          "action": {
+            "title": "Action",
+            "type": "string"
+          },
+          "severity": {
+            "title": "Severity",
+            "type": "string"
+          },
+          "trigger": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Trigger"
+          }
+        },
+        "required": [
+          "action",
+          "severity"
+        ],
+        "title": "RecommendationOut",
+        "type": "object"
+      },
+      "ReportRequest": {
+        "description": "Report creation request (API_CONTRACT section 8).",
+        "properties": {
+          "format": {
+            "default": "html",
+            "pattern": "^(html|pdf)$",
+            "title": "Format",
+            "type": "string"
+          },
+          "scope": {
+            "pattern": "^(component|lot)$",
+            "title": "Scope",
+            "type": "string"
+          },
+          "target_id": {
+            "minLength": 1,
+            "title": "Target Id",
+            "type": "string"
+          }
+        },
+        "required": [
+          "scope",
+          "target_id"
+        ],
+        "title": "ReportRequest",
+        "type": "object"
+      },
+      "RiskBlock": {
+        "description": "Decomposed worklist-ordering index (never the verdict).",
+        "properties": {
+          "band": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Band"
+          },
+          "components": {
+            "items": {
+              "$ref": "#/components/schemas/RiskComponentOut"
+            },
+            "title": "Components",
+            "type": "array"
+          },
+          "ordinal_note": {
+            "default": "risk_index orders the worklist; it does not decide the band",
+            "title": "Ordinal Note",
+            "type": "string"
+          },
+          "parameter": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Parameter"
+          },
+          "refusal_code": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Refusal Code"
+          },
+          "risk_index": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "sum_check": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/SumCheckOut"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "warning": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Warning"
+          }
+        },
+        "title": "RiskBlock",
+        "type": "object"
+      },
+      "RiskComponentOut": {
+        "description": "One decomposed risk term with its traced raw value.",
+        "properties": {
+          "formula_id": {
+            "title": "Formula Id",
+            "type": "string"
+          },
+          "name": {
+            "title": "Name",
+            "type": "string"
+          },
+          "raw": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "null"
+              }
+            ]
+          },
+          "weight": {
+            "title": "Weight",
+            "type": "number"
+          },
+          "weighted": {
+            "title": "Weighted",
+            "type": "number"
+          }
+        },
+        "required": [
+          "name",
+          "weight",
+          "weighted",
+          "formula_id"
+        ],
+        "title": "RiskComponentOut",
+        "type": "object"
+      },
+      "SlopesBlock": {
+        "description": "Slopes in physical units; plain when the unit enum cannot hold them.",
+        "properties": {
+          "delta_max_used": {
+            "default": false,
+            "title": "Delta Max Used",
+            "type": "boolean"
+          },
+          "observed_early": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Observed Early"
+          },
+          "predicted_long": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Predicted Long"
+          },
+          "safety_slope": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Safety Slope"
+          },
+          "slope_ratio": {
+            "anyOf": [
+              {
+                "$ref": "#/components/schemas/TracedValueSchema"
+              },
+              {
+                "type": "number"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Slope Ratio"
+          },
+          "slope_unit": {
+            "title": "Slope Unit",
+            "type": "string"
+          }
+        },
+        "required": [
+          "slope_unit"
+        ],
+        "title": "SlopesBlock",
+        "type": "object"
+      },
+      "SumCheckOut": {
+        "description": "The adding-up proof shipped in the payload (RISK_SCORING_SPEC).",
+        "properties": {
+          "abs_diff": {
+            "title": "Abs Diff",
+            "type": "number"
+          },
+          "components_sum": {
+            "title": "Components Sum",
+            "type": "number"
+          },
+          "reported_total": {
+            "title": "Reported Total",
+            "type": "number"
+          },
+          "tolerance": {
+            "title": "Tolerance",
+            "type": "number"
+          }
+        },
+        "required": [
+          "components_sum",
+          "reported_total",
+          "abs_diff",
+          "tolerance"
+        ],
+        "title": "SumCheckOut",
+        "type": "object"
+      },
+      "TracedValueSchema": {
+        "description": "API mirror of ``backend.core.traced.TracedValue`` + expression.",
+        "properties": {
+          "dataset_hash": {
+            "minLength": 1,
+            "title": "Dataset Hash",
+            "type": "string"
+          },
+          "display_precision": {
+            "minimum": 0.0,
+            "title": "Display Precision",
+            "type": "integer"
+          },
+          "expression": {
+            "minLength": 1,
+            "title": "Expression",
+            "type": "string"
+          },
+          "formula_id": {
+            "title": "Formula Id",
+            "type": "string"
+          },
+          "inputs": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "title": "Inputs",
+            "type": "object"
+          },
+          "model_version": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Model Version"
+          },
+          "parameters": {
+            "additionalProperties": {
+              "anyOf": [
+                {
+                  "type": "number"
+                },
+                {
+                  "type": "string"
+                }
+              ]
+            },
+            "title": "Parameters",
+            "type": "object"
+          },
+          "unit": {
+            "title": "Unit",
+            "type": "string"
+          },
+          "value": {
+            "title": "Value",
+            "type": "number"
+          }
+        },
+        "required": [
+          "value",
+          "unit",
+          "formula_id",
+          "expression",
+          "inputs",
+          "parameters",
+          "dataset_hash",
+          "display_precision"
+        ],
+        "title": "TracedValueSchema",
+        "type": "object"
+      },
+      "ValidationError": {
+        "properties": {
+          "ctx": {
+            "title": "Context",
+            "type": "object"
+          },
+          "input": {
+            "title": "Input"
+          },
+          "loc": {
+            "items": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "integer"
+                }
+              ]
+            },
+            "title": "Location",
+            "type": "array"
+          },
+          "msg": {
+            "title": "Message",
+            "type": "string"
+          },
+          "type": {
+            "title": "Error Type",
+            "type": "string"
+          }
+        },
+        "required": [
+          "loc",
+          "msg",
+          "type"
+        ],
+        "title": "ValidationError",
+        "type": "object"
+      },
+      "VersionData": {
+        "description": "Service identity payload (T-501 ``/version``). All values runtime-derived.",
+        "properties": {
+          "api_version": {
+            "pattern": "^v1$",
+            "title": "Api Version",
+            "type": "string"
+          },
+          "code": {
+            "$ref": "#/components/schemas/CodeInfo"
+          },
+          "formula_registry": {
+            "$ref": "#/components/schemas/FormulaRegistryInfo"
+          },
+          "service": {
+            "pattern": "^latentis$",
+            "title": "Service",
+            "type": "string"
+          }
+        },
+        "required": [
+          "service",
+          "api_version",
+          "code",
+          "formula_registry"
+        ],
+        "title": "VersionData",
+        "type": "object"
+      },
+      "WorstOut": {
+        "description": "Server-side worst-parameter selection (D-023).",
+        "properties": {
+          "band": {
+            "anyOf": [
+              {
+                "type": "string"
+              },
+              {
+                "type": "null"
+              }
+            ],
+            "title": "Band"
+          },
+          "parameter": {
+            "title": "Parameter",
+            "type": "string"
+          },
+          "recommendation": {
+            "title": "Recommendation",
+            "type": "string"
+          },
+          "selection_rule": {
+            "title": "Selection Rule",
+            "type": "string"
+          },
+          "severity": {
+            "title": "Severity",
+            "type": "string"
+          }
+        },
+        "required": [
+          "parameter",
+          "severity",
+          "recommendation",
+          "selection_rule"
+        ],
+        "title": "WorstOut",
+        "type": "object"
+      }
+    }
+  },
+  "info": {
+    "description": "LATENTIS \u2014 LATENT-defect Inspection & Screening (SIH26170). Synthetic data only; single-operator local tool with no authentication (SR-09).",
+    "title": "LATENTIS API",
+    "version": "v1"
+  },
+  "openapi": "3.1.0",
+  "paths": {
+    "/api/v1/components": {
+      "get": {
+        "description": "Paginated component directory (metadata only; analysis lives downstream).",
+        "operationId": "list_components_api_v1_components_get",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "lot_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Lot Id"
+            }
+          },
+          {
+            "in": "query",
+            "name": "limit",
+            "required": false,
+            "schema": {
+              "default": 50,
+              "title": "Limit",
+              "type": "integer"
+            }
+          },
+          {
+            "in": "query",
+            "name": "cursor",
+            "required": false,
+            "schema": {
+              "default": "0",
+              "title": "Cursor",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "List Components",
+        "tags": [
+          "components"
+        ]
+      }
+    },
+    "/api/v1/components/{component_id}": {
+      "get": {
+        "description": "Static metadata for one component (no decision content).",
+        "operationId": "get_component_api_v1_components__component_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "component_id",
+            "required": true,
+            "schema": {
+              "title": "Component Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_ComponentIdentity_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Component",
+        "tags": [
+          "components"
+        ]
+      }
+    },
+    "/api/v1/components/{component_id}/anomaly": {
+      "get": {
+        "description": "ANOMALY_SPEC section 8 contract projected from the investigation.",
+        "operationId": "get_anomaly_api_v1_components__component_id__anomaly_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "component_id",
+            "required": true,
+            "schema": {
+              "title": "Component Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Anomaly",
+        "tags": [
+          "components"
+        ]
+      }
+    },
+    "/api/v1/components/{component_id}/disposition": {
+      "post": {
+        "description": "Record an inspector disposition; append-only with evidence snapshot.",
+        "operationId": "post_disposition_api_v1_components__component_id__disposition_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "component_id",
+            "required": true,
+            "schema": {
+              "title": "Component Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/DispositionRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_DispositionRecord_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Post Disposition",
+        "tags": [
+          "components"
+        ]
+      }
+    },
+    "/api/v1/components/{component_id}/drift": {
+      "get": {
+        "description": "DRIFT_SPEC section 8 contract projected from the investigation.",
+        "operationId": "get_drift_api_v1_components__component_id__drift_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "component_id",
+            "required": true,
+            "schema": {
+              "title": "Component Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Drift",
+        "tags": [
+          "components"
+        ]
+      }
+    },
+    "/api/v1/components/{component_id}/explanation": {
+      "get": {
+        "description": "Narrative, attribution, and counterfactuals for one component.",
+        "operationId": "get_explanation_api_v1_components__component_id__explanation_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "component_id",
+            "required": true,
+            "schema": {
+              "title": "Component Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Explanation",
+        "tags": [
+          "components"
+        ]
+      }
+    },
+    "/api/v1/components/{component_id}/investigation": {
+      "get": {
+        "description": "Flagship composite: anomaly + drift + risk + explanation (T-503).",
+        "operationId": "get_investigation_api_v1_components__component_id__investigation_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "component_id",
+            "required": true,
+            "schema": {
+              "title": "Component Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_InvestigationData_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Investigation",
+        "tags": [
+          "components"
+        ]
+      }
+    },
+    "/api/v1/datasets": {
+      "get": {
+        "description": "List ingested datasets with hashes and row counts.",
+        "operationId": "get_datasets_api_v1_datasets_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_list_dict_str__Any___"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Datasets",
+        "tags": [
+          "datasets"
+        ]
+      },
+      "post": {
+        "description": "Ingest one CSV/Parquet file; returns the rejection report (T-502).",
+        "operationId": "post_datasets_api_v1_datasets_post",
+        "parameters": [
+          {
+            "in": "query",
+            "name": "profile_id",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "Profile Id"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "multipart/form-data": {
+              "schema": {
+                "$ref": "#/components/schemas/Body_post_datasets_api_v1_datasets_post"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_IngestReport_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Post Datasets",
+        "tags": [
+          "datasets"
+        ]
+      }
+    },
+    "/api/v1/datasets/{dataset_hash}": {
+      "get": {
+        "description": "Fetch one dataset manifest by content hash.",
+        "operationId": "get_dataset_api_v1_datasets__dataset_hash__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dataset_hash",
+            "required": true,
+            "schema": {
+              "title": "Dataset Hash",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Dataset",
+        "tags": [
+          "datasets"
+        ]
+      }
+    },
+    "/api/v1/datasets/{dataset_hash}/validate": {
+      "post": {
+        "description": "Re-run the structural validation gates over stored data.",
+        "operationId": "post_dataset_validate_api_v1_datasets__dataset_hash__validate_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "dataset_hash",
+            "required": true,
+            "schema": {
+              "title": "Dataset Hash",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Post Dataset Validate",
+        "tags": [
+          "datasets"
+        ]
+      }
+    },
+    "/api/v1/formulas": {
+      "get": {
+        "description": "Every registry entry with its human-readable contract.",
+        "operationId": "list_formulas_api_v1_formulas_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_list_dict_str__Any___"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Formulas",
+        "tags": [
+          "models"
+        ]
+      }
+    },
+    "/api/v1/formulas/{formula_id}": {
+      "get": {
+        "description": "One registry entry (unknown ids are structured 404s).",
+        "operationId": "get_formula_entry_api_v1_formulas__formula_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "formula_id",
+            "required": true,
+            "schema": {
+              "title": "Formula Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Formula Entry",
+        "tags": [
+          "models"
+        ]
+      }
+    },
+    "/api/v1/health": {
+      "get": {
+        "description": "Contract-named alias of ``/healthz`` (API_CONTRACT \u00a7 3). Same handler truth.",
+        "operationId": "get_health_api_v1_health_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_HealthData_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Health",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/api/v1/healthz": {
+      "get": {
+        "description": "Liveness + readiness with provenance identity (T-501).",
+        "operationId": "get_healthz_api_v1_healthz_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_HealthData_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Healthz",
+        "tags": [
+          "system"
+        ]
+      }
+    },
+    "/api/v1/lots": {
+      "get": {
+        "description": "Every lot with part counts and provenance.",
+        "operationId": "list_lots_api_v1_lots_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_list_LotSummary__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Lots",
+        "tags": [
+          "lots"
+        ]
+      }
+    },
+    "/api/v1/lots/{lot_id}/anomaly": {
+      "post": {
+        "description": "Run Module A across a lot; persists the run and per-part summaries.",
+        "operationId": "run_lot_anomaly_api_v1_lots__lot_id__anomaly_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lot_id",
+            "required": true,
+            "schema": {
+              "title": "Lot Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Run Lot Anomaly",
+        "tags": [
+          "lots"
+        ]
+      }
+    },
+    "/api/v1/lots/{lot_id}/disposition": {
+      "get": {
+        "description": "PDA roll-up with both figures (RISK_SCORING_SPEC section 5).",
+        "operationId": "lot_disposition_api_v1_lots__lot_id__disposition_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lot_id",
+            "required": true,
+            "schema": {
+              "title": "Lot Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lot Disposition",
+        "tags": [
+          "lots"
+        ]
+      }
+    },
+    "/api/v1/lots/{lot_id}/distribution": {
+      "get": {
+        "description": "Per-parameter distributions with DPAT limits and member positions.",
+        "operationId": "get_distribution_api_v1_lots__lot_id__distribution_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lot_id",
+            "required": true,
+            "schema": {
+              "title": "Lot Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Distribution",
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/api/v1/lots/{lot_id}/drift": {
+      "post": {
+        "description": "Run Module B across a lot; persists the run and per-part forecasts.",
+        "operationId": "run_lot_drift_api_v1_lots__lot_id__drift_post",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lot_id",
+            "required": true,
+            "schema": {
+              "title": "Lot Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Run Lot Drift",
+        "tags": [
+          "lots"
+        ]
+      }
+    },
+    "/api/v1/lots/{lot_id}/statistics": {
+      "get": {
+        "description": "Per-parameter DPAT limits + robust statistics with the guard state.",
+        "operationId": "lot_statistics_api_v1_lots__lot_id__statistics_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "lot_id",
+            "required": true,
+            "schema": {
+              "title": "Lot Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "query",
+            "name": "for_component",
+            "required": false,
+            "schema": {
+              "anyOf": [
+                {
+                  "type": "string"
+                },
+                {
+                  "type": "null"
+                }
+              ],
+              "title": "For Component"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Lot Statistics",
+        "tags": [
+          "lots"
+        ]
+      }
+    },
+    "/api/v1/models": {
+      "get": {
+        "description": "Calibration identity: versions, manifests, loaded state, cards note.",
+        "operationId": "list_models_api_v1_models_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "List Models",
+        "tags": [
+          "models"
+        ]
+      }
+    },
+    "/api/v1/models/coverage": {
+      "get": {
+        "description": "Ladder capacity per Mondrian group; held-out coverage pending T-402.",
+        "operationId": "models_coverage_api_v1_models_coverage_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Models Coverage",
+        "tags": [
+          "models"
+        ]
+      }
+    },
+    "/api/v1/models/shape/{group}": {
+      "get": {
+        "description": "The fitted population shape as plottable points (DRIFT_SPEC 4.2).",
+        "operationId": "model_shape_api_v1_models_shape__group__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "group",
+            "required": true,
+            "schema": {
+              "title": "Group",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Model Shape",
+        "tags": [
+          "models"
+        ]
+      }
+    },
+    "/api/v1/posture": {
+      "get": {
+        "description": "Mission Risk Posture: risk configuration with model identity.",
+        "operationId": "get_posture_api_v1_posture_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Posture",
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/api/v1/profiles": {
+      "get": {
+        "description": "Every profile with its stored versions.",
+        "operationId": "get_profiles_api_v1_profiles_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_list_dict_str__Any___"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Profiles",
+        "tags": [
+          "datasets"
+        ]
+      }
+    },
+    "/api/v1/profiles/{profile_id}": {
+      "get": {
+        "description": "The latest version of one profile, with provenance tags.",
+        "operationId": "get_profile_api_v1_profiles__profile_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Profile",
+        "tags": [
+          "datasets"
+        ]
+      },
+      "put": {
+        "description": "Append a new profile version; existing versions are never mutated.",
+        "operationId": "put_profile_api_v1_profiles__profile_id__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Put Profile",
+        "tags": [
+          "datasets"
+        ]
+      }
+    },
+    "/api/v1/profiles/{profile_id}/{version}": {
+      "get": {
+        "description": "One exact profile version (dispositions pin these, FR-607).",
+        "operationId": "get_profile_version_api_v1_profiles__profile_id___version__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "required": true,
+            "schema": {
+              "title": "Version",
+              "type": "integer"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Profile Version",
+        "tags": [
+          "datasets"
+        ]
+      },
+      "put": {
+        "description": "Replace an unreferenced draft version; referenced ones are 409 (TEST-PROF-001).",
+        "operationId": "rewrite_profile_api_v1_profiles__profile_id___version__put",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "profile_id",
+            "required": true,
+            "schema": {
+              "title": "Profile Id",
+              "type": "string"
+            }
+          },
+          {
+            "in": "path",
+            "name": "version",
+            "required": true,
+            "schema": {
+              "title": "Version",
+              "type": "integer"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ProfileUpdateRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Rewrite Profile",
+        "tags": [
+          "datasets"
+        ]
+      }
+    },
+    "/api/v1/reports": {
+      "post": {
+        "description": "Create a disposition report (HTML always; PDF rendered on fetch).",
+        "operationId": "post_reports_api_v1_reports_post",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ReportRequest"
+              }
+            }
+          },
+          "required": true
+        },
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Post Reports",
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/api/v1/reports/{report_id}": {
+      "get": {
+        "description": "Fetch one stored report's metadata and self-contained HTML.",
+        "operationId": "get_report_api_v1_reports__report_id__get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "report_id",
+            "required": true,
+            "schema": {
+              "title": "Report Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_dict_str__Any__"
+                }
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Report",
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/api/v1/reports/{report_id}/pdf": {
+      "get": {
+        "description": "The PDF rendering of a report (TASKS ``/export/{id}.pdf``).",
+        "operationId": "get_report_pdf_api_v1_reports__report_id__pdf_get",
+        "parameters": [
+          {
+            "in": "path",
+            "name": "report_id",
+            "required": true,
+            "schema": {
+              "title": "Report Id",
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {}
+              }
+            },
+            "description": "Successful Response"
+          },
+          "422": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/HTTPValidationError"
+                }
+              }
+            },
+            "description": "Validation Error"
+          }
+        },
+        "summary": "Get Report Pdf",
+        "tags": [
+          "reports"
+        ]
+      }
+    },
+    "/api/v1/version": {
+      "get": {
+        "description": "Service identity: code SHA, registry hash, API version (T-501).",
+        "operationId": "get_version_api_v1_version_get",
+        "responses": {
+          "200": {
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Envelope_VersionData_"
+                }
+              }
+            },
+            "description": "Successful Response"
+          }
+        },
+        "summary": "Get Version",
+        "tags": [
+          "system"
+        ]
+      }
+    }
+  }
+}

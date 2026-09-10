@@ -1,0 +1,40 @@
+================================================================================
+  LATENTIS Reproducibility Verification — Gate: QG-REL-03 (INV-8)
+================================================================================
+Timestamp (UTC): 2026-09-09T02:27:33.962826+00:00
+Git Commit SHA:  1a3718252f29ba640663e1bcff8813c482283cba
+Generator Seed:  20260930
+Profile:         mil_std_883_like
+Libraries:       python 3.11.16, numpy 2.4.6, polars 1.44.1
+--------------------------------------------------------------------------------
+STAGE 1: Dataset Artifacts SHA-256 Byte-wise Verification (T-210)
+--------------------------------------------------------------------------------
+Artifact             Expected SHA-256                   Recomputed SHA-256                 Status
+-------------------------------------------------------------------------------------------------
+calib.parquet        93350ac66d1ce3...727f830e6a4bcb    93350ac66d1ce3...727f830e6a4bcb    PASS
+full.parquet         e0da360bb6e4ff...94beed91167aeb    e0da360bb6e4ff...94beed91167aeb    PASS
+screening.parquet    dd6f6b7f6db6ab...4af63c39bef03c    dd6f6b7f6db6ab...4af63c39bef03c    PASS
+test.parquet         61491a3aa41262...6c6d8fcb89ea59    61491a3aa41262...6c6d8fcb89ea59    PASS
+train.parquet        224087d4b2fb23...dd96c4a8743521    224087d4b2fb23...dd96c4a8743521    PASS
+truth.parquet        d6d8def33d8a0e...752eccab0aed62    d6d8def33d8a0e...752eccab0aed62    PASS
+-------------------------------------------------------------------------------------------------
+dataset_hash         0231a45de76781...f761c2d298e505    0231a45de76781...f761c2d298e505    PASS
+
+Row Counts Verification:
+  - calib       : expected 36,102 | recomputed 36,102  [PASS]
+  - full        : expected 148,159 | recomputed 148,159 [PASS]
+  - screening   : expected 74,126 | recomputed 74,126  [PASS]
+  - test        : expected 12,415 | recomputed 12,415  [PASS]
+  - train       : expected 99,642 | recomputed 99,642  [PASS]
+  - truth       : expected 37,466 | recomputed 37,466  [PASS]
+Escape Set Count (S1 union S2, TEST-GEN-004): expected 479 | recomputed 479 [PASS]
+Split Disjointness Audit (INV-4, TEST-SPLIT-001): [PASS]
+--------------------------------------------------------------------------------
+STAGE 2: Model Training Artifact Hashes (Phase 4 / T-401)
+  [INFO] Deferred until Phase 4 (model training pipeline).
+--------------------------------------------------------------------------------
+STAGE 3: Calibration Split Re-scoring (Phase 4 / T-402, calib only)
+  [INFO] Deferred until Phase 4 (scoring harness). Test split reserved.
+--------------------------------------------------------------------------------
+[PASS] Gate QG-REL-03: Dataset reproducibility byte-stable and verified.
+================================================================================

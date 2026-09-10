@@ -1,0 +1,138 @@
+[project]
+name = "latentis"
+version = "0.1.0"
+description = "LATENTIS — LATENT-defect Inspection & Screening (SIH26170)"
+readme = "README.md"
+requires-python = ">=3.11"
+authors = [
+    { name = "LATENTIS Team" }
+]
+dependencies = [
+    # API layer & server (ARCHITECTURE § 3)
+    "fastapi==0.141.1",
+    "uvicorn[standard]==0.52.4",
+    "python-multipart==0.0.32",
+    # Data validation & typed boundaries (CLAUDE.md § 5, SR-01)
+    "pydantic==2.13.5",
+    "pydantic-settings==2.15.0",
+    # Columnar analytical engine & Parquet storage (D-022, ARCHITECTURE § 3)
+    "duckdb==1.5.5",
+    "pyarrow==25.0.1",
+    # High-throughput data ingest (ARCHITECTURE § 3)
+    "polars==1.44.1",
+    # Core numerical computing & statistics (CLAUDE.md § 5)
+    "numpy==2.4.6",
+    "scipy==1.17.1",
+    # Machine learning estimators & pipeline serialization (D-001..D-006, ARCHITECTURE § 3)
+    "scikit-learn==1.9.0",
+    "joblib==1.6.0",
+    # Disposition report HTML rendering for PDF generation (D-028)
+    "jinja2==3.1.6",
+]
+
+[dependency-groups]
+dev = [
+    # Formatting & linting (CLAUDE.md § 5, GIT_WORKFLOW § 7)
+    "black==26.5.1",
+    "ruff==0.16.6",
+    # Static type checking (CLAUDE.md § 5, GIT_WORKFLOW § 7)
+    "mypy==2.3.1",
+    # Unit, integration, and property testing (TEST_STRATEGY § 2, ARCHITECTURE § 3)
+    "pytest==9.1.1",
+    "pytest-cov==7.1.0",
+    "hypothesis==6.167.1",
+    # API test client for FastAPI
+    "httpx==0.28.1",
+    # Dependency vulnerability scanner (SR-07)
+    "pip-audit==2.10.1",
+]
+
+[tool.ruff]
+target-version = "py311"
+line-length = 100
+src = ["backend", "datagen", "scripts"]
+exclude = [
+    ".git",
+    ".venv",
+    "__pycache__",
+    "frontend",
+    "build",
+    "dist",
+]
+
+[tool.ruff.lint]
+select = [
+    "E",      # pycodestyle errors
+    "W",      # pycodestyle warnings
+    "F",      # pyflakes
+    "I",      # isort
+    "B",      # flake8-bugbear
+    "C4",     # flake8-comprehensions
+    "UP",     # pyupgrade
+    "T20",    # flake8-print (disallows print statements per CLAUDE.md § 5)
+    "BLE",    # flake8-blind-except (disallows bare except per CLAUDE.md § 5)
+    "PIE",    # flake8-pie
+    "RUF",    # ruff-specific rules
+]
+ignore = []
+
+[tool.ruff.lint.isort]
+known-first-party = ["backend", "datagen"]
+
+[tool.black]
+line-length = 100
+target-version = ["py311"]
+include = '\.pyi?$'
+exclude = '''
+/(
+    \.git
+  | \.venv
+  | __pycache__
+  | frontend
+  | build
+  | dist
+)/
+'''
+
+[tool.mypy]
+python_version = "3.11"
+strict = true
+warn_return_any = true
+warn_unused_configs = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+disallow_untyped_decorators = false
+no_implicit_optional = true
+warn_redundant_casts = true
+warn_unused_ignores = true
+warn_no_return = true
+warn_unreachable = true
+plugins = ["pydantic.mypy"]
+
+[[tool.mypy.overrides]]
+module = [
+    "scipy.*",
+    "sklearn.*",
+    "duckdb.*",
+    "joblib.*",
+    "polars.*",
+    "pyarrow.*",
+    "hypothesis.*",
+]
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+minversion = "8.0"
+testpaths = ["backend/tests", "tests"]
+pythonpath = [".", "backend"]
+addopts = "-v --strict-markers"
+markers = [
+    "fast: Fast unit tests (pre-commit, < 60s)",
+    "full: Full test suite",
+    "property: Hypothesis property-based tests",
+    "integration: Integration tests",
+    "adversarial: Red-team adversarial and boundary tests",
+    "offline: Offline and reproducibility tests",
+]
+

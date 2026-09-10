@@ -1,0 +1,22 @@
+{
+ "datasetHash": "sha256:c04f62637da9b85c3df280fcdb20976a7bd7b402e15cdba7d582df814abe7ea8",
+ "lotId": "L-2026-001",
+ "escape": {
+  "componentId": "C-L-2026-002-0006",
+  "lotId": "L-2026-002",
+  "parameter": "leakage_input"
+ },
+ "healthy": {
+  "componentId": "C-L-2026-001-0001",
+  "lotId": "L-2026-001"
+ },
+ "sensor": null,
+ "degraded": {
+  "componentId": "C-L-2026-040-0001",
+  "lotId": "L-2026-040",
+  "kind": "payload",
+  "insufficient": false,
+  "recommendation": "INSUFFICIENT_EVIDENCE"
+ },
+ "sensorIndet": null
+}
