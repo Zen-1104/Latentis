@@ -33,7 +33,7 @@ export function Badge({
     <span
       data-testid={testId}
       className={cn(
-        "inline-flex h-chip shrink-0 items-center gap-1 rounded-sm border px-2 text-caption",
+        "inline-flex h-chip shrink-0 items-center gap-1 whitespace-nowrap rounded-sm border px-2 text-caption",
         mono && "font-mono",
         TONES[tone],
         className,

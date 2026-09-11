@@ -35,6 +35,7 @@ export function TermHelp({
 
   return (
     <Tooltip
+      float
       content={
         <span className="block space-y-1">
           <span className="block font-sans font-medium text-text-1">{resolved.label}</span>
@@ -197,7 +198,7 @@ export function InsightCard({
           "motion-reduce:hidden",
         )}
       />
-      <div className="relative z-10 p-5 lg:p-6">
+      <div className="relative p-5 lg:p-6">
         <div className="space-y-2">
           {eyebrow !== undefined && (
             <p

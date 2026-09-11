@@ -68,7 +68,7 @@ export function ProvenanceHeader({
               <dt className="shrink-0 text-text-3">{entry.label}</dt>
               <dd className={cn("min-w-0 truncate text-text-num")}>
                 {entry.full !== undefined && entry.full !== "" ? (
-                  <Tooltip content={<span className="break-all font-mono">{entry.full}</span>} align="start">
+                  <Tooltip float content={<span className="break-all font-mono">{entry.full}</span>}>
                     <span
                       tabIndex={0}
                       className="cursor-help rounded-sm underline decoration-border-2 decoration-dotted underline-offset-4"

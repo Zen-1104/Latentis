@@ -87,6 +87,7 @@ export function StatusBadge({
 
   return (
     <Tooltip
+      float
       content={
         <span className="block space-y-1">
           <span className="block font-sans">{term.explain}</span>

@@ -71,6 +71,15 @@ export function Investigation({ componentId }: { componentId: string }): React.J
 
   return (
     <div className="space-y-6">
+      {inv.data === null && (
+        <PageHeader
+          question={SURFACE_COPY.S3?.question ?? ""}
+          crumbs={[{ label: "Mission Control", to: { surface: "S1" } }, { label: componentId }]}
+          eyebrow={`S3 · #/components/${componentId}`}
+          title={componentId}
+          monoTitle
+        />
+      )}
       <StateBlock
         status={inv.status}
         error={inv.error}

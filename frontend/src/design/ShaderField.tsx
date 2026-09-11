@@ -287,6 +287,15 @@ export function ShaderField({ className }: { className?: string }): React.JSX.El
       gl.deleteShader(vs);
       gl.deleteShader(fs);
       gl.deleteBuffer(buf);
+      // Deliberately NOT calling WEBGL_lose_context.loseContext() here.
+      // `canvas.getContext("webgl2")` returns the *same* context object for a
+      // given canvas, and React re-runs this effect after its cleanup (in
+      // StrictMode, and on any remount that reuses the element). Losing the
+      // context in cleanup therefore kills the one context the canvas will
+      // ever have, and the re-run receives it back already dead — the field
+      // renders nothing at all. Measured: 12 remounts without releasing it
+      // leaves the context healthy, because the browser reclaims it when the
+      // canvas is collected. Releasing here is worse than leaving it.
     };
   }, []);
 

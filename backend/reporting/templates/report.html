@@ -79,9 +79,18 @@
   "INSUFFICIENT_EVIDENCE": "There is too little data here to reach a conclusion",
   "INSUFFICIENT_COHORT": "This lot has too few comparable parts for a reliable peer comparison",
   "INSUFFICIENT_CALIBRATION": "There is too little reference data to calibrate a prediction range",
+  "CONCUR": "The engineer accepted the recommendation as issued",
+  "OVERRIDE": "The engineer departed from the recommendation, with a written reason",
+  "DEFER": "No decision yet; the part stays under investigation",
   "NO_VARIATION": "Every peer measured the same, so there is no spread to compare against"
 } %}
 {% macro reading(value) %}{{ PLAIN.get(value, value) }}{% endmacro %}
+{#
+   Plain reading followed by the recorded enum — but only when the two differ.
+   Without the guard an unmapped value printed itself twice, e.g. the
+   disposition actions rendered as "OVERRIDE (OVERRIDE)".
+#}
+{% macro verdict(value) %}{{ PLAIN.get(value, value) }}{% if value in PLAIN %} <span class="enum">({{ value }})</span>{% endif %}{% endmacro %}
 
   {% if scope == "component" %}
   <h2>What this report says</h2>
@@ -96,15 +105,15 @@
   <div class="headline">
     <p>
       <span class="plain">How unusual is this part, compared with its own lot?</span><br>
-      {{ reading(worst.severity) }} <span class="enum">({{ worst.severity }})</span>
+      {{ verdict(worst.severity) }}
     </p>
     <p>
       <span class="plain">Where is it heading before the end of the horizon?</span><br>
-      {{ reading(worst.band) }} <span class="enum">({{ worst.band }})</span>
+      {{ verdict(worst.band) }}
     </p>
     <p>
       <span class="plain">What does the tool recommend?</span><br>
-      {{ reading(worst.recommendation) }} <span class="enum">({{ worst.recommendation }})</span>
+      {{ verdict(worst.recommendation) }}
     </p>
     <p>
       <span class="plain">Which measurement drove that?</span><br>
@@ -172,8 +181,8 @@
   </p>
   {% for block in parameters %}
   <h3>{{ block.parameter }} ({{ block.unit }}) —
-      {{ reading(block.severity) }} <span class="enum">({{ block.severity }})</span> /
-      {{ reading(block.band) }} <span class="enum">({{ block.band }})</span></h3>
+      {{ verdict(block.severity) }} /
+      {{ verdict(block.band) }}</h3>
   <table>
     <tr><th>Quantity</th><th>Value</th><th>Formula</th><th>Operands</th></tr>
     <tr><td>Peer limit, upper (Dynamic PAT)</td><td>{{ block.dpat.limit_high | traced }}</td>
@@ -207,7 +216,7 @@
   <div class="headline">
     <p>
       <span class="plain">Verdict for the lot as a whole</span><br>
-      {{ reading(disposition.lot_verdict) }} <span class="enum">({{ disposition.lot_verdict }})</span>
+      {{ verdict(disposition.lot_verdict) }}
     </p>
     <p>
       <span class="plain">Parts tested, rejected, and flagged as an early warning</span><br>
@@ -239,9 +248,9 @@
         <th>Recommendation</th><th>Worst parameter</th></tr>
     {% for row in queue %}
     <tr><td class="formula">{{ row.component_id }}</td>
-        <td>{{ reading(row.severity) }} <span class="enum">({{ row.severity }})</span></td>
-        <td>{{ reading(row.band) }} <span class="enum">({{ row.band }})</span></td>
-        <td>{{ reading(row.recommendation) }} <span class="enum">({{ row.recommendation }})</span></td>
+        <td>{{ verdict(row.severity) }}</td>
+        <td>{{ verdict(row.band) }}</td>
+        <td>{{ verdict(row.recommendation) }}</td>
         <td class="formula">{{ row.worst_parameter }}</td></tr>
     {% endfor %}
   </table>
@@ -258,7 +267,7 @@
     <tr><th>Component</th><th>Action</th><th>Reason</th><th>Actor</th><th>At</th></tr>
     {% for item in dispositions %}
     <tr><td class="formula">{{ item.component_id }}</td>
-        <td>{{ reading(item.action) }} <span class="enum">({{ item.action }})</span></td>
+        <td>{{ verdict(item.action) }}</td>
         <td>{{ item.reason }}</td><td>{{ item.actor }}</td><td>{{ item.created_at }}</td></tr>
     {% endfor %}
   </table>
