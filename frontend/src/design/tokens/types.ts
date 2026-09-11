@@ -135,6 +135,7 @@ export type ShadowToken =
 
 /** Font size scale tokens */
 export type FontSizeToken =
+  | "hero"
   | "display"
   | "h1"
   | "h2"

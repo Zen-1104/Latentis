@@ -398,6 +398,29 @@ p {
   }
 }
 
+/* Entry reveals are affect, not information — every one of them is optional.
+   Tailwind's `motion-reduce:` variant covers what is authored per element;
+   this catches the animation utilities applied in bulk (the chamber grid's
+   staggered cells, the card sweep) in one place. */
+@media (prefers-reduced-motion: reduce) {
+  .animate-cell-in,
+  .animate-scan,
+  .animate-fade-in,
+  .animate-rise-in,
+  .animate-slide-in-right {
+    animation: none !important;
+  }
+}
+
+/* The guided tour rings the element its current caption is about. Applied
+   imperatively, so it is a class rather than a utility. */
+.tour-focus {
+  outline: 2px solid var(--accent);
+  outline-offset: 4px;
+  border-radius: var(--r-md);
+  transition: outline-color 160ms cubic-bezier(0.2, 0, 0.2, 1);
+}
+
 /* Native form controls inherit the instrument's type, not the platform's. */
 input,
 select,

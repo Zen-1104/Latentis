@@ -50,6 +50,11 @@ export const FONT_FAMILY_STRINGS: Readonly<Record<FontFamilyToken, string>> = Ob
  * Font size specifications with line-heights and semantic uses.
  */
 export const FONT_SIZES: Readonly<Record<FontSizeToken, FontSizeConfig>> = Object.freeze({
+  hero: {
+    size: "44px",
+    lineHeight: "48px",
+    use: "Surface headline on an entry screen",
+  },
   display: {
     size: "28px",
     lineHeight: "34px",

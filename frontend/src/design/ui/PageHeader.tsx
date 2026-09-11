@@ -24,6 +24,8 @@ interface PageHeaderProps {
   meta?: ReactNode;
   /** Renders the title in mono — used where the title is an entity id. */
   monoTitle?: boolean;
+  /** `hero` uses the 44px step; for the landing surface only. */
+  size?: "default" | "hero";
   className?: string;
 }
 
@@ -42,6 +44,7 @@ export function PageHeader({
   badges,
   meta,
   monoTitle = false,
+  size = "default",
   className,
 }: PageHeaderProps): React.JSX.Element {
   return (
@@ -57,7 +60,10 @@ export function PageHeader({
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <h1
               className={cn(
-                "text-display font-semibold leading-tight",
+                "font-semibold leading-tight",
+                // `hero` is reserved for an entry screen, where the title is
+                // the first thing read rather than a label above a workbench.
+                size === "hero" ? "text-hero" : "text-display",
                 monoTitle
                   ? "break-all font-mono tracking-tight text-text-num"
                   : "tracking-tight text-text-1",

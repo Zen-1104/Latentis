@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { concept, settingTerm, type Term } from "../vocabulary";
 import { Tooltip } from "./Tooltip";
+import { useCountUp } from "./useCountUp";
 import { cn } from "./cn";
 
 /**
@@ -180,9 +181,23 @@ export function InsightCard({
   return (
     <section
       data-testid={testId}
-      className={cn("overflow-hidden rounded-md border bg-surface-1 shadow-panel", BORDER)}
+      className={cn(
+        "relative overflow-hidden rounded-md border shadow-card",
+        "[background:linear-gradient(180deg,var(--surface-2),var(--surface-1)_38%)]",
+        BORDER,
+      )}
     >
-      <div className="p-5 lg:p-6">
+      {/* One sweep as the finding resolves — an instrument acquiring a
+          reading. Decorative only, and off under reduced motion. */}
+      <span
+        aria-hidden="true"
+        className={cn(
+          "pointer-events-none absolute inset-y-0 left-0 z-0 w-1/3 animate-scan",
+          "[background:linear-gradient(90deg,transparent,var(--accent-soft),transparent)]",
+          "motion-reduce:hidden",
+        )}
+      />
+      <div className="relative z-10 p-5 lg:p-6">
         <div className="space-y-2">
           {eyebrow !== undefined && (
             <p
@@ -295,6 +310,23 @@ export function ChartLegend({
  * the display size, which the locked scale provides but nothing else was
  * spending.
  */
+/**
+ * One figure that animates to its real value.
+ *
+ * A component rather than an inline hook call because `useCountUp` cannot be
+ * called inside `items.map`.
+ */
+function CountingFigure({
+  to,
+  format,
+}: {
+  to: number;
+  format: (n: number) => string;
+}): React.JSX.Element {
+  const shown = useCountUp(to);
+  return <>{format(shown ?? to)}</>;
+}
+
 export function StatStrip({
   items,
   testId,
@@ -307,6 +339,13 @@ export function StatStrip({
     tone?: "default" | "severe" | "nominal" | "elevated" | "info";
     conceptKey?: string;
     settingKey?: string;
+    /**
+     * Counts up to this value on first paint. Pass the real number and a
+     * formatter; the figure only ever animates toward the value given, so
+     * what is on screen is always the backend's number or on its way to it.
+     */
+    countTo?: number | null;
+    format?: (n: number) => string;
   }>;
   testId?: string;
 }): React.JSX.Element {
@@ -351,7 +390,11 @@ export function StatStrip({
               )}
               data-tabular-nums="true"
             >
-              {item.value}
+              {item.countTo !== undefined && item.countTo !== null && item.format !== undefined ? (
+                <CountingFigure to={item.countTo} format={item.format} />
+              ) : (
+                item.value
+              )}
             </span>
             {item.unit !== undefined && (
               <span className="font-mono text-caption text-text-3">{item.unit}</span>

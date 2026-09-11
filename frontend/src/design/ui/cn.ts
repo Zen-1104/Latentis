@@ -18,6 +18,7 @@ import { extendTailwindMerge } from "tailwind-merge";
  * at body size regardless of the token they asked for.
  */
 const FONT_SIZES = [
+  "hero",
   "display",
   "h1",
   "h2",
@@ -63,7 +64,34 @@ const COLORS = [
 /** Colours nested under `text`, i.e. `text-text-1` .. `text-text-num`. */
 const TEXT_COLORS = ["1", "2", "3", "num"] as const;
 
+/**
+ * Named layout dimensions from `tailwind.config.ts` -> `theme.extend`.
+ *
+ * They have to be declared for the same reason the font sizes do: twMerge
+ * only recognises Tailwind's own scale values, so a custom key does not
+ * conflict with a built-in one and both classes survive — leaving the winner
+ * to stylesheet order rather than to author order.
+ */
+const SIZES = {
+  w: ["label", "sidebar", "rail", "cell", "chip", "control-sm", "control-md", "control-lg"],
+  h: ["cell", "chip", "row", "control-sm", "control-md", "control-lg", "header", "bar", "bar-thin", "hair"],
+  minW: ["label", "control-md", "touch"],
+  minH: ["control-sm", "control-md", "control-lg", "touch"],
+  maxW: ["prose", "measure", "content"],
+  maxH: ["list", "panel"],
+} as const;
+
 const merge = extendTailwindMerge({
+  extend: {
+    classGroups: {
+      w: [{ w: [...SIZES.w] }],
+      h: [{ h: [...SIZES.h] }],
+      "min-w": [{ "min-w": [...SIZES.minW] }],
+      "min-h": [{ "min-h": [...SIZES.minH] }],
+      "max-w": [{ "max-w": [...SIZES.maxW] }],
+      "max-h": [{ "max-h": [...SIZES.maxH] }],
+    },
+  },
   override: {
     classGroups: {
       "font-size": [{ text: [...FONT_SIZES] }],

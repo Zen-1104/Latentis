@@ -52,7 +52,7 @@ export function ChamberMap({ cells, selectedId, onSelect, testId }: ChamberMapPr
                   const sb = b.socket_id ?? b.component_id;
                   return sa < sb ? -1 : 1;
                 })
-                .map((c) => {
+                .map((c, i) => {
                   const selected = c.component_id === selectedId;
                   const border =
                     c.severity === null || c.severity === "weak"
@@ -66,9 +66,11 @@ export function ChamberMap({ cells, selectedId, onSelect, testId }: ChamberMapPr
                     c.severity === null || c.severity === "weak"
                       ? "○"
                       : SEVERITY_CONFIGS[c.severity].glyph;
+                  const delayMs = Math.min(i, 40) * 12;
                   return (
                     <button
                       key={c.component_id}
+                      style={{ animationDelay: `${delayMs}ms` }}
                       type="button"
                       onClick={() => onSelect(c.component_id)}
                       title={`${c.component_id} · socket ${c.socket_id ?? "?"} · ${c.label}`}
@@ -77,7 +79,12 @@ export function ChamberMap({ cells, selectedId, onSelect, testId }: ChamberMapPr
                       data-testid={`${testId}-cell-${c.component_id}`}
                       className={cn(
                         "flex h-cell w-cell flex-col items-center justify-center rounded-sm border",
-                        "bg-surface-2 transition-colors duration-fast hover:bg-surface-3",
+                        "animate-cell-in bg-surface-2 hover:bg-surface-3",
+                        "transition-[background-color,box-shadow,transform] duration-fast",
+                        // A flagged socket lifts slightly under the pointer and
+                        // picks up its own severity glow, so scanning the grid
+                        // by hand feels like an instrument responding.
+                        "hover:-translate-y-px hover:shadow-panel",
                         border,
                         selected && "ring-1 ring-accent",
                       )}

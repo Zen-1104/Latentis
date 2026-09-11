@@ -102,6 +102,9 @@ const config: Config = {
       full: "9999px",
     },
     fontSize: {
+      // The scale topped out at 28px, which is why a surface title never read
+      // as a headline. `hero` is for the one title on an entry screen.
+      hero: ["44px", { lineHeight: "48px" }],
       display: ["28px", { lineHeight: "34px" }],
       h1: ["20px", { lineHeight: "28px" }],
       h2: ["16px", { lineHeight: "24px" }],
@@ -221,11 +224,25 @@ const config: Config = {
         shimmer: {
           "100%": { transform: "translateX(100%)" },
         },
+        // Entry reveals. Containers may run longer than the 150ms cap that
+        // applies to data marks, because nothing here encodes a value.
+        "cell-in": {
+          from: { transform: "scale(0.82)", opacity: "0" },
+          to: { transform: "scale(1)", opacity: "1" },
+        },
+        // One pass of a highlight across a card as it resolves: an instrument
+        // acquiring a reading, not a loading state.
+        scan: {
+          from: { transform: "translateX(-120%)" },
+          to: { transform: "translateX(320%)" },
+        },
       },
       animation: {
         "fade-in": "fade-in 140ms cubic-bezier(0.2, 0, 0.2, 1) both",
         "slide-in-right": "slide-in-right 180ms cubic-bezier(0.2, 0, 0.2, 1) both",
         "rise-in": "rise-in 160ms cubic-bezier(0.2, 0, 0.2, 1) both",
+        "cell-in": "cell-in 260ms cubic-bezier(0.2, 0, 0.2, 1) both",
+        scan: "scan 1100ms cubic-bezier(0.4, 0, 0.6, 1) 1 both",
       },
       zIndex: {
         nav: "30",

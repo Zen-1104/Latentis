@@ -11,6 +11,9 @@ import { SURFACE_COPY, parameterLabel } from "../../design/vocabulary";
 import { Badge } from "../../design/ui/Badge";
 import { Button } from "../../design/ui/Button";
 import { InsightCard, StatStrip, TermHelp } from "../../design/ui/Cards";
+import { Hero } from "../../design/ui/Hero";
+import { TourButton } from "../tour/Tour";
+import { useTour } from "../tour/useTour";
 import { KeyTakeaway, SectionHeader, TechnicalDetails } from "../../design/ui/Disclosure";
 import { EmptyState, Skeleton } from "../../design/ui/Feedback";
 import { PageHeader } from "../../design/ui/PageHeader";
@@ -143,19 +146,34 @@ export function CommandCenter(): React.JSX.Element {
       ? (totals.accepted / totals.measurements) * 100
       : null;
 
+  // Hand the resolved escape to the tour. It walks the real application, so
+  // it needs the same ids this screen found — never a hard-coded one.
+  const { setAnchor } = useTour();
+  useEffect(() => {
+    if (escape !== null && escape !== "none") {
+      setAnchor({ componentId: escape.componentId, lotId: escape.lotId });
+    }
+  }, [escape, setAnchor]);
+
   return (
     <>
-      <PageHeader
-        question={SURFACE_COPY.S1?.question ?? ""}
-        title="Mission Control"
-        description={SURFACE_COPY.S1?.summary ?? ""}
-        eyebrow="S1 · #/"
-        actions={
-          <Button variant="ghost" size="sm" onClick={() => navigate({ surface: "S7" })}>
-            Data &amp; Quality →
-          </Button>
-        }
-      />
+      <Hero testId="s1-hero">
+        <PageHeader
+          question={SURFACE_COPY.S1?.question ?? ""}
+          title="Mission Control"
+          description={SURFACE_COPY.S1?.summary ?? ""}
+          eyebrow="S1 · #/"
+          size="hero"
+          actions={
+            <div className="flex flex-wrap items-center gap-2">
+              <TourButton />
+              <Button variant="ghost" size="sm" onClick={() => navigate({ surface: "S7" })}>
+                Data &amp; Quality →
+              </Button>
+            </div>
+          }
+        />
+      </Hero>
 
       <StateBlock
         status={lots.status}
@@ -189,16 +207,22 @@ export function CommandCenter(): React.JSX.Element {
               {
                 label: "Lots",
                 value: totals.lots,
+                countTo: totals.lots,
+                format: (n) => String(Math.round(n)),
                 hint: "manufacturing batches loaded",
               },
               {
                 label: "Components",
                 value: totals.components.toLocaleString(),
+                countTo: totals.components,
+                format: (n) => Math.round(n).toLocaleString(),
                 hint: "parts under screening",
               },
               {
                 label: "Measurements",
                 value: totals.measurements === null ? "—" : totals.measurements.toLocaleString(),
+                countTo: totals.measurements,
+                format: (n) => Math.round(n).toLocaleString(),
                 hint:
                   totals.measurements === null
                     ? "no dataset summary"
@@ -207,6 +231,8 @@ export function CommandCenter(): React.JSX.Element {
               {
                 label: "Readings accepted",
                 value: quality === null ? "—" : formatPlain(quality, 2),
+                countTo: quality,
+                format: (n) => formatPlain(n, 2),
                 unit: quality === null ? undefined : "%",
                 tone: quality !== null && quality >= 99 ? "nominal" : "elevated",
                 hint:

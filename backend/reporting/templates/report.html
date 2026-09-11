@@ -17,8 +17,22 @@
   .formula { font-family: monospace; font-size: 0.85rem; }
   footer.page-footer { border-top: 2px solid #1a1a1a; margin-top: 2rem; padding-top: 0.5rem;
             font-size: 0.8rem; color: #333; }
+
+  /* Plain-language layer. The technical content below is unchanged; these
+     styles only give the reading order a visible hierarchy. */
+  .lede { font-size: 1.05rem; line-height: 1.55; margin: 0.75rem 0 1.25rem; }
+  .headline { border-left: 6px solid #1a1a1a; padding: 0.75rem 1rem; background: #f5f5f5;
+              margin: 1rem 0 1.5rem; }
+  .headline p { margin: 0.35rem 0; }
+  .plain { font-weight: bold; }
+  .enum { font-family: monospace; font-size: 0.82rem; color: #444; }
+  .note { font-size: 0.88rem; color: #333; line-height: 1.5; }
+  .glossary th { width: 14rem; }
+  .section-note { font-size: 0.88rem; color: #333; font-style: italic; margin: 0.25rem 0 0.75rem; }
+  h2 { border-bottom: 1px solid #bbb; padding-bottom: 0.2rem; margin-top: 2rem; }
   @media print {
     .banner { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    .headline { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
     footer.page-footer { position: fixed; bottom: 0; width: 100%; }
   }
 </style>
@@ -28,46 +42,154 @@
 <main>
   <h1>LATENTIS disposition report</h1>
   <p>Scope <strong>{{ scope }}</strong> · target <strong>{{ target_id }}</strong></p>
-  <table>
-    <tr><th>Dataset hash</th><td class="formula">{{ dataset_hash }}</td></tr>
-    <tr><th>Profile</th><td>{{ profile_ref }}</td></tr>
-    <tr><th>Model versions</th><td class="formula">{{ model_versions }}</td></tr>
-    <tr><th>Code SHA</th><td class="formula">{{ code_sha }}</td></tr>
-    <tr><th>Generated at (UTC)</th><td>{{ generated_at }}</td></tr>
-    <tr><th>Report id</th><td class="formula">{{ report_id }}</td></tr>
-    <tr><th>Alpha / k / margin fraction / PDA limit</th>
-        <td>{{ alpha }} / {{ k }} / {{ margin_fraction }} / {{ pda_limit_pct }} %</td></tr>
-  </table>
+
+{#
+   Plain-language readings of the backend's verdict enums.
+
+   The wording is copied from the frontend vocabulary so a reader sees the
+   same phrase on screen and on paper. The enum is always printed next to the
+   phrase rather than replaced by it: an auditor has to be able to read the
+   recorded value straight off the page, and the integration test asserts the
+   raw severity string appears in this document.
+
+   A value missing from this map falls back to the enum itself, so a new
+   backend verdict degrades to "unexplained but still shown" rather than
+   silently rendering blank.
+#}
+{% set PLAIN = {
+  "PASS": "Within the limit that applies to this measurement",
+  "FAIL": "Outside the limit that applies to this measurement",
+  "NOMINAL": "Behaving like the rest of its lot",
+  "SAFE": "Projected to stay clear of the safety boundary",
+  "ELEVATED": "A little outside the normal spread for its lot — worth watching",
+  "WATCH": "Not a problem yet, but the trend is worth monitoring",
+  "MONITOR": "Keep this part under observation at the next read-point",
+  "ANOMALOUS": "Clearly different from similar parts in the same lot",
+  "EARLY_WARNING": "Projected to approach the safety boundary before the horizon",
+  "INVESTIGATE": "The evidence needs a human to look at it before the part is released",
+  "SEVERE": "Far outside the normal spread for its lot",
+  "REJECT": "Projected to cross the safety boundary",
+  "ABSOLUTE_FAIL": "Outside an absolute limit that must never be exceeded",
+  "ACCEPT": "No evidence against releasing this part",
+  "EXTEND": "Run the part longer before deciding",
+  "VALID": "The assumptions behind this result hold",
+  "DEGRADED": "The result stands, but the conditions behind it are weaker than usual",
+  "VOID": "The stated conditions do not hold, so this result should not be relied on",
+  "INDETERMINATE": "The evidence does not point either way",
+  "INSUFFICIENT_EVIDENCE": "There is too little data here to reach a conclusion",
+  "INSUFFICIENT_COHORT": "This lot has too few comparable parts for a reliable peer comparison",
+  "INSUFFICIENT_CALIBRATION": "There is too little reference data to calibrate a prediction range",
+  "NO_VARIATION": "Every peer measured the same, so there is no spread to compare against"
+} %}
+{% macro reading(value) %}{{ PLAIN.get(value, value) }}{% endmacro %}
 
   {% if scope == "component" %}
+  <h2>What this report says</h2>
+  <p class="lede">
+    This is a record of one decision about one part, and of the evidence behind
+    it. Two independent checks were applied: whether the part meets the fixed
+    limit that every part must meet, and whether it resembles the other parts
+    made alongside it. A part can pass the first and still fail the second —
+    finding those is the purpose of this tool.
+  </p>
+
+  <div class="headline">
+    <p>
+      <span class="plain">How unusual is this part, compared with its own lot?</span><br>
+      {{ reading(worst.severity) }} <span class="enum">({{ worst.severity }})</span>
+    </p>
+    <p>
+      <span class="plain">Where is it heading before the end of the horizon?</span><br>
+      {{ reading(worst.band) }} <span class="enum">({{ worst.band }})</span>
+    </p>
+    <p>
+      <span class="plain">What does the tool recommend?</span><br>
+      {{ reading(worst.recommendation) }} <span class="enum">({{ worst.recommendation }})</span>
+    </p>
+    <p>
+      <span class="plain">Which measurement drove that?</span><br>
+      <span class="formula">{{ worst.parameter }}</span>
+    </p>
+    <p class="note">
+      A recommendation is not a decision. Nothing is scrapped or released until
+      an engineer records a disposition, and an override requires a written
+      reason. Any decision already recorded for this part is listed under
+      <em>Recorded dispositions</em> below.
+    </p>
+  </div>
+
+  <h2>What the analysis found</h2>
+  <p class="section-note">
+    Written by the analysis engine from the same values shown in the tables
+    below, so the wording and the numbers cannot disagree.
+  </p>
+  <p>{{ narrative }}</p>
+
+  <h2>How to read the terms used above</h2>
+  <table class="glossary">
+    <tr><th>Term</th><th>What it means here</th></tr>
+    <tr><td>Fixed limit</td>
+        <td>A threshold every part must meet, independent of any other part.
+            Conventional screening uses only this.</td></tr>
+    <tr><td>Peer comparison<br>(Dynamic PAT)</td>
+        <td>The same reading judged against the other parts from the same lot,
+            rather than against a fixed number. This is what catches a part
+            that is within spec but unlike its neighbours.</td></tr>
+    <tr><td>Robust distance</td>
+        <td>How far this reading sits from the middle of its lot, measured in
+            units of the lot's own typical spread. Larger means more unusual.
+            It is computed with a median-based spread so a handful of extreme
+            parts cannot mask the rest.</td></tr>
+    <tr><td>Prediction range<br>(conformal bound)</td>
+        <td>A <em>calibrated range</em> for where a future reading is expected
+            to fall — never a guarantee. It is built so that, across many
+            parts, the true value lands inside it about as often as the
+            configured level says it should. A wide range means the evidence
+            is thin, and that is reported rather than hidden.</td></tr>
+    <tr><td>Horizon</td>
+        <td>How far ahead the projection is carried. Figures labelled 168&nbsp;h
+            are projections to that point, not measurements.</td></tr>
+    <tr><td>Risk index</td>
+        <td>A single ordering number combining the checks above, used only to
+            put a work queue in a sensible order. It is not a probability of
+            failure.</td></tr>
+  </table>
+
   <h2>Verdict strip</h2>
+  <p class="section-note">The recorded values, verbatim.</p>
   <div class="verdict-strip">
     <div><strong>Severity</strong><br>{{ worst.severity }}</div>
     <div><strong>Band</strong><br>{{ worst.band }}</div>
     <div><strong>Recommendation</strong><br>{{ worst.recommendation }}</div>
     <div><strong>Worst parameter</strong><br>{{ worst.parameter }}</div>
   </div>
-  <h2>Explanation</h2>
-  <p>{{ narrative }}</p>
-  <h2>Parameters</h2>
+
+  <h2>Measurement detail</h2>
+  <p class="section-note">
+    One block per measurement. Every quantity carries the expression and the
+    operands it was computed from, so each figure can be recomputed by hand
+    from this page alone.
+  </p>
   {% for block in parameters %}
-  <h3>{{ block.parameter }} ({{ block.unit }}) — {{ block.severity }} / {{ block.band }}</h3>
+  <h3>{{ block.parameter }} ({{ block.unit }}) —
+      {{ reading(block.severity) }} <span class="enum">({{ block.severity }})</span> /
+      {{ reading(block.band) }} <span class="enum">({{ block.band }})</span></h3>
   <table>
     <tr><th>Quantity</th><th>Value</th><th>Formula</th><th>Operands</th></tr>
-    <tr><td>DPAT upper limit</td><td>{{ block.dpat.limit_high | traced }}</td>
+    <tr><td>Peer limit, upper (Dynamic PAT)</td><td>{{ block.dpat.limit_high | traced }}</td>
         <td class="formula">{{ block.dpat.limit_high.expression if block.dpat.limit_high }}</td>
         <td class="formula">{{ block.dpat.limit_high.inputs if block.dpat.limit_high }}</td></tr>
-    <tr><td>Robust distance z</td><td>{{ block.dpat.z | traced }}</td>
+    <tr><td>Distance from its peers</td><td>{{ block.dpat.z | traced }}</td>
         <td class="formula">{{ block.dpat.z.expression if block.dpat.z }}</td>
         <td class="formula">{{ block.dpat.z.inputs if block.dpat.z }}</td></tr>
-    <tr><td>168 h point forecast</td><td>{{ block.drift.point | traced }}</td>
+    <tr><td>Projected reading at 168 h</td><td>{{ block.drift.point | traced }}</td>
         <td class="formula">{{ block.drift.point.expression if block.drift.point }}</td>
         <td class="formula">{{ block.drift.point.inputs if block.drift.point }}</td></tr>
-    <tr><td>168 h upper bound</td>
+    <tr><td>Top of the prediction range at 168 h</td>
         <td>{{ block.drift.bound.upper_168h | traced if block.drift.bound }}</td>
         <td class="formula">{{ block.drift.bound.upper_168h.expression if block.drift.bound and block.drift.bound.upper_168h }}</td>
         <td class="formula">{{ block.drift.bound.upper_168h.inputs if block.drift.bound and block.drift.bound.upper_168h }}</td></tr>
-    <tr><td>Risk index</td><td>{{ block.risk.risk_index | traced }}</td>
+    <tr><td>Risk index (ordering only)</td><td>{{ block.risk.risk_index | traced }}</td>
         <td class="formula">{{ block.risk.risk_index.expression if block.risk.risk_index }}</td>
         <td class="formula">{{ block.risk.risk_index.inputs if block.risk.risk_index }}</td></tr>
   </table>
@@ -75,33 +197,102 @@
   {% endif %}
 
   {% if scope == "lot" %}
+  <h2>What this report says</h2>
+  <p class="lede">
+    This is a record of how one manufacturing lot was judged, and of the parts
+    within it that need a person to look at them. Each part was checked both
+    against the fixed limit every part must meet and against the other parts
+    from the same lot.
+  </p>
+  <div class="headline">
+    <p>
+      <span class="plain">Verdict for the lot as a whole</span><br>
+      {{ reading(disposition.lot_verdict) }} <span class="enum">({{ disposition.lot_verdict }})</span>
+    </p>
+    <p>
+      <span class="plain">Parts tested, rejected, and flagged as an early warning</span><br>
+      {{ disposition.n_tested }} tested · {{ disposition.n_reject }} rejected ·
+      {{ disposition.n_early_warning }} early warning
+    </p>
+    <p class="note">
+      PDA is the percentage of the lot rejected. A lot that exceeds the
+      configured limit is held for review as a whole, on the reasoning that
+      the process, not the individual part, is the thing at fault.
+    </p>
+  </div>
+
   <h2>Lot disposition</h2>
   <table>
     <tr><th>Lot verdict</th><td><strong>{{ disposition.lot_verdict }}</strong></td></tr>
     <tr><th>Tested / rejected / early-warning</th>
         <td>{{ disposition.n_tested }} / {{ disposition.n_reject }} / {{ disposition.n_early_warning }}</td></tr>
-    <tr><th>PDA</th><td>{{ disposition.pda_pct.value if disposition.pda_pct }} % (limit {{ disposition.pda_limit_pct }} %)</td></tr>
+    <tr><th>PDA (percent of the lot rejected)</th>
+        <td>{{ disposition.pda_pct.value if disposition.pda_pct }} % (limit {{ disposition.pda_limit_pct }} %)</td></tr>
   </table>
-  <h2>Work queue (risk-ordered)</h2>
+  <h2>Work queue (most in need of attention first)</h2>
+  <p class="section-note">
+    Ordered by the risk index, which exists to rank this queue and nothing
+    else. The plain reading of each verdict is given beside it.
+  </p>
   <table>
-    <tr><th>Component</th><th>Severity</th><th>Band</th><th>Recommendation</th><th>Worst parameter</th></tr>
+    <tr><th>Component</th><th>How unusual</th><th>Where it is heading</th>
+        <th>Recommendation</th><th>Worst parameter</th></tr>
     {% for row in queue %}
-    <tr><td class="formula">{{ row.component_id }}</td><td>{{ row.severity }}</td>
-        <td>{{ row.band }}</td><td>{{ row.recommendation }}</td><td>{{ row.worst_parameter }}</td></tr>
+    <tr><td class="formula">{{ row.component_id }}</td>
+        <td>{{ reading(row.severity) }} <span class="enum">({{ row.severity }})</span></td>
+        <td>{{ reading(row.band) }} <span class="enum">({{ row.band }})</span></td>
+        <td>{{ reading(row.recommendation) }} <span class="enum">({{ row.recommendation }})</span></td>
+        <td class="formula">{{ row.worst_parameter }}</td></tr>
     {% endfor %}
   </table>
   {% endif %}
 
   {% if dispositions %}
   <h2>Recorded dispositions</h2>
+  <p class="section-note">
+    Decisions actually taken by a person. This list is append-only: an entry is
+    never edited or removed, so a later reader sees what was decided at the
+    time and by whom.
+  </p>
   <table>
     <tr><th>Component</th><th>Action</th><th>Reason</th><th>Actor</th><th>At</th></tr>
     {% for item in dispositions %}
-    <tr><td class="formula">{{ item.component_id }}</td><td>{{ item.action }}</td>
+    <tr><td class="formula">{{ item.component_id }}</td>
+        <td>{{ reading(item.action) }} <span class="enum">({{ item.action }})</span></td>
         <td>{{ item.reason }}</td><td>{{ item.actor }}</td><td>{{ item.created_at }}</td></tr>
     {% endfor %}
   </table>
   {% endif %}
+
+  <h2>What produced this report</h2>
+  <p class="section-note">
+    Identifiers, not measurements. Together they pin down exactly which data,
+    rules, models and build produced everything above, so the same report can
+    be regenerated and checked later.
+  </p>
+  <table class="glossary">
+    <tr><th>Field</th><th>Value</th><th>Why it is here</th></tr>
+    <tr><th>Dataset hash</th><td class="formula">{{ dataset_hash }}</td>
+        <td>Fingerprint of the exact measurements used. A different dataset
+            produces a different hash.</td></tr>
+    <tr><th>Profile</th><td>{{ profile_ref }}</td>
+        <td>Which screening rulebook, and which version of it, was in force.
+            Once referenced by a decision a profile is immutable.</td></tr>
+    <tr><th>Model versions</th><td class="formula">{{ model_versions }}</td>
+        <td>The fitted models behind the projections.</td></tr>
+    <tr><th>Code SHA</th><td class="formula">{{ code_sha }}</td>
+        <td>The build that generated this document.</td></tr>
+    <tr><th>Generated at (UTC)</th><td>{{ generated_at }}</td>
+        <td>When it was produced.</td></tr>
+    <tr><th>Report id</th><td class="formula">{{ report_id }}</td>
+        <td>Identifier for this document.</td></tr>
+    <tr><th>Alpha / k / margin fraction / PDA limit</th>
+        <td>{{ alpha }} / {{ k }} / {{ margin_fraction }} / {{ pda_limit_pct }} %</td>
+        <td>The four settings that decide how strict the screening was: the
+            prediction-range level, the peer-limit width, the guard band kept
+            back from the fixed limit, and the share of a lot that may be
+            rejected before the lot itself is held.</td></tr>
+  </table>
 
   <h2>Provenance appendix</h2>
   <p>Every formula below shipped its expression inside the payload; a reviewer

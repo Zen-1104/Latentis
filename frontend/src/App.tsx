@@ -6,14 +6,12 @@ import {
   Database,
   Layers,
   Menu,
-  Moon,
   PanelLeft,
   PanelLeftClose,
   Rows2,
   Rows3,
   Sigma,
   SlidersHorizontal,
-  Sun,
   TrendingUp,
   X,
 } from "lucide-react";
@@ -36,6 +34,7 @@ import { ModelsView } from "@/features/models/ModelsView";
 import { IngestView } from "@/features/ingest/IngestView";
 import { DispositionView } from "@/features/disposition/DispositionView";
 import { ComponentPicker, LotPicker } from "@/features/select/Pickers";
+import { TourOverlay, TourProvider } from "@/features/tour/Tour";
 
 interface SurfaceDef {
   id: string;
@@ -174,7 +173,9 @@ export default function App(): React.JSX.Element {
   return (
     <PreferencesProvider>
       <LedgerProvider>
-        <Shell />
+        <TourProvider>
+          <Shell />
+        </TourProvider>
       </LedgerProvider>
     </PreferencesProvider>
   );
@@ -261,6 +262,7 @@ function Shell(): React.JSX.Element {
             <RouteView route={route} />
           </div>
         </main>
+        <TourOverlay />
       </div>
     </div>
   );
@@ -277,7 +279,7 @@ function AppHeader({
   backend: BackendStatus;
   onOpenNav: () => void;
 }): React.JSX.Element {
-  const { theme, toggleTheme, density, toggleDensity, navCollapsed, toggleNavCollapsed } =
+  const { density, toggleDensity, navCollapsed, toggleNavCollapsed } =
     usePreferences();
   const status = BACKEND_COPY[backend];
 
@@ -292,7 +294,6 @@ function AppHeader({
         // every surface shares a boundary.
         "after:pointer-events-none after:absolute after:inset-x-0 after:-bottom-px after:h-px",
         "after:bg-accent after:opacity-40",
-        "relative",
       )}
     >
       <IconButton
@@ -300,6 +301,14 @@ function AppHeader({
         icon={<Menu className="h-4 w-4" />}
         onClick={onOpenNav}
         className="lg:hidden"
+      />
+
+      <IconButton
+        label={navCollapsed ? "Expand navigation" : "Collapse navigation"}
+        icon={navCollapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
+        onClick={toggleNavCollapsed}
+        aria-pressed={navCollapsed}
+        className="hidden lg:inline-flex"
       />
 
       <button
@@ -349,18 +358,6 @@ function AppHeader({
           aria-pressed={density === "compact"}
           className="hidden sm:inline-flex"
         />
-        <IconButton
-          label={theme === "dark" ? "Switch to light theme" : "Switch to dark theme"}
-          icon={theme === "dark" ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          onClick={toggleTheme}
-        />
-        <IconButton
-          label={navCollapsed ? "Expand navigation" : "Collapse navigation"}
-          icon={navCollapsed ? <PanelLeft className="h-4 w-4" /> : <PanelLeftClose className="h-4 w-4" />}
-          onClick={toggleNavCollapsed}
-          aria-pressed={navCollapsed}
-          className="hidden lg:inline-flex"
-        />
       </div>
     </header>
   );
@@ -393,7 +390,7 @@ function SurfaceNav({
         // reading column is unmistakably the foreground.
         "[background:linear-gradient(180deg,var(--surface-1),var(--surface-0))]",
         variant === "static"
-          ? "sticky top-[var(--h-header)] h-[calc(100vh-var(--h-header))] overflow-y-auto border-r"
+          ? "sticky top-[var(--h-header)] z-nav h-[calc(100vh-var(--h-header))] overflow-y-auto border-r"
           : "h-[calc(100%-var(--h-header))] overflow-y-auto",
         isRail ? "w-rail" : "w-sidebar",
       )}
@@ -435,7 +432,9 @@ function SurfaceNav({
                 "group flex w-full items-center gap-3 rounded-sm text-left text-body",
                 "transition-colors duration-fast",
                 "[@media(pointer:coarse)]:min-h-touch",
-                isRail ? "h-control-lg justify-center px-0" : "min-h-control-lg px-2 py-2 items-start",
+                isRail
+                  ? "relative aspect-square w-full justify-center gap-0 px-0"
+                  : "min-h-control-lg items-center px-2 py-2",
                 isActive
                   ? "bg-accent-soft text-text-num shadow-panel"
                   : "text-text-2 hover:bg-hover hover:text-text-1",
@@ -447,7 +446,13 @@ function SurfaceNav({
               <span
                 aria-hidden="true"
                 className={cn(
-                  "w-1 shrink-0 rounded-full transition-all duration-fast",
+                  "rounded-full transition-all duration-fast",
+                  // In the rail it is pinned to the left edge rather than
+                  // taking a slot in the row, so the icon stays centred in a
+                  // square target.
+                  isRail
+                    ? "absolute left-0 top-1/2 w-1 -translate-y-1/2"
+                    : "w-1 shrink-0",
                   isActive ? "h-5 bg-accent" : "h-4 bg-transparent",
                 )}
               />
@@ -481,6 +486,9 @@ function SurfaceNav({
         <li key={surface.id}>
           {isRail ? (
             <Tooltip
+              className="w-full justify-center"
+              float
+              side="right"
               content={
                 <span>
                   <span className="font-medium text-text-1">{surface.name}</span>
@@ -490,7 +498,6 @@ function SurfaceNav({
                   <span className="font-mono text-text-3">{surface.id}</span>
                 </span>
               }
-              align="start"
             >
               {link}
             </Tooltip>

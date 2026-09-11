@@ -13,6 +13,7 @@ import { cn } from "./cn";
  */
 describe("cn", () => {
   const SIZES = [
+    "text-hero",
     "text-display",
     "text-h1",
     "text-h2",

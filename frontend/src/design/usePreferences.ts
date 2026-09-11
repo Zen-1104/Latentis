@@ -6,8 +6,6 @@ export interface PreferencesValue {
   density: DensityMode;
   /** Desktop sidebar collapsed to an icon rail. */
   navCollapsed: boolean;
-  setTheme: (theme: Theme) => void;
-  toggleTheme: () => void;
   setDensity: (density: DensityMode) => void;
   toggleDensity: () => void;
   toggleNavCollapsed: () => void;
@@ -22,8 +20,6 @@ export const PreferencesContext = createContext<PreferencesValue>({
   theme: "dark",
   density: "comfortable",
   navCollapsed: false,
-  setTheme: () => undefined,
-  toggleTheme: () => undefined,
   setDensity: () => undefined,
   toggleDensity: () => undefined,
   toggleNavCollapsed: () => undefined,

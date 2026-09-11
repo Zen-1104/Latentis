@@ -4,8 +4,14 @@ import { DENSITY_STORAGE_KEY, DEFAULT_DENSITY_MODE } from "./tokens/density";
 import type { DensityMode, Theme } from "./tokens/types";
 import { PreferencesContext } from "./usePreferences";
 
-const THEME_STORAGE_KEY = "latentis_theme";
 const NAV_STORAGE_KEY = "latentis_nav_collapsed";
+
+/**
+ * The only theme the product ships. There is no toggle: the hero shader is a
+ * dark-ground effect, so a light mode would be a visibly worse screen rather
+ * than an equal alternative.
+ */
+const FIXED_THEME: Theme = "dark";
 
 /**
  * localStorage is unavailable in private modes and under some test runners;
@@ -31,7 +37,6 @@ function writeStored(key: string, value: string): void {
   }
 }
 
-const THEMES: readonly Theme[] = ["dark", "light"];
 const DENSITIES: readonly DensityMode[] = ["comfortable", "compact"];
 
 /**
@@ -41,9 +46,7 @@ const DENSITIES: readonly DensityMode[] = ["comfortable", "compact"];
  * the same CSS variables, so they follow the theme without a redraw path.
  */
 export function PreferencesProvider({ children }: { children: ReactNode }): React.JSX.Element {
-  const [theme, setThemeState] = useState<Theme>(() =>
-    readStored(THEME_STORAGE_KEY, THEMES, "dark"),
-  );
+  const [theme] = useState<Theme>(FIXED_THEME);
   const [density, setDensityState] = useState<DensityMode>(() =>
     readStored(DENSITY_STORAGE_KEY, DENSITIES, DEFAULT_DENSITY_MODE),
   );
@@ -60,22 +63,9 @@ export function PreferencesProvider({ children }: { children: ReactNode }): Reac
     document.documentElement.setAttribute("data-density", density);
   }, [density]);
 
-  const setTheme = useCallback((next: Theme) => {
-    setThemeState(next);
-    writeStored(THEME_STORAGE_KEY, next);
-  }, []);
-
   const setDensity = useCallback((next: DensityMode) => {
     setDensityState(next);
     writeStored(DENSITY_STORAGE_KEY, next);
-  }, []);
-
-  const toggleTheme = useCallback(() => {
-    setThemeState((prev) => {
-      const next: Theme = prev === "dark" ? "light" : "dark";
-      writeStored(THEME_STORAGE_KEY, next);
-      return next;
-    });
   }, []);
 
   const toggleDensity = useCallback(() => {
@@ -98,13 +88,11 @@ export function PreferencesProvider({ children }: { children: ReactNode }): Reac
       theme,
       density,
       navCollapsed,
-      setTheme,
-      toggleTheme,
       setDensity,
       toggleDensity,
       toggleNavCollapsed,
     }),
-    [theme, density, navCollapsed, setTheme, toggleTheme, setDensity, toggleDensity, toggleNavCollapsed],
+    [theme, density, navCollapsed, setDensity, toggleDensity, toggleNavCollapsed],
   );
 
   return <PreferencesContext.Provider value={value}>{children}</PreferencesContext.Provider>;
