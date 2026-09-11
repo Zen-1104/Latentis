@@ -16,14 +16,26 @@ at every phase boundary and before any tag (`T-706`).
 | **Measured** | A number from a real pipeline run, reproducible, artifact committed. | the number + its artifact path |
 | **Target** | A goal not yet met. | "target", never as a result |
 
-**Snapshot date:** 2026-09-05 · **Phase:** 0 · **Tag:** none
+**Snapshot date:** 2026-09-11 · **Phase:** implementation · **Tag:** none
 
 ---
 
 ## § Capability status
 
-Everything is `Specified`. That is the honest total after Phase 0, and stating it plainly now is what makes the
-later upgrades believable.
+The backend service, DuckDB store, formula registry and disposition report renderer are implemented and
+exercised by `backend/tests` — **255 passing, 0 failing** as of this snapshot date. The React console is
+implemented across its eight surfaces with its own unit suite. Reproduce both with:
+
+```bash
+pytest backend/tests          # 255 passed
+cd frontend && npm test       # console unit tests
+```
+
+> **The per-capability table below has not been re-audited since 2026-09-05 and still reads `Specified`
+> throughout.** Do not read those rows as a considered judgement that the capability is unimplemented — most
+> have code and tests behind them now. Advancing a row to `Verified` requires naming the passing test, and
+> to `Measured` requires a committed artifact; nobody has done that pass yet. Until they do, treat the
+> paragraph above as the accurate summary and the table as a known-stale checklist.
 
 | # | Capability | Status | Evidence required to advance |
 |---|---|---|---|

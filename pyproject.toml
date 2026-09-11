@@ -28,6 +28,13 @@ dependencies = [
     "joblib==1.6.0",
     # Disposition report HTML rendering for PDF generation (D-028)
     "jinja2==3.1.6",
+    # IANA time-zone database. Linux and macOS ship one system-wide; Windows
+    # does not, so `zoneinfo` there has no data and polars raises
+    # "The zoneinfo module or pytz package must be installed" the moment an
+    # upload carries a timezone-aware timestamp. Declaring it makes ingest
+    # behave identically on every platform instead of only where the OS
+    # happens to provide it.
+    "tzdata==2026.3",
 ]
 
 [dependency-groups]

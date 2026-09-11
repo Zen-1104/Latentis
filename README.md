@@ -42,30 +42,42 @@ System codename: **LATENTIS** (LATENT-defect Inspection & Screening).
 
 ```
 SIH26170/
-├── CLAUDE.md                  Agent operating rules — READ FIRST
 ├── PROJECT_MASTER_SPEC.md     Single source of truth
 ├── ARCHITECTURE.md            System + data-flow architecture
-├── TASKS.md  DECISIONS.md  INTEGRATION_STATUS.md
-├── HUMAN_ACTIONS.md  CHANGELOG.md  FINAL_STATUS.md
-├── research/                  Evidence base (5 docs, cited)
+├── DECISIONS.md  CHANGELOG.md
+├── pyproject.toml  uv.lock    Python project + locked dependencies
+├── backend/                   FastAPI service, DuckDB store, report renderer
+├── frontend/                  React QA console (Vite + TypeScript)
+├── datagen/                   Synthetic dataset generator
 ├── data/                      Dataset + generator specifications
 ├── models/                    Anomaly, drift, conformal, risk specs
-├── backend/                   FastAPI service (Phase 3)
-├── frontend/                  React QA console (Phase 5)
+├── research/                  Evidence base (5 docs, cited)
 ├── tests/                     Strategy, matrix, registry, red team
-├── docs/                      Explainability, UX, design system, demo, API
+├── docs/                      API contract, explainability, UX, design system
+│   └── internal/              Working notes: TASKS, FINAL_STATUS,
+│                              INTEGRATION_STATUS, HUMAN_ACTIONS, reviews
 ├── presentation/              SIH slide specification
 ├── reports/                   Audits and generated artifacts
-├── scripts/                   Reproducibility + release tooling
-└── agents/                    Specialist agent team charter
+└── scripts/                   Reproducibility + release tooling
 ```
 
 ## Status
 
-**Phase 0 — Foundation. Specification complete; implementation not started.**
-No model has been trained, no metric has been measured. Every number in these documents is
-either a cited external fact, a stated design target, or an explicitly labelled assumption.
-See `FINAL_STATUS.md` for the live picture and `reports/FOUNDATION_AUDIT.md` for known gaps.
+**Implementation in progress.** The FastAPI backend, DuckDB store, formula registry and
+disposition report renderer are built and covered by `backend/tests` (255 passing as of
+2026-09-11). The React console is built across its eight surfaces with its own unit tests.
+
+Every figure shown in the product is computed from the loaded synthetic dataset and carries
+its formula and operands; every figure in the specification documents is either a cited
+external fact, a stated design target, or an explicitly labelled assumption. Verify with:
+
+```bash
+pytest backend/tests          # backend contract + integration suite
+cd frontend && npm test       # console unit tests
+```
+
+See `docs/internal/FINAL_STATUS.md` for the phase-by-phase picture and
+`reports/FOUNDATION_AUDIT.md` for known gaps.
 
 ## Data honesty statement
 

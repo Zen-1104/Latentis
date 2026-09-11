@@ -697,6 +697,15 @@ def ingest_payload(
         )
         return report
     finally:
+        # The writer holds an OS handle on the staging file. It is closed
+        # above on the success path, but every ApiError raised before that
+        # point — unparseable bytes, no data rows, all rows rejected — skipped
+        # it. POSIX unlinks a file with an open handle happily; Windows
+        # refuses with WinError 32, and that PermissionError escaped from this
+        # `finally` and replaced the intended 422 with an unhandled 500,
+        # violating FR-603. `ParquetWriter.close()` is guarded by `is_open`,
+        # so closing here a second time is a no-op on the success path.
+        writer.close()
         Path(staging_name).unlink(missing_ok=True)
 
 
