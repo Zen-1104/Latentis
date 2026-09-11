@@ -1,51 +1,49 @@
 # LATENTIS
 
-A screening decision-support platform that catches latent defects in electronic components during burn-in testing — the ones that pass a static datasheet limit but are already behaving abnormally relative to their own production lot.
-
+Screening tool for making support decisions in the detection of hidden defects in electronic devices during burn-in testing, i.e., devices passing the limit based on static datasheet criteria but showing abnormal behavior within their lot.
 ---
 
 ## The problem
 
-Burn-in and screening tests compare each part against a fixed absolute limit. A part reading 45 µA of leakage against a 50 µA datasheet maximum is a **pass** — even if every other part in its lot is sitting at 8–12 µA, which would put that part 4–5 robust standard deviations outside its own cohort. Static limits can't see that. LATENTIS can.
-
+The burn-in and screening processes are based on comparing each unit to an absolute limit. If a certain unit displays 45 µA of leakage with a maximum value of 50 µA specified in the datasheet, it is considered a **pass**, regardless of the fact that all other units within the same batch are at 8–12 µA – 4–5 standard deviations away from their peers. LATENTIS does.
 ## What it does
 
-LATENTIS ingests parametric burn-in readings (0 h, 24 h, and onward) for a lot of components and evaluates each part through three independent lenses, plus a separate data-quality signal:
+LATENTIS processes parametric burn-in data (0 h, 24 h, and beyond) for many devices, and assesses each device based on three different perspectives, as well as another for quality of data:
 
-**Lens 1 — Anomaly.** Is this part statistically unusual *relative to its own lot*, right now? Combines lot-relative robust statistics (median ± a scaled IQR, in the spirit of AEC-Q001 Dynamic Part Average Testing), a multivariate Mahalanobis distance across parameters, and CUSUM drift-in-mean detection — with Isolation Forest available as a secondary, advisory-only check that can never independently produce a verdict.
+**Lens 1 - Anomaly.** Is this component statistically abnormal *in relation to its own lot* at the current time? Utilizes lot-wise robust statistics (median ± scaled IQR, inspired by AEC-Q001 Dynamic Part Average Testing), Mahalanobis distance for multivariate parameter analysis, as well as CUSUM detection of drift-in-mean — with an optional Isolation Forest test used only for advisory purposes and unable to make its own determination.
 
-**Lens 2 — Degradation.** Is the part's behavior drifting over time, independent of whether it has tripped a point-in-time anomaly threshold? Uses a Shape–Amplitude decomposition of the measurement trajectory so a smooth, progressive drift shows up even when no single reading looks abnormal.
+**Lens 2 - Degradation**. Is there an evolution in the behavior of the part, regardless of the fact that it has triggered any threshold value for a point in time anomaly? The use of Shape–Amplitude decomposition for the measurements helps to reveal an evolving degradation despite no obvious anomalies.
 
-**Lens 3 — Projected Risk.** Given the trend so far, will this part cross its safety envelope by the end of the burn-in window? Forecasts the 168-hour value from early readings and rejects on a **conformal prediction upper bound**, not a bare point estimate — so the reject rule carries a distribution-free, finite-sample guarantee rather than an assumed one. Risk is decomposed into interpretable, additive terms (safety margin, observed slope, projected slope, slope ratio) rather than delivered as a single opaque score. A Neyman–Pearson-style threshold selection process is used so the system can state, explicitly, what false-negative rate a given cutoff implies.
+**Lens 3 - Projected risk.** In light of the pattern established thus far, will the portion exceed its safety envelope by the time it finishes burning in? Predicts the 168-hour result based on preliminary data and rejects based on a **conformal upper prediction bound**, not a simple point prediction — hence the reject criterion comes with a distribution-free, finite sample validity instead of the other way around. The risk is expressed as a sum of easily understood, additive components (safety margin, slope, projected slope, slope ratio) instead of being presented in one opaque number.
 
-**Sensor Confidence.** A rule-based fault-detection pass over the incoming telemetry itself — flatlines, impossible values, out-of-range gaps. This never gets folded into the Anomaly, Degradation, or Risk scores; it travels alongside them as its own signal, all the way to the UI, so a sensor problem is never mistaken for a component problem.
+**Sensor confidence.** A rule-based fault detection pass on the telemetry feed – flatlines, impossibles, gaps out of range. This is never incorporated into the Anomaly, Degradation, or Risk scores but travels separately from them to the UI so that any problems with the sensors can never be confused with problems with the components.
 
-All three lens scores, plus every intermediate number that feeds a disposition decision, are wrapped in a **traced value** — a structure that carries the value itself, its units, the formula version that produced it, and the exact inputs that went in. Every number shown to an inspector is re-derivable, not just displayed.
+All three values for the lenses and all the numbers in between that go into the dispositions decision process come in a **traced value** package, meaning that the number itself is packaged along with its units, its formula version, and the exact input that generated it. All the numbers available to an inspector are re-derivable.
 
 ## Design principles
 
-| # | Principle | Why it matters |
+| # | Principle | Explanation |
 |---|---|---|
-| 1 | Standard, defensible statistics (lot-relative DPAT-style limits) instead of an invented heuristic | Something a reliability engineer can actually check the math on |
-| 2 | Conformal prediction drives the reject rule | A distribution-free guarantee on escapes, not a hand-tuned threshold |
-| 3 | Explicit false-negative rate targeting | The failure mode that actually matters is missed escapes, not false alarms |
-| 4 | Shape–Amplitude decomposition for two-point forecasting | Doesn't pretend to fit a nonlinear curve from two readings |
-| 5 | A defined evaluation protocol (an escape set + a named recall metric) | Makes the core claim measurable, not just asserted |
-| 6 | A provenance ledger behind every number | Click any figure, see the exact arithmetic that produced it |
-| 7 | Sensor confidence never merges into a component verdict | A flaky sensor and a bad part are never conflated |
-| 8 | Lot-level disposition against a percent-defective-allowed threshold | Mirrors how a real test floor actually dispositions a lot, not just one part |
-| 9 | An exchangeability guard that can decline its own guarantee | The system says when its statistical assumptions no longer hold, instead of answering anyway |
-| 10 | Counterfactual explanations ("would have passed if X ≤ value") | Gives an inspector something actionable, not just an attribution chart |
+| 1 | Defensible, established statistics (limits as per lot-based DPAT methodology) versus an invented heuristic | Something a reliability engineer can verify mathematically |
+| 2 | Conformal prediction controls the reject decision | Distribution-free guarantee on escapes, not manually set threshold |
+| 3 | Explicit false-negative target | What we care about is escapes, not false alarms |
+| 4 | Shape-Amplitude decomposition for two-point prediction | Not pretending to fit a curve based on two data points |
+| 5 | Defined methodology (escape set and recall metric) | Making the core claim verifiable |
+| 6 | Provenance ledger behind each number | Click a figure, get the underlying computation |
+| 7 | Confidence in the sensors does not bleed into the components | A flakey sensor cannot be confused with a bad part |
+| 8 | Disposition at a lot level against a percent defective allowed limit | Like how a real factory dispositions a lot |
+| 9 | An exchangeability test which may opt out of making a guarantee | When the statistical guarantees don't apply, the system knows and refuses to answer |
+| 10 | Counterfactual explanations ("would have passed if X ≤ value") | Giving an inspector an actionable explanation rather than just attribution |
 
 ## Architecture
 
-The project is two independently runnable services plus a shared scientific core:
+This project consists of two separate services, both of which use a common scientific core:
 
-**Backend** — FastAPI, with all decision-bearing computation isolated into a dependency-free scientific core (`backend/core`). The core is called once per computation; every route in `backend/app` reads the resulting traced value rather than recomputing anything, so the API, the on-screen numbers, and the generated reports can never quietly disagree. Storage is DuckDB over Parquet — a single embedded analytical engine rather than a networked database, since a burn-in dataset for a demo or a single test floor doesn't need one.
+**Backend** — FastAPI, where all decisions are based on computation, and the computation logic is isolated to a dependency-free scientific core (`backend/core`). The core is invoked once per computation, and each endpoint in `backend/app` relies on the traced value from this core without any additional computation, thus ensuring that the API, screen values, and reports always agree. Storage uses DuckDB with Parquet storage — a single analytical engine embedded in the service itself instead of a networked database, because a burn-in dataset for a demo or a single test floor does not require that.
 
-**Frontend** — React 18 with TypeScript, built with Vite and styled with Tailwind. A small custom design-token system backs the UI components rather than a third-party component library. State and data-fetching are handled through a typed API client generated directly from the backend's OpenAPI schema, so the frontend and backend contracts can't silently drift apart.
+**Frontend** — React 18 with TypeScript, bundled using Vite and styled using Tailwind. The UI components use a small custom design tokens system as opposed to an external component library. Data fetching and state management are provided by an API client automatically generated from the backend's OpenAPI spec.
 
-**Reporting** — Server-rendered HTML/PDF disposition reports (Jinja2) that carry the same traced values shown in the UI, including a provenance appendix that lists every formula actually used to produce that report.
+**Reporting** – Server-side HTML/PDF reports with Jinja2 templates that hold the same traceable values displayed on the UI, with an appendix of formulas used for generating that particular report.
 
 ## Project structure
 
@@ -87,7 +85,7 @@ The API is versioned under `/api/v1`. A representative slice:
 | `GET /api/v1/formulas` / `GET /api/v1/models` | The formula and model registry backing every traced value |
 | `POST /api/v1/reports` / `GET /api/v1/reports/{id}/pdf` | Generate and retrieve a disposition report |
 
-Every response is wrapped in a common envelope carrying a request ID, the dataset hash it was computed against, and the model/formula versions used — so any number returned by the API can be traced back to exactly how it was produced.
+Each answer is sent out enclosed in an envelope containing the Request ID, the hash of the dataset on which the answer was generated, and the versions of the model/formula used – such that all answers sent out by the API have provenance.
 
 ## Running locally
 
@@ -140,10 +138,10 @@ cd frontend && npm test      # frontend unit tests
 
 ## Data honesty statement
 
-No proprietary or real component test data is used anywhere in this project. All data is synthetic, generated by a documented, seeded simulator (`datagen/`). Every dataset file, API response, UI screen, and report artifact carries a non-removable synthetic-data marker, so it's never possible to mistake a demonstration result for a real measurement.
+None of the proprietary or real components testing data are used in any part of the project. Data used in this project are all simulated data, produced through a known and seeded simulator (`datagen/`). All files containing dataset, API response, user interface screen shots, and reports have the non-removable synthetic data label.
 
 ## Known limitations
 
-- The forecast in Lens 3 is built from two early readings (0 h and 24 h); it is explicitly a linear/shape-based extrapolation, not a learned per-part trajectory model, and the conformal bound is what makes that honest rather than a curve-fit that overclaims precision.
-- Isolation Forest, and any other benchmark model included for comparison, is advisory only and never permitted to independently produce or override a disposition verdict.
-- The exchangeability guard can decline to issue a guaranteed bound when its statistical assumptions are violated (e.g., too few parts in a lot) — in that state the system reports reduced confidence rather than a number it can't stand behind.
+- The prediction in Lens 3 is derived from two initial readings (0 h and 24 h); this is clearly an extrapolation by shape/linearity, not a learned per-part trajectory model, and the conformal bound tells us so; otherwise we would have been doing something else that overpromises.
+- The Isolation Forest, as well as any other model used for benchmarking purposes, acts purely in advisory capacity and is never allowed to independently make or overturn the disposition decision.
+- The exchangeability guard is capable of withholding the guaranteed bound due to the violation of statistical assumptions (for example, too many parts per lot) – in such case the system expresses decreased confidence instead.
