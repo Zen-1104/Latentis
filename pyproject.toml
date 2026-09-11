@@ -37,6 +37,15 @@ dependencies = [
     "tzdata==2026.3",
 ]
 
+[project.optional-dependencies]
+# PDF rendering for disposition reports (D-028). Optional by design: the
+# HTML report is always available, and without this the PDF endpoint returns
+# a structured 503 naming the renderer rather than failing opaquely.
+# Install with:  uv sync --extra pdf   &&   playwright install chromium
+pdf = [
+    "playwright==1.62.0",
+]
+
 [dependency-groups]
 dev = [
     # Formatting & linting (CLAUDE.md § 5, GIT_WORKFLOW § 7)
