@@ -2,7 +2,7 @@ import { useApi } from "../../hooks/useApi";
 import type { InvestigationData } from "../../api/generated/client";
 import { InvestigationSection } from "../../design/InvestigationSection";
 import { ProvenanceHeader } from "../../design/ProvenanceHeader";
-import { SeverityChip } from "../../design/SeverityChip";
+import { StatusBadge } from "../../design/ui/StatusBadge";
 import { ShapeCurve } from "../../design/ShapeCurve";
 import { StateBlock } from "../../design/StateBlock";
 import { formatPlain } from "../../format";
@@ -10,6 +10,8 @@ import { Badge } from "../../design/ui/Badge";
 import { Button } from "../../design/ui/Button";
 import { EmptyState } from "../../design/ui/Feedback";
 import { MetaList, PageHeader } from "../../design/ui/PageHeader";
+import { TechnicalDetails } from "../../design/ui/Disclosure";
+import { SURFACE_COPY } from "../../design/vocabulary";
 import { navigate } from "../../router";
 import { ForecastSection } from "../investigation/ForecastSection";
 
@@ -44,9 +46,15 @@ export function DriftView({ componentId }: { componentId: string }): React.JSX.E
   return (
     <div className="space-y-6">
       <PageHeader
+        question={SURFACE_COPY.S4?.question ?? ""}
+        crumbs={[
+          { label: "Mission Control", to: { surface: "S1" } },
+          { label: componentId, to: { surface: "S3", componentId } },
+          { label: "Outlook" },
+        ]}
         eyebrow={`S4 · #/components/${componentId}/drift`}
-        title="Drift Studio"
-        description="Trajectory, forecast, conformal band and safety slope — plus the fitted population shape the forecast rests on, published and disputable."
+        title="Where is this component heading?"
+        description={SURFACE_COPY.S4?.summary ?? ""}
         badges={<Badge tone="neutral">{componentId}</Badge>}
         actions={
           <Button
@@ -77,7 +85,14 @@ export function DriftView({ componentId }: { componentId: string }): React.JSX.E
       >
         {inv.data !== null && (
           <>
-            {inv.meta !== null && <ProvenanceHeader meta={inv.meta} />}
+            {inv.meta !== null && (
+              <TechnicalDetails
+                label="Data & calculation history"
+                hint="dataset, screening profile and model versions"
+              >
+                <ProvenanceHeader meta={inv.meta} />
+              </TechnicalDetails>
+            )}
             {(inv.data.parameters ?? []).map((p) => (
               <ForecastSection
                 key={p.parameter}
@@ -89,8 +104,8 @@ export function DriftView({ componentId }: { componentId: string }): React.JSX.E
             ))}
             <InvestigationSection
               index="Φ"
-              title="Fitted population shape"
-              hint="One curve per calibration group, fitted across lots. The forecast is this shape scaled to the part."
+              title="What shape does this kind of part usually follow?"
+              hint="Learned from many lots of the same part type. The projection is this shape scaled to this component's own early readings — it is not fitted to one part alone."
               testId="s4-shape"
             >
               <StateBlock
@@ -110,14 +125,16 @@ export function DriftView({ componentId }: { componentId: string }): React.JSX.E
                     <div className="flex flex-wrap items-center gap-x-5 gap-y-3">
                       <MetaList
                         items={[
-                          { label: "group", value: shape.data.group },
-                          { label: "family", value: shape.data.family },
-                          { label: "Φ(168)", value: formatPlain(shape.data.phi_168, 4) },
-                          { label: "fitted on", value: `${shape.data.fitted_on_lots} lots` },
-                          { label: "normalisation", value: shape.data.normalisation },
+                          { label: "part type / measurement", value: shape.data.group },
+                          { label: "curve family", value: shape.data.family },
+                          {
+                            label: "share of change by 168 h",
+                            value: formatPlain(shape.data.phi_168, 4),
+                          },
+                          { label: "learned from", value: `${shape.data.fitted_on_lots} lots` },
                         ]}
                       />
-                      {shape.data.warning !== null && <SeverityChip value="DEGRADED" />}
+                      {shape.data.warning !== null && <StatusBadge value="DEGRADED" withHelp />}
                     </div>
                     <ShapeCurve points={shape.data.points} testId="s4-shape-chart" />
                   </>

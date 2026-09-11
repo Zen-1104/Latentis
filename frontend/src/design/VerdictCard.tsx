@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { SEVERITY_CONFIGS } from "./tokens";
 import { severityOf } from "./severityMap";
+import { verdictLabel } from "./vocabulary";
 import { FieldLabel } from "./ui/Panel";
 import { cn } from "./ui/cn";
 
@@ -43,13 +44,23 @@ export function VerdictCard({ title, verdict, children, testId }: VerdictCardPro
       <div aria-hidden="true" className={cn("h-hair w-full", ruleClass)} />
       <div className="flex min-w-0 flex-1 flex-col gap-3 p-4">
         <FieldLabel>{title}</FieldLabel>
-        {/* Glyph + word + token colour in one line satisfies NN-1 on its own;
-            a chip underneath repeated the identical string. */}
-        <div className={cn("flex items-center gap-2", colorClass)}>
-          <span aria-hidden="true" className="text-num-lg leading-none">
+        {/* Human reading leads; the backend enum stays beneath it so an
+            auditor can read the payload value straight off the screen.
+            Glyph + word + token colour satisfies NN-1 on its own. */}
+        <div className={cn("flex items-start gap-2", colorClass)}>
+          <span aria-hidden="true" className="text-num-lg leading-tight">
             {glyph}
           </span>
-          <span className="break-all font-mono text-num-lg font-semibold">{verdict ?? "—"}</span>
+          <span className="min-w-0">
+            <span className="block text-num-lg font-semibold leading-tight">
+              {verdictLabel(verdict)}
+            </span>
+            {verdict != null && (
+              <span className="mt-1 block break-all font-mono text-caption text-text-3">
+                {verdict}
+              </span>
+            )}
+          </span>
         </div>
         {children !== undefined && (
           <div className="space-y-2 text-body text-text-2">{children}</div>

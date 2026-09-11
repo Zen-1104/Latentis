@@ -63,14 +63,20 @@ export const RADIUS_CSS_VARS: Readonly<Record<RadiusSize, string>> = Object.free
 /** Elevation shadows */
 export const SHADOW_VALUES: Readonly<Record<Theme, Record<ShadowToken, string>>> = Object.freeze({
   dark: {
-    "sh-drawer": "-4px 0 24px rgba(0, 0, 0, 0.4)",
-    "sh-popover": "0 4px 16px rgba(0, 0, 0, 0.3)",
-    "sh-sticky": "0 1px 0 rgba(0, 0, 0, 0.5)",
+    "sh-drawer": "-8px 0 40px rgba(0, 0, 0, 0.6)",
+    "sh-popover": "0 12px 32px rgba(2, 5, 12, 0.6)",
+    "sh-sticky": "0 1px 0 rgba(0, 0, 0, 0.6)",
+    "sh-panel": "inset 0 1px 0 rgba(160, 180, 255, 0.07), 0 1px 2px rgba(2, 5, 12, 0.5)",
+    "sh-card": "0 1px 2px rgba(2, 5, 12, 0.5), 0 8px 24px -12px rgba(2, 5, 12, 0.7)",
+    "sh-accent": "0 1px 0 rgba(255, 255, 255, 0.14) inset, 0 4px 14px -4px rgba(70, 102, 240, 0.55)",
   },
   light: {
-    "sh-drawer": "-4px 0 24px rgba(15, 23, 42, 0.15)",
-    "sh-popover": "0 4px 16px rgba(15, 23, 42, 0.12)",
-    "sh-sticky": "0 1px 0 rgba(15, 23, 42, 0.1)",
+    "sh-drawer": "-8px 0 40px rgba(15, 23, 42, 0.16)",
+    "sh-popover": "0 12px 32px rgba(15, 23, 42, 0.16)",
+    "sh-sticky": "0 1px 0 rgba(15, 23, 42, 0.09)",
+    "sh-panel": "inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 2px rgba(15, 23, 42, 0.05)",
+    "sh-card": "0 1px 2px rgba(15, 23, 42, 0.06), 0 10px 24px -14px rgba(15, 23, 42, 0.22)",
+    "sh-accent": "0 1px 0 rgba(255, 255, 255, 0.22) inset, 0 4px 14px -4px rgba(46, 75, 224, 0.45)",
   },
 });
 

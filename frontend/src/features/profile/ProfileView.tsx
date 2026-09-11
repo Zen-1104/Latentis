@@ -11,6 +11,10 @@ import { PageHeader } from "../../design/ui/PageHeader";
 import { FieldLabel } from "../../design/ui/Panel";
 import { ToggleChips } from "../../design/ui/Segmented";
 import { ValueCell } from "../investigation/ValueCell";
+import { MetricCard } from "../../design/ui/Cards";
+import { TechnicalDetails } from "../../design/ui/Disclosure";
+import { SETTINGS, SURFACE_COPY, settingTerm } from "../../design/vocabulary";
+import { formatPlain as fmt } from "../../format";
 
 interface ProfileDoc {
   [k: string]: unknown;
@@ -33,9 +37,11 @@ export function ProfileView({ profileId }: { profileId: string | null }): React.
   return (
     <div className="space-y-6">
       <PageHeader
+        question={SURFACE_COPY.S5?.question ?? ""}
+        crumbs={[{ label: "Mission Control", to: { surface: "S1" } }, { label: "Screening rules" }]}
         eyebrow="S5 · #/profiles"
         title="Screening Profile"
-        description="Limits, k, α, margin reserve and PDA — the configuration, versioned and immutable once referenced. Read-only in this slice; new versions are an explicit engineering action outside the demo path."
+        description={SURFACE_COPY.S5?.summary ?? ""}
         badges={<Badge tone="outline">read-only</Badge>}
       />
 
@@ -54,16 +60,21 @@ export function ProfileView({ profileId }: { profileId: string | null }): React.
         {posture.data !== null && (
           <InvestigationSection
             index="α"
-            title="Mission Risk Posture (active)"
-            hint="The policy inputs in force for every verdict in this session."
+            title="The rules in force right now"
+            hint="Every verdict in this session is measured against these settings."
             testId="s5-active"
           >
-            <ValueGrid label="Mission risk posture" values={posture.data.mission_risk_posture} />
-            <ValueGrid label="Risk weights" values={posture.data.risk_weights} />
-            <p className="max-w-prose text-caption text-text-3">
-              Weights are policy inputs (assumed) — structurally unable to move a part across a
-              band boundary (RT-010).
-            </p>
+            <SettingsGrid values={posture.data.mission_risk_posture} />
+            <TechnicalDetails
+              label="How the risk score is weighted"
+              hint="ordering only — these cannot change a verdict"
+            >
+              <ValueGrid label="Risk weights" values={posture.data.risk_weights} />
+              <p className="max-w-prose text-caption text-text-3">
+                These weights decide the order of the worklist, nothing more. They are
+                structurally unable to move a component across a verdict boundary (RT-010).
+              </p>
+            </TechnicalDetails>
           </InvestigationSection>
         )}
       </StateBlock>
@@ -115,10 +126,17 @@ export function ProfileView({ profileId }: { profileId: string | null }): React.
       >
         {doc.data !== null && (
           <>
-            {doc.meta !== null && <ProvenanceHeader meta={doc.meta} />}
+            {doc.meta !== null && (
+              <TechnicalDetails
+                label="Data & calculation history"
+                hint="dataset, screening profile and model versions"
+              >
+                <ProvenanceHeader meta={doc.meta} />
+              </TechnicalDetails>
+            )}
             <DataTable
               testId="s5-doc-table"
-              caption={`Profile document ${selected} (backend values; nested objects expandable)`}
+              caption={`Every field in screening profile ${selected}, exactly as stored`}
               columns={[
                 {
                   header: "Field",
@@ -160,6 +178,61 @@ export function ProfileView({ profileId }: { profileId: string | null }): React.
 }
 
 /**
+ * The active screening settings, as labelled cards.
+ *
+ * Replaces the `alpha 0.1000 k 6.0000 margin_fraction 0.2000` strip: each
+ * knob gets its human name, a readable value, an explanation on demand and
+ * the raw field name for auditors. Percentages and sigma units are applied
+ * per-key because the payload reports plain fractions.
+ */
+function SettingsGrid({
+  values,
+}: {
+  values: Record<string, number | string>;
+}): React.JSX.Element {
+  const FORMAT: Readonly<Record<string, (v: number) => string>> = {
+    alpha: (v) => `${fmt(v * 100, 0)}%`,
+    margin_fraction: (v) => `${fmt(v * 100, 0)}%`,
+    pda_limit_pct: (v) => `${fmt(v, 1)}%`,
+    k: (v) => `${fmt(v, 1)} σ`,
+    horizon_hours: (v) => `${fmt(v, 0)} h`,
+  };
+  // Only the documented knobs get a card; anything else the backend adds
+  // still appears, under the technical disclosure below.
+  const known = Object.keys(SETTINGS).filter((k) => k in values);
+
+  return (
+    <>
+      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-3">
+        {known.map((k) => {
+          const raw = values[k];
+          const term = settingTerm(k);
+          const shown =
+            typeof raw === "number"
+              ? (FORMAT[k]?.(raw) ?? fmt(raw, 4))
+              : String(raw ?? "—");
+          return (
+            <MetricCard
+              key={k}
+              label={term?.label ?? k}
+              value={shown}
+              hint={term?.explain}
+              settingKey={k}
+              technical={`${k} = ${String(raw)}`}
+            />
+          );
+        })}
+      </div>
+      <p className="max-w-prose text-caption text-text-3">
+        These are configuration, not measurements. Once a screening profile has been referenced
+        by a decision it is immutable, so a recorded verdict can always be re-read against the
+        exact rules that produced it.
+      </p>
+    </>
+  );
+}
+
+/**
  * Key/value grid for a flat config block. A definition list rather than a
  * run of inline spans, so the pairs survive a narrow viewport and read as
  * pairs to a screen reader.
@@ -177,8 +250,8 @@ function ValueGrid({
       <dl className="grid grid-cols-2 gap-x-6 gap-y-3 sm:grid-cols-3 lg:grid-cols-4">
         {Object.entries(values).map(([k, v]) => (
           <div key={k} className="min-w-0">
-            <dt className="truncate font-mono text-caption text-text-3" title={k}>
-              {k}
+            <dt className="truncate text-caption text-text-3" title={k}>
+              {settingTerm(k)?.label ?? k.replace(/_/g, " ")}
             </dt>
             <dd
               className="mt-1 font-mono text-num text-text-num tnum"

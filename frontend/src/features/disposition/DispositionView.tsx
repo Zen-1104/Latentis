@@ -7,6 +7,8 @@ import { Badge } from "../../design/ui/Badge";
 import { Button } from "../../design/ui/Button";
 import { EmptyState } from "../../design/ui/Feedback";
 import { PageHeader } from "../../design/ui/PageHeader";
+import { TechnicalDetails } from "../../design/ui/Disclosure";
+import { SURFACE_COPY } from "../../design/vocabulary";
 import { navigate } from "../../router";
 import { DispositionPanel } from "./DispositionPanel";
 import { ReportPanel } from "./ReportPanel";
@@ -20,9 +22,15 @@ export function DispositionView({ componentId }: { componentId: string }): React
   return (
     <div className="space-y-6">
       <PageHeader
+        question={SURFACE_COPY.S8?.question ?? ""}
+        crumbs={[
+          { label: "Mission Control", to: { surface: "S1" } },
+          { label: componentId, to: { surface: "S3", componentId } },
+          { label: "Decision" },
+        ]}
         eyebrow={`S8 · #/components/${componentId}/dispose`}
         title="Disposition & Report"
-        description="Record the engineer decision against the system recommendation, then generate the audit-grade report that carries both."
+        description={SURFACE_COPY.S8?.summary ?? ""}
         badges={<Badge tone="neutral">{componentId}</Badge>}
         actions={
           <Button variant="secondary" onClick={() => navigate({ surface: "S3", componentId })}>
@@ -50,11 +58,18 @@ export function DispositionView({ componentId }: { componentId: string }): React
       >
         {inv.data !== null && (
           <>
-            {inv.meta !== null && <ProvenanceHeader meta={inv.meta} />}
+            {inv.meta !== null && (
+              <TechnicalDetails
+                label="Data & calculation history"
+                hint="dataset, screening profile and model versions"
+              >
+                <ProvenanceHeader meta={inv.meta} />
+              </TechnicalDetails>
+            )}
             <InvestigationSection
-              index="D"
-              title="Engineer decision"
-              hint="Append-only. The exact system output is snapshotted with the record."
+              index="1"
+              title="Record your decision"
+              hint="LATENTIS recommends; you decide. The record is append-only and captures the exact system output alongside it."
               testId="s8-decision"
             >
               <DispositionPanel
@@ -64,9 +79,9 @@ export function DispositionView({ componentId }: { componentId: string }): React
               />
             </InvestigationSection>
             <InvestigationSection
-              index="R"
-              title="Audit-grade report"
-              hint="Self-contained artifact with the provenance appendix and the synthetic banner."
+              index="2"
+              title="Produce the report"
+              hint="A self-contained document carrying the evidence, the calculation history and the synthetic-data marking."
               testId="s8-report"
             >
               <ReportPanel defaultScope="component" defaultTarget={componentId} />

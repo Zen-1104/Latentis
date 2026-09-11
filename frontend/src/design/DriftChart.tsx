@@ -34,6 +34,11 @@ const PADB = 30;
  * Forecast chart (UX_SPEC §4). Observed markers are measurements; the 168 h
  * endpoints (forecast, baseline, bound) are backend values. The forecast
  * connector is dashed-schematic — only the endpoints are authoritative.
+ *
+ * The projection is drawn in `--info`, not `--sev-nominal`. It used to share
+ * the PASS colour, which made a forecast look like a verdict; hue is
+ * reserved for severity, so an analysis series gets the achromatic-adjacent
+ * analysis token instead.
  */
 export function DriftChart({
   observed,
@@ -76,7 +81,7 @@ export function DriftChart({
         viewBox={`0 0 ${W} ${H}`}
         className="w-full rounded-md border border-border-1 bg-surface-1"
         role="img"
-        aria-label={`Drift forecast in ${unit} over 0 to ${xMax} hours.`}
+        aria-label={`Measured readings and the projection to ${xMax} hours, in ${unit}. The table below lists the same values.`}
       >
         {[0.25, 0.5, 0.75].map((f) => (
           <line
@@ -128,7 +133,7 @@ export function DriftChart({
             x2={x(xMax)}
             y1={y(last.value)}
             y2={y(forecast168)}
-            stroke="var(--sev-nominal)"
+            stroke="var(--info)"
             strokeWidth={2}
             strokeDasharray="6 3"
           />
@@ -189,34 +194,34 @@ export function DriftChart({
           <span className="text-text-num" aria-hidden="true">
             ●
           </span>{" "}
-          Observed (only observations)
+          Measured
         </li>
         <li>
-          <span className="text-sev-nominal" aria-hidden="true">
+          <span className="text-info" aria-hidden="true">
             ┄
           </span>{" "}
-          Forecast segment → 168 h endpoint
+          Projected to 168 h
         </li>
         <li>
           <span className="text-baseline" aria-hidden="true">
             ┄
           </span>{" "}
-          Naïve linear baseline
+          Simple straight-line comparison
         </li>
         <li>
           <span className="text-sev-critical" aria-hidden="true">
             ──
           </span>{" "}
-          Absolute limit
+          Safety boundary
         </li>
       </ul>
       <div className="mt-3">
         <DataTable
           testId={`${testId}-table`}
-          caption={`Forecast values in ${unit} — same endpoints as plotted`}
+          caption={`The plotted values in ${unit}: what was measured, and where the projection lands`}
           columns={[
-            { header: "Series", render: (r) => r.series },
-            { header: "t (h)", numeric: true, render: (r) => r.h },
+            { header: "Series", rowHeader: true, render: (r) => r.series },
+            { header: "Hours", numeric: true, render: (r) => r.h },
             { header: "Value", numeric: true, render: (r) => r.display },
           ]}
           rows={buildRows(obs, forecast168, baseline168, bound168, unit)}
@@ -241,15 +246,15 @@ function buildRows(
   unit: string,
 ): DriftRow[] {
   const rows: DriftRow[] = obs.map((o) => ({
-    series: `Observed (${o.status})`,
+    series: `Measured at ${o.h} h (${o.status})`,
     h: String(o.h),
     display: `${formatPlain(o.value, 3)} ${unit}`,
   }));
   if (forecast168 !== null)
-    rows.push({ series: "Forecast point", h: "168", display: `${formatPlain(forecast168, 3)} ${unit}` });
+    rows.push({ series: "Projected value", h: "168", display: `${formatPlain(forecast168, 3)} ${unit}` });
   if (bound168 !== null)
-    rows.push({ series: "Conformal upper bound", h: "168", display: `${formatPlain(bound168, 3)} ${unit}` });
+    rows.push({ series: "Top of prediction range", h: "168", display: `${formatPlain(bound168, 3)} ${unit}` });
   if (baseline168 !== null)
-    rows.push({ series: "Linear baseline", h: "168", display: `${formatPlain(baseline168, 3)} ${unit}` });
+    rows.push({ series: "Straight-line comparison", h: "168", display: `${formatPlain(baseline168, 3)} ${unit}` });
   return rows;
 }

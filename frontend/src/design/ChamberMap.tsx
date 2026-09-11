@@ -100,13 +100,13 @@ export function ChamberMap({ cells, selectedId, onSelect, testId }: ChamberMapPr
           <span className="text-sev-severe" aria-hidden="true">
             ✗
           </span>{" "}
-          DPAT signal
+          Needs attention
         </li>
         <li>
           <span className="text-sev-nominal" aria-hidden="true">
             ✓
           </span>{" "}
-          No signal
+          Behaving like its peers
         </li>
         <li>
           <span className="text-accent" aria-hidden="true">

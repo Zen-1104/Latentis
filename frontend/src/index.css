@@ -29,43 +29,62 @@
 
 :root {
   /* Surface tokens (dark default per UI_DESIGN_SYSTEM § 1, 2) */
-  --surface-0: #0B0F14;
-  --surface-1: #11171F;
-  --surface-2: #18202B;
-  --surface-3: #202A38;
-  --border-1: #263241;
-  --border-2: #33445A;
+  --surface-0: #060A14;
+  --surface-1: #0F1829;
+  --surface-2: #17223A;
+  --surface-3: #1F2D4A;
+  --border-1: #293755;
+  --border-2: #3D5480;
 
   /* Typography tokens */
-  --text-1: #E8EEF6;
-  --text-2: #A9B7C8;
-  --text-3: #6F8095;
-  --text-num: #F2F7FD;
+  --text-1: #E8EEFA;
+  --text-2: #A5B4CE;
+  --text-3: #6B7C9C;
+  --text-num: #F7FAFF;
 
   /* Severity tokens */
-  --sev-nominal: #3FA46A;
-  --sev-elevated: #C9A227;
-  --sev-anomaly: #D97A25;
-  --sev-severe: #C8442E;
-  --sev-critical: #8E2B7A;
+  --sev-nominal: #2FD19A;
+  --sev-elevated: #F0C245;
+  --sev-anomaly: #FF9245;
+  --sev-severe: #FF6155;
+  --sev-critical: #D06BC8;
 
   /* Evidence & Guard tokens */
-  --evidence-weak: #5B7C9E;
-  --guard-void: #B0432A;
-  --synthetic: #7A5CC4;
+  --evidence-weak: #5A96B8;
+  --guard-void: #E2705C;
+  --synthetic: #A88BFF;
 
   /* Chart tokens */
-  --baseline: #7C8899;
-  --bound-fill: rgba(63, 164, 106, 0.14);
+  --baseline: #8595AD;
+  --bound-fill: rgba(47, 209, 154, 0.16);
 
-  /* Interaction chrome — achromatic, so focus/hover never reads as a verdict */
-  --accent: #DCE6F4;
-  --accent-fg: #0B0F14;
-  --accent-soft: rgba(220, 230, 244, 0.10);
-  --hover: rgba(220, 230, 244, 0.05);
-  --active: rgba(220, 230, 244, 0.10);
-  --focus-ring: #8FA6C2;
-  --overlay: rgba(5, 8, 11, 0.66);
+  /* Interaction chrome.
+     Previously achromatic on the theory that hue belonged only to severity.
+     In practice that left the product with no colour of its own and no
+     visual answer to "what do I press", so the accent is now a saturated
+     indigo. It stays safe because severity never relies on colour alone
+     (NN-1: every verdict carries a glyph and a word), and indigo is not a
+     severity hue: it sits between the weak-evidence blue and the violet
+     reserved for ABSOLUTE_FAIL. */
+  --accent: #4666F0;
+  --accent-fg: #FFFFFF;
+  --accent-hi: #8CA6FF;
+  --accent-line: rgba(140, 166, 255, 0.42);
+
+  /* Ground layers (see body::before / body::after) */
+  --glow-1: rgba(70, 102, 240, 0.22);
+  --glow-2: rgba(63, 208, 224, 0.10);
+  --grid-line: rgba(140, 166, 255, 0.045);
+  --accent-soft: rgba(110, 140, 255, 0.13);
+  --hover: rgba(124, 152, 255, 0.075);
+  --active: rgba(124, 152, 255, 0.14);
+  --focus-ring: #8CA6FF;
+  --overlay: rgba(3, 6, 14, 0.78);
+
+  /* Analysis / forecast accent — distinct from weak-evidence blue and from
+     the violet reserved for ABSOLUTE_FAIL, so it can never read as a verdict */
+  --info: #3FD0E0;
+  --info-soft: rgba(63, 208, 224, 0.15);
 
   /* Spacing tokens */
   --sp-1: 4px;
@@ -84,9 +103,12 @@
   --r-lg: 8px;
 
   /* Elevation tokens */
-  --sh-drawer: -4px 0 24px rgba(0, 0, 0, 0.4);
-  --sh-popover: 0 4px 16px rgba(0, 0, 0, 0.3);
-  --sh-sticky: 0 1px 0 rgba(0, 0, 0, 0.5);
+  --sh-drawer: -8px 0 40px rgba(0, 0, 0, 0.6);
+  --sh-popover: 0 12px 32px rgba(2, 5, 12, 0.6);
+  --sh-sticky: 0 1px 0 rgba(0, 0, 0, 0.6);
+  --sh-panel: inset 0 1px 0 rgba(160, 180, 255, 0.07), 0 1px 2px rgba(2, 5, 12, 0.5);
+  --sh-accent: 0 1px 0 rgba(255, 255, 255, 0.14) inset, 0 4px 14px -4px rgba(70, 102, 240, 0.55);
+  --sh-card: 0 1px 2px rgba(2, 5, 12, 0.5), 0 8px 24px -12px rgba(2, 5, 12, 0.7);
 
   /* Control geometry. The locked 4px scale has no half-steps, so controls
      declare a height and centre their content instead of padding to size. */
@@ -96,7 +118,7 @@
   --chip-h: 22px;
 
   /* Layout geometry */
-  --w-sidebar: 264px;
+  --w-sidebar: 288px;
   --w-rail: 60px;
   --sz-cell: 36px;
   --h-header: 52px;
@@ -107,42 +129,55 @@
 }
 
 [data-theme="light"] {
-  --surface-0: #F6F8FB;
+  --surface-0: #EEF1F8;
   --surface-1: #FFFFFF;
-  --surface-2: #EDF2F7;
-  --surface-3: #E2E8F0;
-  --border-1: #D2DCE6;
-  --border-2: #B0C0D2;
+  --surface-2: #E4E9F4;
+  --surface-3: #D6DEEE;
+  --border-1: #C6D0E2;
+  --border-2: #9AA9C4;
 
-  --text-1: #0F172A;
-  --text-2: #334155;
-  --text-3: #64748B;
-  --text-num: #090D16;
+  --text-1: #0D1626;
+  --text-2: #41506B;
+  --text-3: #64748E;
+  --text-num: #040811;
 
-  --sev-nominal: #2E7D4F;
-  --sev-elevated: #A17D16;
-  --sev-anomaly: #C0641A;
-  --sev-severe: #B33622;
-  --sev-critical: #7B2169;
+  --sev-nominal: #0B6B47;
+  --sev-elevated: #7A5709;
+  --sev-anomaly: #96430A;
+  --sev-severe: #B5241A;
+  --sev-critical: #8B1D77;
 
-  --evidence-weak: #456482;
-  --guard-void: #9B341D;
-  --synthetic: #694CB5;
+  --evidence-weak: #33607F;
+  --guard-void: #A12814;
+  --synthetic: #5636AE;
 
-  --baseline: #64748B;
-  --bound-fill: rgba(46, 125, 79, 0.14);
+  --baseline: #58677C;
+  --bound-fill: rgba(11, 107, 71, 0.14);
 
-  --accent: #16233A;
+  --accent: #2E4BE0;
   --accent-fg: #FFFFFF;
-  --accent-soft: rgba(22, 35, 58, 0.07);
-  --hover: rgba(15, 23, 42, 0.04);
-  --active: rgba(15, 23, 42, 0.08);
-  --focus-ring: #3B5878;
-  --overlay: rgba(15, 23, 42, 0.40);
+  --accent-hi: #2742C9;
+  --accent-line: rgba(39, 66, 201, 0.38);
 
-  --sh-drawer: -4px 0 24px rgba(15, 23, 42, 0.15);
-  --sh-popover: 0 4px 16px rgba(15, 23, 42, 0.12);
-  --sh-sticky: 0 1px 0 rgba(15, 23, 42, 0.1);
+  /* Ground layers (see body::before / body::after) */
+  --glow-1: rgba(46, 75, 224, 0.09);
+  --glow-2: rgba(6, 118, 138, 0.05);
+  --grid-line: rgba(46, 75, 224, 0.05);
+  --accent-soft: rgba(46, 75, 224, 0.09);
+  --hover: rgba(20, 32, 64, 0.05);
+  --active: rgba(20, 32, 64, 0.09);
+  --focus-ring: #2E4BE0;
+  --overlay: rgba(13, 22, 38, 0.48);
+
+  --info: #06768A;
+  --info-soft: rgba(6, 118, 138, 0.12);
+
+  --sh-drawer: -8px 0 40px rgba(15, 23, 42, 0.16);
+  --sh-popover: 0 12px 32px rgba(15, 23, 42, 0.16);
+  --sh-sticky: 0 1px 0 rgba(15, 23, 42, 0.09);
+  --sh-panel: inset 0 1px 0 rgba(255, 255, 255, 0.9), 0 1px 2px rgba(15, 23, 42, 0.05);
+  --sh-accent: 0 1px 0 rgba(255, 255, 255, 0.22) inset, 0 4px 14px -4px rgba(46, 75, 224, 0.45);
+  --sh-card: 0 1px 2px rgba(15, 23, 42, 0.06), 0 10px 24px -14px rgba(15, 23, 42, 0.22);
 }
 
 /* Very narrow viewports (<=359px): the header wraps to two rows. The token
@@ -172,6 +207,7 @@ html {
 body {
   margin: 0;
   background-color: var(--surface-0);
+  position: relative;
   color: var(--text-1);
   font-family: Inter, "Inter var", "SF Pro Text", system-ui, -apple-system,
     "Segoe UI Variable Text", "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
@@ -183,6 +219,44 @@ body {
   /* Contextual alternates only; no discretionary ligatures in a UI that
      renders part ids and formulas. */
   font-feature-settings: "cv05" 1, "cv08" 1, "calt" 1;
+}
+
+/* The lit ground. `--glow-*` and `--grid-*` are theme-swapped below. */
+body::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      120rem 42rem at 50% -14rem,
+      var(--glow-1) 0%,
+      transparent 68%
+    ),
+    radial-gradient(60rem 30rem at 100% 0%, var(--glow-2) 0%, transparent 70%);
+}
+
+/* Instrument graph paper: present at the threshold of visibility, so the
+   ground has grain instead of being a void. */
+body::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  background-image:
+    linear-gradient(to right, var(--grid-line) 0 1px, transparent 1px 100%),
+    linear-gradient(to bottom, var(--grid-line) 0 1px, transparent 1px 100%);
+  background-size: 32px 32px;
+  mask-image: radial-gradient(90rem 60rem at 50% 0%, #000 0%, transparent 75%);
+  -webkit-mask-image: radial-gradient(90rem 60rem at 50% 0%, #000 0%, transparent 75%);
+}
+
+/* Everything real sits above the two ground layers. */
+#root {
+  position: relative;
+  z-index: 1;
 }
 
 /* Headings are set tight and balanced; the scale is locked, so hierarchy
@@ -204,7 +278,9 @@ p {
 
 /* Visible keyboard focus everywhere (WCAG 2.4.7): one global rule so no
    control depends on a per-component ring class being remembered.
-   Achromatic by charter — a green ring would read as a PASS verdict. */
+   Indigo, matching the interaction accent: it reads as "focused" because it
+   is the same colour as everything else that responds to you, and it is not
+   a severity hue, so it cannot be misread as a verdict. */
 :focus-visible {
   outline: 2px solid var(--focus-ring);
   outline-offset: 2px;
@@ -217,8 +293,8 @@ p {
 }
 
 ::selection {
-  background: var(--accent-soft);
-  color: var(--text-num);
+  background: var(--accent);
+  color: var(--accent-fg);
 }
 
 /* Instrument-grade scrollbars: present enough to grab, quiet enough to
@@ -278,8 +354,21 @@ p {
   font-size: 12px;
   line-height: 16px;
   text-transform: uppercase;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
+}
+
+/* Zero-specificity default so a `text-*` utility composed alongside
+   `.eyebrow` still wins. As a plain `.eyebrow { color }` this rule sat after
+   the utilities layer and silently greyed out every coloured label. */
+:where(.eyebrow) {
   color: var(--text-3);
+}
+
+/* Long-form explanation: a comfortable measure and looser leading, so prose
+   reads as prose rather than as another dense data field. */
+.prose-body {
+  max-width: 72ch;
+  line-height: 1.65;
 }
 
 /* Loading skeleton: a single sweep, no pulsing opacity on every block. */

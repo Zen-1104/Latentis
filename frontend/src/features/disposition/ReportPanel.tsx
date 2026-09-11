@@ -75,7 +75,7 @@ export function ReportPanel({
     <div data-testid="report-panel" className="space-y-4">
       <div className="flex flex-wrap items-end gap-4">
         <div className="space-y-2">
-          <FieldLabel>Format</FieldLabel>
+          <FieldLabel>Report format</FieldLabel>
           <Segmented
             label="Report format"
             value={format}
@@ -97,9 +97,10 @@ export function ReportPanel({
       </div>
 
       <p className="max-w-prose text-caption text-text-3">
-        Scope <span className="font-mono text-text-2">{defaultScope}</span> · target{" "}
-        <span className="font-mono text-text-2">{defaultTarget}</span>. The HTML artifact is
-        self-contained and opens in a new tab.
+        The report covers{" "}
+        <span className="font-mono text-text-2">{defaultTarget}</span> and opens in a new tab. It
+        is self-contained — the evidence, the calculation history and the synthetic-data marking
+        travel inside the document.
       </p>
 
       {error !== null && (
@@ -137,7 +138,7 @@ export function ReportPanel({
                 ? [{ label: "created", value: formatTime(String(report.created_at)) }]
                 : []),
               ...(htmlLen !== null
-                ? [{ label: "html size", value: `${htmlLen} chars` }]
+                ? [{ label: "document size", value: `${htmlLen.toLocaleString()} characters` }]
                 : []),
             ].map((row) => (
               <div key={row.label} className="min-w-0">
@@ -156,10 +157,10 @@ export function ReportPanel({
               className="inline-flex min-h-control-sm items-center rounded-sm font-mono text-caption text-text-num underline decoration-border-2 decoration-dotted underline-offset-4 transition-colors duration-fast hover:decoration-text-num"
               data-testid="report-pdf-link"
             >
-              Open PDF rendering →
+              Download as PDF →
             </a>
             <span className="text-caption text-text-3">
-              503 names the renderer where Chromium is absent
+              PDF export needs a renderer on the server; if it is unavailable the link says so
             </span>
           </div>
         </div>

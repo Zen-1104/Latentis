@@ -10,7 +10,22 @@ export interface EscapeHit {
   observed: number;
   unit: string;
   dpatLimitHigh: number | null;
+  /** Unit of the peer limit, which need not match the reading's unit. */
+  dpatLimitUnit: string | null;
   absoluteLimitHigh: number | null;
+  /**
+   * Unit of the absolute limit. The backend reports it separately from the
+   * reading's unit and the two genuinely differ (e.g. a reading in uA
+   * against a limit in nA), so rendering the limit with the reading's unit
+   * misstates it by a factor of 1000.
+   */
+  absoluteLimitUnit: string | null;
+  /**
+   * Headroom to the absolute limit as the backend computed it. The reading
+   * and the limit can arrive in different units, and the frontend must not
+   * convert between them, so the backend's own comparison is what we show.
+   */
+  absoluteMarginPct: number | null;
 }
 
 interface DistributionMember {
@@ -85,7 +100,10 @@ export async function resolveEscapeSpotlight(
             observed,
             unit: block.unit,
             dpatLimitHigh: block.dpat?.limit_high?.value ?? null,
+            dpatLimitUnit: block.dpat?.limit_high?.unit ?? null,
             absoluteLimitHigh: block.absolute?.limit_high ?? null,
+            absoluteLimitUnit: block.absolute?.limit_unit ?? null,
+            absoluteMarginPct: block.absolute?.margin_pct ?? null,
           };
         }
       } catch {

@@ -5,7 +5,8 @@ import { GuardBanner } from "../../design/GuardBanner";
 import { InvestigationSection } from "../../design/InvestigationSection";
 import { Metric } from "../../design/Metric";
 import { PlainValue } from "../../design/PlainValue";
-import { SeverityChip } from "../../design/SeverityChip";
+import { StatusBadge } from "../../design/ui/StatusBadge";
+import { parameterLabel } from "../../design/vocabulary";
 import { Badge } from "../../design/ui/Badge";
 import { FieldLabel } from "../../design/ui/Panel";
 
@@ -59,32 +60,40 @@ export function ForecastSection({
   if (drift?.bound?.warning !== undefined && drift.bound.warning !== null)
     notices.push(drift.bound.warning);
   if (drift?.refusal_code !== undefined && drift.refusal_code !== null)
-    notices.push(`FORECAST REFUSAL: ${drift.refusal_code} — no trajectory is projected.`);
+    notices.push(
+      `NO PROJECTION MADE: ${drift.refusal_code} — the evidence does not support projecting a trend for this measurement.`,
+    );
   if (drift?.safety_refusal !== undefined && drift.safety_refusal !== null)
-    notices.push(`SAFETY REFUSAL: ${drift.safety_refusal}.`);
+    notices.push(
+      `NO HEADROOM FIGURE: ${drift.safety_refusal} — headroom to the boundary could not be established.`,
+    );
   if (drift?.bound?.bound_finite === false)
     notices.push(
-      `UNBOUNDED: calibration cannot support α=${formatPlain(drift.bound.alpha ?? NaN)} here (attainable α ${drift.bound.attainable_alpha ?? "—"}). No point-estimate-only verdict is drawn.`,
+      `PREDICTION RANGE UNAVAILABLE — there is not enough reference data to calibrate a range at this confidence level (requested ${formatPlain(drift.bound.alpha ?? NaN)}, attainable ${drift.bound.attainable_alpha ?? "unknown"}). No outlook is claimed from the projection alone.`,
     );
 
   return (
-    <InvestigationSection index={index} title={`Forecast & safety · ${param.parameter}`} testId={testId}>
-      <GuardBanner guards={param.guards} notices={notices} scope={`${param.parameter} forecast`} />
+    <InvestigationSection index={index} title={`Where is this heading? · ${parameterLabel(param.parameter)}`} testId={testId}>
+      <GuardBanner guards={param.guards} notices={notices} scope={parameterLabel(param.parameter)} />
       <div className="flex flex-wrap items-center gap-x-5 gap-y-3 rounded-sm border border-border-1 bg-surface-2 px-3 py-3">
         <div className="flex items-center gap-2">
-          <FieldLabel as="span">band</FieldLabel>
-          <SeverityChip value={drift?.band ?? param.band ?? null} />
+          <FieldLabel as="span">Outlook</FieldLabel>
+          <StatusBadge value={drift?.band ?? param.band ?? null} showTechnical withHelp />
         </div>
         {drift?.bound?.mondrian_level !== undefined &&
           drift.bound.mondrian_level !== null &&
-          drift.bound.mondrian_level > 0 && <SeverityChip value="DEGRADED" />}
+          drift.bound.mondrian_level > 0 && <StatusBadge value="DEGRADED" withHelp />}
         {drift?.bound !== undefined && drift.bound !== null && (
           <div className="flex flex-wrap items-center gap-2">
             {drift.bound.mondrian_group !== undefined && drift.bound.mondrian_group !== null && (
               <Badge tone="outline">{drift.bound.mondrian_group}</Badge>
             )}
-            <Badge tone="outline">level {drift.bound.mondrian_level ?? 0}</Badge>
-            <Badge tone="outline">n_cal {drift.bound.n_cal ?? "—"}</Badge>
+            <Badge tone="outline">
+              reference group: {(drift.bound.mondrian_level ?? 0) === 0 ? "exact" : "broadened"}
+            </Badge>
+            <Badge tone="outline">
+              {drift.bound.n_cal ?? "—"} reference points
+            </Badge>
           </div>
         )}
       </div>
@@ -103,11 +112,11 @@ export function ForecastSection({
 
       <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
         <div className="space-y-3 rounded-sm border border-border-1 bg-surface-2 p-3">
-          <FieldLabel>Trajectory</FieldLabel>
-          <KV label="168 h point" value={drift?.point} unit={param.unit} />
-          <KV label="168 h upper bound" value={drift?.bound?.upper_168h} unit={param.unit} />
-          <KV label="linear baseline" value={drift?.baseline_linear} unit={param.unit} />
-          <KV label="q_hat" value={drift?.bound?.q_hat} unit={param.unit} />
+          <FieldLabel>Where it is heading</FieldLabel>
+          <KV label="Projected at 168 h" value={drift?.point} unit={param.unit} />
+          <KV label="Top of prediction range" value={drift?.bound?.upper_168h} unit={param.unit} />
+          <KV label="Straight-line comparison" value={drift?.baseline_linear} unit={param.unit} />
+          <KV label="Calibration allowance" value={drift?.bound?.q_hat} unit={param.unit} />
           {drift?.phi_168 !== undefined && drift.phi_168 !== null && isTraced(drift.phi_168) && (
             <div className="flex flex-wrap items-center gap-x-3 gap-y-2 border-t border-border-1 pt-3 text-body">
               <span className="min-w-label font-mono text-caption text-text-3">Φ(168)</span>
@@ -125,23 +134,23 @@ export function ForecastSection({
         </div>
         <div className="space-y-3 rounded-sm border border-border-1 bg-surface-2 p-3">
           <FieldLabel>
-            Slopes &amp; margin ({drift?.slopes?.slope_unit ?? `${param.unit}/h`})
+            Rate of change and headroom ({drift?.slopes?.slope_unit ?? `${param.unit}/h`})
           </FieldLabel>
-          <KV label="observed early slope" value={drift?.slopes?.observed_early} unit={drift?.slopes?.slope_unit ?? ""} />
-          <KV label="predicted long slope" value={drift?.slopes?.predicted_long} unit={drift?.slopes?.slope_unit ?? ""} />
-          <KV label="safety slope" value={drift?.slopes?.safety_slope} unit={drift?.slopes?.slope_unit ?? ""} />
-          <KV label="slope ratio" value={drift?.slopes?.slope_ratio} unit="ratio" />
-          <KV label="usable margin" value={drift?.margin?.usable_margin} unit={param.unit} />
-          <KV label="predicted margin" value={drift?.margin?.predicted_margin} unit={param.unit} />
+          <KV label="Measured rate so far" value={drift?.slopes?.observed_early} unit={drift?.slopes?.slope_unit ?? ""} />
+          <KV label="Projected rate ahead" value={drift?.slopes?.predicted_long} unit={drift?.slopes?.slope_unit ?? ""} />
+          <KV label="Rate that would reach the boundary" value={drift?.slopes?.safety_slope} unit={drift?.slopes?.slope_unit ?? ""} />
+          <KV label="Projected vs safe rate" value={drift?.slopes?.slope_ratio} unit="ratio" />
+          <KV label="Headroom available" value={drift?.margin?.usable_margin} unit={param.unit} />
+          <KV label="Headroom left at 168 h" value={drift?.margin?.predicted_margin} unit={param.unit} />
         </div>
       </div>
 
       {drift?.band !== undefined && drift.band !== null && (
         <p className="max-w-prose text-body text-text-2">
-          Band <SeverityChip value={drift.band} /> is computed from the{" "}
-          <span className="text-text-num">conformal upper bound</span>, never from the point
-          estimate. The point forecast is displayed for calibration against error metrics —
-          it does not drive the verdict.
+          The outlook <StatusBadge value={drift.band} withHelp /> is set by the{" "}
+          <span className="text-text-num">top of the prediction range</span>, never from the
+          projected value alone. The projection is shown so it can be checked against what
+          actually happens; it does not decide the outcome on its own.
         </p>
       )}
     </InvestigationSection>

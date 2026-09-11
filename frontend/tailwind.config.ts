@@ -23,50 +23,57 @@ const config: Config = {
       transparent: "transparent",
       current: "currentColor",
       surface: {
-        0: "var(--surface-0, #0B0F14)",
-        1: "var(--surface-1, #11171F)",
-        2: "var(--surface-2, #18202B)",
-        3: "var(--surface-3, #202A38)",
+        0: "var(--surface-0, #060A14)",
+        1: "var(--surface-1, #0F1829)",
+        2: "var(--surface-2, #17223A)",
+        3: "var(--surface-3, #1F2D4A)",
       },
       border: {
-        1: "var(--border-1, #263241)",
-        2: "var(--border-2, #33445A)",
+        1: "var(--border-1, #293755)",
+        2: "var(--border-2, #3D5480)",
       },
       text: {
-        1: "var(--text-1, #E8EEF6)",
-        2: "var(--text-2, #A9B7C8)",
-        3: "var(--text-3, #6F8095)",
-        num: "var(--text-num, #F2F7FD)",
+        1: "var(--text-1, #E8EEFA)",
+        2: "var(--text-2, #A5B4CE)",
+        3: "var(--text-3, #6B7C9C)",
+        num: "var(--text-num, #F7FAFF)",
       },
       sev: {
-        nominal: "var(--sev-nominal, #3FA46A)",
-        elevated: "var(--sev-elevated, #C9A227)",
-        anomaly: "var(--sev-anomaly, #D97A25)",
-        severe: "var(--sev-severe, #C8442E)",
-        critical: "var(--sev-critical, #8E2B7A)",
+        nominal: "var(--sev-nominal, #2FD19A)",
+        elevated: "var(--sev-elevated, #F0C245)",
+        anomaly: "var(--sev-anomaly, #FF9245)",
+        severe: "var(--sev-severe, #FF6155)",
+        critical: "var(--sev-critical, #D06BC8)",
       },
       evidence: {
-        weak: "var(--evidence-weak, #5B7C9E)",
+        weak: "var(--evidence-weak, #5A96B8)",
       },
       guard: {
-        void: "var(--guard-void, #B0432A)",
+        void: "var(--guard-void, #E2705C)",
       },
-      synthetic: "var(--synthetic, #7A5CC4)",
-      baseline: "var(--baseline, #7C8899)",
+      synthetic: "var(--synthetic, #A88BFF)",
+      baseline: "var(--baseline, #8595AD)",
       bound: {
-        fill: "var(--bound-fill, rgba(63, 164, 106, 0.14))",
+        fill: "var(--bound-fill, rgba(47, 209, 154, 0.16))",
       },
-      // Interaction chrome. Achromatic on purpose: hue is reserved for
-      // severity, so focus/hover/selection must not borrow a verdict colour.
+      // Interaction chrome: a saturated indigo that is not a severity hue.
+      // `hi` is the brighter variant for accent text on a dark surface.
       accent: {
-        DEFAULT: "var(--accent, #DCE6F4)",
-        fg: "var(--accent-fg, #0B0F14)",
-        soft: "var(--accent-soft, rgba(220, 230, 244, 0.10))",
+        DEFAULT: "var(--accent, #4666F0)",
+        fg: "var(--accent-fg, #FFFFFF)",
+        hi: "var(--accent-hi, #8CA6FF)",
+        line: "var(--accent-line, rgba(140, 166, 255, 0.42))",
+        soft: "var(--accent-soft, rgba(110, 140, 255, 0.13))",
       },
-      hover: "var(--hover, rgba(220, 230, 244, 0.05))",
-      active: "var(--active, rgba(220, 230, 244, 0.10))",
-      focus: "var(--focus-ring, #8FA6C2)",
-      overlay: "var(--overlay, rgba(5, 8, 11, 0.66))",
+      hover: "var(--hover, rgba(124, 152, 255, 0.075))",
+      active: "var(--active, rgba(124, 152, 255, 0.14))",
+      focus: "var(--focus-ring, #8CA6FF)",
+      // Analysis / forecast. Not a severity: never used for a verdict.
+      info: {
+        DEFAULT: "var(--info, #3FD0E0)",
+        soft: "var(--info-soft, rgba(63, 208, 224, 0.15))",
+      },
+      overlay: "var(--overlay, rgba(3, 6, 14, 0.78))",
     },
     spacing: {
       0: "0px",
@@ -130,12 +137,20 @@ const config: Config = {
     },
     boxShadow: {
       none: "none",
-      drawer: "var(--sh-drawer, -4px 0 24px rgba(0, 0, 0, 0.4))",
-      popover: "var(--sh-popover, 0 4px 16px rgba(0, 0, 0, 0.3))",
-      sticky: "var(--sh-sticky, 0 1px 0 rgba(0, 0, 0, 0.5))",
+      drawer: "var(--sh-drawer, -8px 0 40px rgba(0, 0, 0, 0.6))",
+      popover: "var(--sh-popover, 0 12px 32px rgba(2, 5, 12, 0.6))",
+      sticky: "var(--sh-sticky, 0 1px 0 rgba(0, 0, 0, 0.6))",
+      // A panel reads as a lit surface: a hairline highlight along its top
+      // edge plus a close contact shadow.
+      panel: "var(--sh-panel, inset 0 1px 0 rgba(160, 180, 255, 0.07), 0 1px 2px rgba(2, 5, 12, 0.5))",
+      card: "var(--sh-card, 0 1px 2px rgba(2, 5, 12, 0.5), 0 8px 24px -12px rgba(2, 5, 12, 0.7))",
+      // The primary action carries a coloured glow, so "what do I press" has
+      // a visual answer instead of relying on position alone.
+      accent: "var(--sh-accent, 0 1px 0 rgba(255, 255, 255, 0.14) inset, 0 4px 14px -4px rgba(70, 102, 240, 0.55))",
     },
     extend: {
       width: {
+        label: "148px",
         "1/2": "50%",
         "1/3": "33.333333%",
         "2/3": "66.666667%",
@@ -159,6 +174,7 @@ const config: Config = {
         "control-lg": "var(--control-h-lg, 40px)",
         header: "var(--h-header, 52px)",
         bar: "10px",
+        "bar-thin": "6px",
         hair: "1px",
       },
       minHeight: {

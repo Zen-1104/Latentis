@@ -51,7 +51,7 @@ export function StateBlock({
     );
   }
   return (
-    <div data-testid={`${testId}-ready`} className="animate-fade-in space-y-6">
+    <div data-testid={`${testId}-ready`} className="animate-fade-in space-y-8">
       {children}
     </div>
   );

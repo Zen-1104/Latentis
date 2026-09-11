@@ -23,7 +23,7 @@ export function RiskBreakdown({ risk, testId }: RiskBreakdownProps): React.JSX.E
     <div data-testid={testId} className="space-y-2">
       {risk.risk_index !== undefined && risk.risk_index !== null && isTraced(risk.risk_index) && (
         <div className="rounded-sm border border-border-1 bg-surface-2 p-3">
-          <FieldLabel>risk_index</FieldLabel>
+          <FieldLabel>Risk score</FieldLabel>
           <div className="mt-1">
             <Metric
               traced={risk.risk_index}
@@ -66,7 +66,11 @@ export function RiskBreakdown({ risk, testId }: RiskBreakdownProps): React.JSX.E
           </p>
         </div>
       )}
-      <p className="max-w-prose text-caption italic text-text-3">
+      <p className="max-w-prose text-caption text-text-3">
+        This score decides the order of the worklist, nothing more — it cannot move a component
+        across a verdict boundary.
+      </p>
+      <p className="max-w-prose font-mono text-caption text-text-3">
         {risk.ordinal_note ?? "risk_index orders the worklist; it does not decide the band"}
       </p>
     </div>

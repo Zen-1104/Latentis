@@ -23,6 +23,7 @@ import type {
   SyntheticToken,
   ChartColorToken,
   InteractionToken,
+  InfoToken,
   Theme,
 } from "./types";
 
@@ -32,45 +33,51 @@ import type {
  */
 export const DARK_COLORS: Readonly<Record<ColorToken, string>> = Object.freeze({
   // Surfaces
-  "surface-0": "#0B0F14",
-  "surface-1": "#11171F",
-  "surface-2": "#18202B",
-  "surface-3": "#202A38",
+  "surface-0": "#060A14",
+  "surface-1": "#0F1829",
+  "surface-2": "#17223A",
+  "surface-3": "#1F2D4A",
 
   // Borders
-  "border-1": "#263241",
-  "border-2": "#33445A",
+  "border-1": "#293755",
+  "border-2": "#3D5480",
 
   // Typography text
-  "text-1": "#E8EEF6",
-  "text-2": "#A9B7C8",
-  "text-3": "#6F8095",
-  "text-num": "#F2F7FD",
+  "text-1": "#E8EEFA",
+  "text-2": "#A5B4CE",
+  "text-3": "#6B7C9C",
+  "text-num": "#F7FAFF",
 
   // Semantic Severities
-  "sev-nominal": "#3FA46A",
-  "sev-elevated": "#C9A227",
-  "sev-anomaly": "#D97A25",
-  "sev-severe": "#C8442E",
-  "sev-critical": "#8E2B7A", // Violet hue: distinct from lot-relative anomaly
+  "sev-nominal": "#2FD19A",
+  "sev-elevated": "#F0C245",
+  "sev-anomaly": "#FF9245",
+  "sev-severe": "#FF6155",
+  "sev-critical": "#D06BC8", // Violet hue: distinct from lot-relative anomaly
 
   // Evidence & Guard
-  "evidence-weak": "#5B7C9E", // Blue family: data quality / reduced power / censored
-  "guard-void": "#B0432A",
-  "synthetic": "#7A5CC4", // Dedicated synthetic badge color
+  "evidence-weak": "#5A96B8", // Blue family: data quality / reduced power / censored
+  "guard-void": "#E2705C",
+  "synthetic": "#A88BFF", // Dedicated synthetic badge color
 
   // Chart tokens
-  "baseline": "#7C8899",
-  "bound-fill": "rgba(63, 164, 106, 0.14)",
+  "baseline": "#8595AD",
+  "bound-fill": "rgba(47, 209, 154, 0.16)",
 
-  // Interaction chrome — achromatic by charter (see InteractionToken).
-  "accent": "#DCE6F4",
-  "accent-fg": "#0B0F14",
-  "accent-soft": "rgba(220, 230, 244, 0.10)",
-  "hover": "rgba(220, 230, 244, 0.05)",
-  "active": "rgba(220, 230, 244, 0.10)",
-  "focus-ring": "#8FA6C2",
-  "overlay": "rgba(5, 8, 11, 0.66)",
+  // Interaction chrome — saturated indigo, outside every severity hue.
+  "accent": "#4666F0",
+  "accent-fg": "#FFFFFF",
+  "accent-hi": "#8CA6FF",
+  "accent-line": "rgba(140, 166, 255, 0.42)",
+  "accent-soft": "rgba(110, 140, 255, 0.13)",
+  "hover": "rgba(124, 152, 255, 0.075)",
+  "active": "rgba(124, 152, 255, 0.14)",
+  "focus-ring": "#8CA6FF",
+  "overlay": "rgba(3, 6, 14, 0.78)",
+
+  // Analysis / forecast accent (hue ~189; 6.7:1 on surface-0).
+  "info": "#3FD0E0",
+  "info-soft": "rgba(63, 208, 224, 0.15)",
 });
 
 /**
@@ -79,45 +86,51 @@ export const DARK_COLORS: Readonly<Record<ColorToken, string>> = Object.freeze({
  */
 export const LIGHT_COLORS: Readonly<Record<ColorToken, string>> = Object.freeze({
   // Surfaces
-  "surface-0": "#F6F8FB",
+  "surface-0": "#EEF1F8",
   "surface-1": "#FFFFFF",
-  "surface-2": "#EDF2F7",
-  "surface-3": "#E2E8F0",
+  "surface-2": "#E4E9F4",
+  "surface-3": "#D6DEEE",
 
   // Borders
-  "border-1": "#D2DCE6",
-  "border-2": "#B0C0D2",
+  "border-1": "#C6D0E2",
+  "border-2": "#9AA9C4",
 
   // Typography text
-  "text-1": "#0F172A",
-  "text-2": "#334155",
-  "text-3": "#64748B",
-  "text-num": "#090D16",
+  "text-1": "#0D1626",
+  "text-2": "#41506B",
+  "text-3": "#64748E",
+  "text-num": "#040811",
 
   // Semantic Severities
-  "sev-nominal": "#2E7D4F",
-  "sev-elevated": "#A17D16",
-  "sev-anomaly": "#C0641A",
-  "sev-severe": "#B33622",
-  "sev-critical": "#7B2169",
+  "sev-nominal": "#0B6B47",
+  "sev-elevated": "#7A5709",
+  "sev-anomaly": "#96430A",
+  "sev-severe": "#B5241A",
+  "sev-critical": "#8B1D77",
 
   // Evidence & Guard
-  "evidence-weak": "#456482",
-  "guard-void": "#9B341D",
-  "synthetic": "#694CB5",
+  "evidence-weak": "#33607F",
+  "guard-void": "#A12814",
+  "synthetic": "#5636AE",
 
   // Chart tokens
-  "baseline": "#64748B",
-  "bound-fill": "rgba(46, 125, 79, 0.14)",
+  "baseline": "#58677C",
+  "bound-fill": "rgba(11, 107, 71, 0.14)",
 
-  // Interaction chrome — achromatic by charter (see InteractionToken).
-  "accent": "#16233A",
+  // Interaction chrome — saturated indigo, outside every severity hue.
+  "accent": "#2E4BE0",
   "accent-fg": "#FFFFFF",
-  "accent-soft": "rgba(22, 35, 58, 0.07)",
-  "hover": "rgba(15, 23, 42, 0.04)",
-  "active": "rgba(15, 23, 42, 0.08)",
-  "focus-ring": "#3B5878",
-  "overlay": "rgba(15, 23, 42, 0.40)",
+  "accent-hi": "#2742C9",
+  "accent-line": "rgba(39, 66, 201, 0.38)",
+  "accent-soft": "rgba(46, 75, 224, 0.09)",
+  "hover": "rgba(20, 32, 64, 0.05)",
+  "active": "rgba(20, 32, 64, 0.09)",
+  "focus-ring": "#2E4BE0",
+  "overlay": "rgba(13, 22, 38, 0.48)",
+
+  // Analysis / forecast accent (hue ~189; 5.6:1 on surface-0).
+  "info": "#06768A",
+  "info-soft": "rgba(6, 118, 138, 0.12)",
 });
 
 /** CSS variable names for each token */
@@ -144,11 +157,15 @@ export const COLOR_CSS_VARS: Readonly<Record<ColorToken, string>> = Object.freez
   "bound-fill": "--bound-fill",
   "accent": "--accent",
   "accent-fg": "--accent-fg",
+  "accent-hi": "--accent-hi",
+  "accent-line": "--accent-line",
   "accent-soft": "--accent-soft",
   "hover": "--hover",
   "active": "--active",
   "focus-ring": "--focus-ring",
   "overlay": "--overlay",
+  "info": "--info",
+  "info-soft": "--info-soft",
 });
 
 export const SURFACE_TOKENS: readonly SurfaceToken[] = [
@@ -183,9 +200,13 @@ export const GUARD_TOKENS: readonly GuardToken[] = ["guard-void"];
 export const SYNTHETIC_TOKENS: readonly SyntheticToken[] = ["synthetic"];
 export const CHART_COLOR_TOKENS: readonly ChartColorToken[] = ["baseline", "bound-fill"];
 
+export const INFO_TOKENS: readonly InfoToken[] = ["info", "info-soft"];
+
 export const INTERACTION_TOKENS: readonly InteractionToken[] = [
   "accent",
   "accent-fg",
+  "accent-hi",
+  "accent-line",
   "accent-soft",
   "hover",
   "active",

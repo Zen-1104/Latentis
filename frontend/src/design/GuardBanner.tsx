@@ -31,32 +31,42 @@ export function GuardBanner({
 }: GuardBannerProps): React.JSX.Element | null {
   const items: string[] = [...notices];
   if (guards?.reduced_power === true)
-    items.push("REDUCED POWER — small cohort: MAD estimator with finite-sample correction in force.");
+    items.push(
+      "SMALL PEER GROUP — this lot has few comparable parts, so the peer comparison is less sensitive than usual.",
+    );
   if (guards?.insufficient_data === true)
-    items.push("INSUFFICIENT EVIDENCE — a required read-point is missing; no value was imputed.");
+    items.push(
+      "A READING IS MISSING — a measurement this result needs was not taken, and no value was filled in for it.",
+    );
   if (guards?.censored === true)
-    items.push("CENSORED READINGS — bounds consumed conservatively, never coerced to zero.");
+    items.push(
+      "SOME READINGS SAT AT THE INSTRUMENT LIMIT — these were treated cautiously rather than as if the true value were zero.",
+    );
   if (
     guards !== null &&
     guards !== undefined &&
     guards.exchangeability !== undefined &&
     guards.exchangeability !== "PASS"
   )
-    items.push(`EXCHANGEABILITY GUARD: ${guards.exchangeability} — calibration comparability is threatened.`);
+    items.push(
+      `REFERENCE DATA MAY NO LONGER COMPARE — the check on whether it is still a fair basis reported ${guards.exchangeability}.`,
+    );
   if (
     guards?.guarantee_status !== undefined &&
     guards.guarantee_status !== null &&
     guards.guarantee_status !== "VALID"
   )
     items.push(
-      `GUARANTEE STATUS: ${guards.guarantee_status} — the conformal guarantee does not hold here.`,
+      `PREDICTION RANGE IS NOT RELIABLE HERE — the conditions it depends on do not hold (${guards.guarantee_status}).`,
     );
   if (
     guards?.mondrian_level !== undefined &&
     guards.mondrian_level !== null &&
     guards.mondrian_level > 0
   )
-    items.push(`MONDRIAN FALLBACK LEVEL ${guards.mondrian_level} — bound is wider and labelled.`);
+    items.push(
+      `A BROADER REFERENCE GROUP WAS USED — this component’s exact group had too little data, so the prediction range is wider than usual (fallback level ${guards.mondrian_level}).`,
+    );
   if (items.length === 0) return null;
 
   const voided =

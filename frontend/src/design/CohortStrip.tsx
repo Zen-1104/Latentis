@@ -24,7 +24,7 @@ const H = 132;
 const PAD = 44;
 
 /**
- * Strip plot of cohort values with DPAT limits as rules and the part under
+ * Strip plot of lot values with the peer limits as rules and the part under
  * test marked. Member positions are backend display aggregation; limits and
  * median are traced values passed as plain endpoints for plotting.
  */
@@ -56,7 +56,7 @@ export function CohortStrip({
         viewBox={`0 0 ${W} ${H}`}
         className="w-full rounded-md border border-border-1 bg-surface-1"
         role="img"
-        aria-label={`Cohort strip plot in ${unit}. ${members.length} sibling parts, DPAT limits drawn.`}
+        aria-label={`Distribution of ${members.length} components in this lot, in ${unit}, with the peer limits drawn. The table below lists the same values.`}
       >
         {median !== null && Number.isFinite(median) && (
           <line
@@ -110,7 +110,7 @@ export function CohortStrip({
               stroke={isFocus ? "var(--text-num)" : "none"}
               strokeWidth={isFocus ? 2 : 0}
             >
-              <title>{`${m.component_id}: ${formatPlain(m.value)} ${unit}, z ${formatPlain(m.z)}${m.flagged ? ", DPAT signal" : ""}`}</title>
+              <title>{`${m.component_id}: ${formatPlain(m.value)} ${unit}, ${formatPlain(m.z)} σ from its peers${m.flagged ? " — needs attention" : ""}`}</title>
             </circle>
           );
         })}
@@ -133,19 +133,19 @@ export function CohortStrip({
           <span className="text-sev-nominal" aria-hidden="true">
             ──
           </span>{" "}
-          DPAT limits
+          Peer limits
         </li>
         <li>
           <span className="text-sev-critical" aria-hidden="true">
             ──
           </span>{" "}
-          Absolute limit
+          Fixed limit
         </li>
         <li>
           <span className="text-sev-severe" aria-hidden="true">
             ●
           </span>{" "}
-          DPAT signal
+          Needs attention
         </li>
         <li>
           <span className="text-text-num" aria-hidden="true">
@@ -167,16 +167,16 @@ export function CohortStrip({
               render: (r) => <span className="font-mono text-text-num">{r.component_id}</span>,
             },
             {
-              header: "Value",
+              header: "Observed",
               numeric: true,
               sortValue: (r) => r.value,
               render: (r) => formatPlain(r.value, 3),
             },
             {
-              header: "z",
+              header: "Distance from peers",
               numeric: true,
               sortValue: (r) => r.z,
-              render: (r) => formatPlain(r.z),
+              render: (r) => `${formatPlain(r.z)} σ`,
             },
             {
               header: "Signal",
@@ -184,7 +184,7 @@ export function CohortStrip({
               render: (r) =>
                 r.flagged ? (
                   <span className="text-sev-severe">
-                    <span aria-hidden="true">✗</span> DPAT signal
+                    <span aria-hidden="true">✗</span> yes
                   </span>
                 ) : (
                   <span className="text-text-3">—</span>

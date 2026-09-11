@@ -81,7 +81,7 @@ export function LedgerDrawer({ traced, title, onClose }: LedgerDrawerProps): Rea
       >
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <FieldLabel>Show the arithmetic</FieldLabel>
+            <FieldLabel>How was this number calculated?</FieldLabel>
             <h2 className="mt-2 text-h2 font-semibold text-text-1">{title}</h2>
             <p className="mt-1 break-all font-mono text-caption text-text-3">
               {traced.formula_id}
@@ -93,7 +93,7 @@ export function LedgerDrawer({ traced, title, onClose }: LedgerDrawerProps): Rea
         </div>
 
         <div className="mt-6 rounded-md border border-border-1 bg-surface-2 p-4">
-          <FieldLabel>Value</FieldLabel>
+          <FieldLabel>Final value</FieldLabel>
           <div className="mt-2 font-mono text-num-lg text-text-num tnum" data-tabular-nums="true">
             {formatTraced(traced)}{" "}
             <span className="text-num font-mono text-text-2">{traced.unit}</span>
@@ -104,11 +104,11 @@ export function LedgerDrawer({ traced, title, onClose }: LedgerDrawerProps): Rea
         </div>
 
         <div className="mt-6">
-          <h3 className="eyebrow">Operands</h3>
+          <h3 className="eyebrow">Values that went in</h3>
           <table className="mt-2 w-full text-body">
             <thead>
               <tr className="text-left text-caption text-text-3 font-mono">
-                <th className="py-1 pr-3 font-medium">Name</th>
+                <th className="py-1 pr-3 font-medium">Input</th>
                 <th className="py-1 pr-3 font-medium">Value</th>
               </tr>
             </thead>
@@ -124,7 +124,7 @@ export function LedgerDrawer({ traced, title, onClose }: LedgerDrawerProps): Rea
               {inputRows.length === 0 && (
                 <tr>
                   <td className="py-1 text-text-3" colSpan={2}>
-                    No operands — root observation.
+                    None — this is a direct measurement, not a calculated value.
                   </td>
                 </tr>
               )}
@@ -134,7 +134,7 @@ export function LedgerDrawer({ traced, title, onClose }: LedgerDrawerProps): Rea
 
         {paramRows.length > 0 && (
           <div className="mt-6">
-            <h3 className="eyebrow">Parameters in force</h3>
+            <h3 className="eyebrow">Settings that applied</h3>
             <table className="mt-2 w-full text-body">
               <tbody>
                 {paramRows.map(([name, v]) => (
@@ -151,7 +151,7 @@ export function LedgerDrawer({ traced, title, onClose }: LedgerDrawerProps): Rea
         )}
 
         <div className="mt-6 space-y-2 rounded-md border border-border-1 bg-surface-2 p-4 font-mono text-body">
-          <FieldLabel>Registry &amp; provenance</FieldLabel>
+          <FieldLabel>Where this calculation comes from</FieldLabel>
           {entry !== null && (
             <>
               {entry.description !== undefined && entry.description !== "" && (
@@ -165,9 +165,9 @@ export function LedgerDrawer({ traced, title, onClose }: LedgerDrawerProps): Rea
               </div>
             </>
           )}
-          {entry === null && !entryError && <div className="text-text-3">Loading registry entry…</div>}
+          {entry === null && !entryError && <div className="text-text-3">Loading the formula record…</div>}
           {entryError && (
-            <div className="text-text-3">Registry entry unavailable — payload values above stand.</div>
+            <div className="text-text-3">The formula record could not be loaded. The values above still stand — they came with the result itself.</div>
           )}
           <div className="text-text-2">
             model_version: <span className="text-text-num">{traced.model_version ?? "—"}</span>

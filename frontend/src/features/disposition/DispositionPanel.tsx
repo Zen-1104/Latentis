@@ -2,7 +2,8 @@ import { useState } from "react";
 import { apiPost, ApiError } from "../../api/client";
 import type { DispositionRecord } from "../../api/generated/client";
 import { formatTime } from "../../format";
-import { SeverityChip } from "../../design/SeverityChip";
+import { StatusBadge } from "../../design/ui/StatusBadge";
+import { VERDICTS } from "../../design/vocabulary";
 import { Button } from "../../design/ui/Button";
 import { Field, TextInput } from "../../design/ui/Field";
 import { Notice } from "../../design/ui/Feedback";
@@ -12,9 +13,16 @@ import { Segmented } from "../../design/ui/Segmented";
 type Action = "CONCUR" | "OVERRIDE" | "DEFER";
 
 const ACTION_HINTS: Readonly<Record<Action, string>> = {
-  CONCUR: "Accept the system recommendation as issued.",
-  OVERRIDE: "Depart from the recommendation. A reason is mandatory (FR-409).",
-  DEFER: "Take no decision yet; the part stays under investigation.",
+  CONCUR: VERDICTS.CONCUR?.explain ?? "",
+  OVERRIDE: VERDICTS.OVERRIDE?.explain ?? "",
+  DEFER: VERDICTS.DEFER?.explain ?? "",
+};
+
+/** Human wording on the buttons, with the recorded enum beneath. */
+const ACTION_LABELS: Readonly<Record<Action, string>> = {
+  CONCUR: "Agree",
+  OVERRIDE: "Override",
+  DEFER: "Defer",
 };
 
 /**
@@ -68,9 +76,9 @@ export function DispositionPanel({
   return (
     <div data-testid="disposition-panel" className="space-y-4">
       <div className="rounded-sm border border-border-1 bg-surface-2 p-3">
-        <FieldLabel>System recommendation</FieldLabel>
+        <FieldLabel>What LATENTIS recommends</FieldLabel>
         <div className="mt-2 flex flex-wrap items-center gap-3">
-          <SeverityChip value={recommendation} />
+          <StatusBadge value={recommendation} size="md" showTechnical withHelp />
           {trigger !== "" && (
             <p className="min-w-0 flex-1 text-caption text-text-3">{trigger}</p>
           )}
@@ -78,7 +86,7 @@ export function DispositionPanel({
       </div>
 
       <div className="space-y-2">
-        <FieldLabel>Your decision</FieldLabel>
+        <FieldLabel>Your decision as the engineer</FieldLabel>
         <Segmented
           label="Disposition action"
           value={action}
@@ -88,7 +96,12 @@ export function DispositionPanel({
           }}
           items={(["CONCUR", "OVERRIDE", "DEFER"] as Action[]).map((a) => ({
             value: a,
-            label: a,
+            label: (
+              <span className="flex items-baseline gap-2">
+                <span>{ACTION_LABELS[a]}</span>
+                <span className="text-caption opacity-70">{a}</span>
+              </span>
+            ),
             hint: ACTION_HINTS[a],
             testId: `disposition-${a.toLowerCase()}`,
           }))}
@@ -151,7 +164,7 @@ export function DispositionPanel({
         data-testid="disposition-submit"
         className="[@media(max-width:400px)]:w-full"
       >
-        {sending ? "Recording…" : "Record disposition"}
+        {sending ? "Recording…" : "Record decision"}
       </Button>
 
       {receipt !== null && (
@@ -164,7 +177,7 @@ export function DispositionPanel({
               ✓
             </span>
             <h3 className="font-mono text-caption font-semibold uppercase tracking-wider text-sev-nominal">
-              Disposition recorded (append-only)
+              Decision recorded
             </h3>
           </div>
           <dl className="grid grid-cols-1 gap-x-6 gap-y-3 p-3 sm:grid-cols-2">
@@ -183,9 +196,9 @@ export function DispositionPanel({
               </div>
             ))}
           </dl>
-          <p className="border-t border-border-1 px-3 py-2 text-caption text-text-3">
-            The exact system output shown above was snapshotted with this record (P4 decision
-            provenance).
+          <p className="max-w-prose border-t border-border-1 px-3 py-2 text-caption text-text-3">
+            The exact system output you were shown has been stored alongside this decision, so a
+            later reviewer can see precisely what was on screen when it was made.
           </p>
         </div>
       )}

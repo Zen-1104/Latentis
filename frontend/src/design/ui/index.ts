@@ -16,3 +16,7 @@ export { Tooltip, InfoHint } from "./Tooltip";
 export { Skeleton, SkeletonPanel, EmptyState, Notice } from "./Feedback";
 export { Badge, StatusDot, StatTile, type BadgeTone } from "./Badge";
 export { Field, TextInput, Select, SearchInput } from "./Field";
+export { StatusBadge, VerdictContrast, type StatusSize } from "./StatusBadge";
+export { TechnicalDetails, SectionHeader, KeyTakeaway, ChartFrame } from "./Disclosure";
+export { TermHelp, MetricCard, StatStrip, InsightCard, ChartLegend } from "./Cards";
+export { Breadcrumbs, type Crumb } from "./Breadcrumbs";

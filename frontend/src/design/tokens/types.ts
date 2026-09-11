@@ -50,15 +50,35 @@ export type ChartColorToken =
   | "bound-fill";
 
 /**
+ * Analysis / information tokens.
+ *
+ * A distinct teal (hue ~189) for forecast, analysis and informational
+ * chrome. Deliberately NOT the weak-evidence blue (hue ~210, desaturated
+ * slate) and NOT the violet reserved for ABSOLUTE_FAIL: an informational
+ * accent must never be mistakable for a verdict. Before this existed the
+ * forecast line was drawn in `--sev-nominal`, so a projection was coloured
+ * exactly like a PASS.
+ */
+export type InfoToken = "info" | "info-soft";
+
+/**
  * Interaction-chrome tokens.
  *
- * Deliberately achromatic: the charter reserves hue for severity, so
- * "this is interactive / focused / selected" must never borrow a verdict
- * colour. A green focus ring reads as PASS; a neutral one reads as focus.
+ * A saturated indigo, deliberately outside every severity hue: it sits
+ * between the weak-evidence blue (190-240) and the violet reserved for
+ * ABSOLUTE_FAIL (290-330), so "interactive / focused / selected" cannot be
+ * read as a verdict. Severity additionally never relies on colour alone
+ * (NN-1), which is what makes a coloured accent safe here.
+ *
+ * `accent` is the fill and carries `accent-fg` text at >= 4.5:1; `accent-hi`
+ * is the brighter variant used when the accent itself has to be legible
+ * *text* on a dark surface. One value cannot satisfy both.
  */
 export type InteractionToken =
   | "accent"
   | "accent-fg"
+  | "accent-hi"
+  | "accent-line"
   | "accent-soft"
   | "hover"
   | "active"
@@ -75,7 +95,8 @@ export type ColorToken =
   | GuardToken
   | SyntheticToken
   | ChartColorToken
-  | InteractionToken;
+  | InteractionToken
+  | InfoToken;
 
 /** 4px base spacing scale tokens */
 export type SpacingToken =
@@ -104,7 +125,13 @@ export type RadiusSize = "sm" | "md" | "lg";
  * for sticky table headers, which need a hairline to separate from the
  * rows scrolling beneath them.
  */
-export type ShadowToken = "sh-drawer" | "sh-popover" | "sh-sticky";
+export type ShadowToken =
+  | "sh-drawer"
+  | "sh-popover"
+  | "sh-sticky"
+  | "sh-panel"
+  | "sh-card"
+  | "sh-accent";
 
 /** Font size scale tokens */
 export type FontSizeToken =
@@ -142,10 +169,17 @@ export type VerdictString =
   | "FAIL"
   | "ABSOLUTE_FAIL";
 
-/** Fixed glyph set per UI_DESIGN_SYSTEM § 8 */
+/**
+ * Fixed glyph set per UI_DESIGN_SYSTEM § 8.
+ *
+ * `△` (hollow) separates ELEVATED from ANOMALOUS (`▲`, solid). They shared
+ * `▲` before, which left colour as the only difference between two distinct
+ * severities — the exact failure NN-1 exists to prevent.
+ */
 export type GlyphSymbol =
   | "✓"
   | "✗"
+  | "△"
   | "▲"
   | "▼"
   | "◆"
@@ -158,6 +192,7 @@ export type GlyphSymbol =
 export type GlyphName =
   | "PASS"
   | "FAIL"
+  | "ELEVATED"
   | "RISING"
   | "FALLING"
   | "ABSOLUTE_FAIL"

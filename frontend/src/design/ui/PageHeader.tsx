@@ -1,7 +1,16 @@
 import type { ReactNode } from "react";
+import { Breadcrumbs, type Crumb } from "./Breadcrumbs";
 import { cn } from "./cn";
 
 interface PageHeaderProps {
+  /**
+   * The question this surface answers, in the reader's words. Leads the
+   * header so the purpose of the screen is the first thing read — the
+   * surface code and route are audit metadata, not an introduction.
+   */
+  question?: string;
+  /** Contextual trail above the title (Phase 22). */
+  crumbs?: Crumb[];
   /** Surface code and route, e.g. "S3 · #/components/C-L-2026-002-0049". */
   eyebrow: string;
   title: ReactNode;
@@ -24,6 +33,8 @@ interface PageHeaderProps {
  * what made the surfaces feel like different applications.
  */
 export function PageHeader({
+  question,
+  crumbs,
   eyebrow,
   title,
   description,
@@ -35,14 +46,21 @@ export function PageHeader({
 }: PageHeaderProps): React.JSX.Element {
   return (
     <header className={cn("space-y-3", className)}>
+      {crumbs !== undefined && crumbs.length > 0 && <Breadcrumbs items={crumbs} />}
       <div className="flex flex-wrap items-start justify-between gap-x-6 gap-y-3">
         <div className="min-w-0 space-y-2">
-          <p className="eyebrow break-all">{eyebrow}</p>
+          {question !== undefined ? (
+            <p className="eyebrow font-semibold text-info">{question}</p>
+          ) : (
+            <p className="eyebrow break-all">{eyebrow}</p>
+          )}
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
             <h1
               className={cn(
-                "text-h1 font-semibold",
-                monoTitle ? "break-all font-mono text-text-num" : "text-text-1",
+                "text-display font-semibold leading-tight",
+                monoTitle
+                  ? "break-all font-mono tracking-tight text-text-num"
+                  : "tracking-tight text-text-1",
               )}
             >
               {title}
@@ -55,7 +73,10 @@ export function PageHeader({
         )}
       </div>
       {description !== undefined && (
-        <p className="max-w-prose text-body text-text-2">{description}</p>
+        <p className="max-w-prose text-body leading-relaxed text-text-2">{description}</p>
+      )}
+      {question !== undefined && (
+        <p className="break-all font-mono text-caption text-text-3">{eyebrow}</p>
       )}
       {meta}
     </header>

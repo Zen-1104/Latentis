@@ -25,6 +25,7 @@ import type {
 export const GLYPHS: Readonly<Record<GlyphName, GlyphSymbol>> = Object.freeze({
   PASS: "✓",
   FAIL: "✗",
+  ELEVATED: "△",
   RISING: "▲",
   FALLING: "▼",
   ABSOLUTE_FAIL: "◆",
@@ -38,7 +39,8 @@ export const GLYPHS: Readonly<Record<GlyphName, GlyphSymbol>> = Object.freeze({
 export const GLYPH_LABELS: Readonly<Record<GlyphSymbol, string>> = Object.freeze({
   "✓": "Pass",
   "✗": "Fail",
-  "▲": "Rising trend / Elevated",
+  "△": "Slightly unusual",
+  "▲": "Unusual / rising trend",
   "▼": "Falling trend",
   "◆": "Absolute limit failure",
   "!": "Guard warning",
@@ -68,8 +70,8 @@ export const SEVERITY_CONFIGS: Readonly<Record<SeverityLevel, SeverityConfig>> =
   elevated: {
     level: "elevated",
     label: "ELEVATED",
-    glyph: "▲",
-    altGlyphs: ["▲"],
+    glyph: "△",
+    altGlyphs: ["△"],
     token: "sev-elevated",
     cssVar: "--sev-elevated",
     description: "ELEVATED / WATCH",

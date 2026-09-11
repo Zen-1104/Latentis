@@ -15,10 +15,19 @@ import { InvestigationSection } from "../../design/InvestigationSection";
 import { Metric } from "../../design/Metric";
 import { ProvenanceHeader } from "../../design/ProvenanceHeader";
 import { RiskBreakdown } from "../../design/RiskBreakdown";
-import { SeverityChip } from "../../design/SeverityChip";
 import { StateBlock } from "../../design/StateBlock";
 import { VerdictCard } from "../../design/VerdictCard";
 import { Badge } from "../../design/ui/Badge";
+import { cn } from "../../design/ui/cn";
+import { InsightCard } from "../../design/ui/Cards";
+import { TechnicalDetails } from "../../design/ui/Disclosure";
+import { StatusBadge, VerdictContrast } from "../../design/ui/StatusBadge";
+import {
+  SURFACE_COPY,
+  parameterLabel,
+  parameterTerm,
+  verdictLabel,
+} from "../../design/vocabulary";
 import { Button } from "../../design/ui/Button";
 import { EmptyState } from "../../design/ui/Feedback";
 import { MetaList, PageHeader } from "../../design/ui/PageHeader";
@@ -113,7 +122,12 @@ function InvestigationBody({
         <button
           type="button"
           onClick={() => navigate({ surface: "S2", lotId: data.component.lot_id })}
-          className="rounded-sm underline decoration-border-2 decoration-dotted underline-offset-4 transition-colors duration-fast hover:decoration-text-num"
+          className={cn(
+            "inline-flex items-center rounded-sm font-mono text-accent-hi underline",
+            "decoration-accent-line decoration-dotted underline-offset-4",
+            "transition-colors duration-fast hover:text-text-num hover:decoration-accent-hi",
+            "[@media(pointer:coarse)]:min-h-touch",
+          )}
         >
           {data.component.lot_id}
         </button>
@@ -130,13 +144,31 @@ function InvestigationBody({
   return (
     <>
       <PageHeader
+        question={SURFACE_COPY.S3?.question ?? ""}
+        crumbs={[
+          { label: "Mission Control", to: { surface: "S1" } },
+          { label: data.component.lot_id, to: { surface: "S2", lotId: data.component.lot_id } },
+          { label: data.component.component_id },
+        ]}
         eyebrow={`S3 · #/components/${data.component.component_id}`}
         title={data.component.component_id}
         monoTitle
         badges={
           <>
-            <SeverityChip value={worst?.severity ?? null} testId="s3-worst-severity" />
-            <SeverityChip value={worst?.band ?? null} testId="s3-worst-band" />
+            <StatusBadge
+              value={worst?.severity ?? null}
+              size="md"
+              showTechnical
+              withHelp
+              testId="s3-worst-severity"
+            />
+            <StatusBadge
+              value={worst?.band ?? null}
+              size="md"
+              showTechnical
+              withHelp
+              testId="s3-worst-band"
+            />
           </>
         }
         meta={<MetaList items={identity} />}
@@ -160,13 +192,20 @@ function InvestigationBody({
         }
       />
 
-      {meta !== null && <ProvenanceHeader meta={meta} testId="s3-provenance" />}
       <GuardBanner guards={data.guards} scope="component" />
 
-      <InvestigationSection index="V" title="Verdict strip" testId="s3-verdicts">
+      {/* ---------- The finding, before any evidence ---------- */}
+      <ComponentHeadline data={data} />
+
+      <InvestigationSection
+        index="V"
+        title="The three verdicts side by side"
+        hint="Each method answers a different question. Where they disagree, that disagreement is the finding."
+        testId="s3-verdicts"
+      >
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
           <VerdictCard
-            title="Dynamic PAT (lot-relative)"
+            title="Peer comparison (this lot)"
             verdict={worstBlock?.dpat?.verdict ?? null}
             testId="s3-verdict-dpat"
           >
@@ -180,7 +219,7 @@ function InvestigationBody({
             </div>
           </VerdictCard>
           <VerdictCard
-            title="Absolute limit"
+            title="Absolute limit (all parts)"
             verdict={worstBlock?.absolute?.verdict ?? null}
             testId="s3-verdict-absolute"
           >
@@ -205,7 +244,7 @@ function InvestigationBody({
             )}
           </VerdictCard>
           <VerdictCard
-            title="Drift band (forecast)"
+            title="Outlook to 168 hours"
             verdict={worst?.band ?? null}
             testId="s3-verdict-band"
           >
@@ -221,23 +260,28 @@ function InvestigationBody({
         </p>
       </InvestigationSection>
 
-      <InvestigationSection index="W" title="Why flagged?" testId="s3-why">
+      <InvestigationSection
+        index="W"
+        title="Why did LATENTIS flag this component?"
+        hint="The backend's own explanation, shown verbatim."
+        testId="s3-why"
+      >
         <WhyNarrative data={data} worstParam={worst?.parameter ?? null} />
         <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-body">
           <WhyLine
-            label="Attribution"
+            label="Likely cause"
             value={worstBlock?.attribution?.verdict ?? null}
-            hint="PART means the evidence points at the component, not the setup."
+            hint="Whether the evidence points at the part or at the equipment testing it."
           />
           <WhyLine
-            label="System recommendation"
+            label="LATENTIS recommends"
             value={data.recommendation?.action ?? null}
             hint={data.recommendation?.trigger ?? ""}
           />
           <WhyLine
-            label="Guarantee"
+            label="Prediction range status"
             value={data.guards?.guarantee_status ?? null}
-            hint="VALID means the conformal bound carries its stated coverage."
+            hint="Whether the assumptions behind the prediction range still hold here."
           />
         </div>
       </InvestigationSection>
@@ -249,12 +293,12 @@ function InvestigationBody({
           scrolled past, which is a sticky bar that never actually sticks. */}
       <section aria-label="Per-parameter evidence" className="space-y-6">
         <div className="flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          <h2 className="text-h2 font-semibold text-text-1">Per-parameter evidence</h2>
+          <h2 className="text-h2 font-semibold text-text-1">Evidence, measurement by measurement</h2>
           <Badge tone="outline">{params.length} parameters</Badge>
         </div>
         <p className="max-w-prose text-body text-text-2">
-          Server-selected worst parameter first. Choosing a parameter re-scopes every section
-          below.
+          The most affected measurement is selected first, as the backend ranked it. Choosing a
+          different measurement re-scopes every section below.
         </p>
 
         <div className="sticky top-[var(--h-header)] z-nav bg-surface-0 pt-2">
@@ -262,8 +306,8 @@ function InvestigationBody({
             label="Parameters"
             items={params.map((p) => ({
               id: p.parameter,
-              label: p.parameter,
-              note: p.parameter === worst?.parameter ? "worst" : undefined,
+              label: parameterLabel(p.parameter),
+              note: p.parameter === worst?.parameter ? "most affected" : undefined,
               testId: `s3-tab-${p.parameter}`,
             }))}
             activeId={activeParameter}
@@ -291,8 +335,8 @@ function InvestigationBody({
 
       <InvestigationSection
         index="R"
-        title="Risk decomposition"
-        hint="Additive contributions that order the worklist. They never decide the band."
+        title="What is driving the risk score?"
+        hint="Additive contributions that order the worklist. They never decide the outcome."
         testId="s3-risk"
       >
         <RiskBreakdown risk={data.risk} testId="s3-risk-breakdown" />
@@ -300,8 +344,8 @@ function InvestigationBody({
 
       <InvestigationSection
         index="D"
-        title="Engineer decision"
-        hint="The system recommends; the human disposes. An override must carry a reason."
+        title="What should the engineer do?"
+        hint="LATENTIS recommends; the engineer decides. An override must carry a written reason."
         testId="s3-disposition"
       >
         <DispositionPanel
@@ -311,14 +355,14 @@ function InvestigationBody({
         />
       </InvestigationSection>
 
-      <InvestigationSection
-        index="P"
-        title="Provenance"
-        hint="Everything needed to recompute the numbers above from this payload alone."
+      <TechnicalDetails
+        label="Data & calculation history"
+        hint="dataset, profile, model versions and every formula referenced"
         testId="s3-provenance-detail"
       >
+        {meta !== null && <ProvenanceHeader meta={meta} testId="s3-provenance" />}
         <ProvenanceDetail data={data} />
-      </InvestigationSection>
+      </TechnicalDetails>
     </>
   );
 }
@@ -403,7 +447,7 @@ function WhyLine({
     <div className="flex min-w-0 flex-col gap-2 rounded-sm border border-border-1 bg-surface-2 p-3">
       <FieldLabel>{label}</FieldLabel>
       <div>
-        <SeverityChip value={value} />
+        <StatusBadge value={value} showTechnical withHelp />
       </div>
       {hint !== "" && <p className="text-caption text-text-3">{hint}</p>}
     </div>
@@ -435,23 +479,24 @@ function ParameterEvidenceView({
     <>
       <InvestigationSection
         index="01"
-        title={`Measurement & peer evidence · ${param.parameter}`}
+        title={`How unusual is this component? · ${parameterLabel(param.parameter)}`}
+        hint="What was measured, and how it compares with the other components in the same lot."
         testId="s3-peer"
       >
         <GuardBanner guards={param.guards} notices={notices} scope={param.parameter} />
         <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-          <VerdictCard title="DPAT" verdict={dpat?.verdict ?? null} testId="s3-param-dpat">
+          <VerdictCard title="Peer comparison" verdict={dpat?.verdict ?? null} testId="s3-param-dpat">
             {dpat?.z !== undefined && dpat.z !== null && isTraced(dpat.z) && (
               <Metric traced={dpat.z} label={`${param.parameter} robust distance`} testId="s3-param-z" />
             )}
             <div className="font-mono text-caption text-text-3">k = {dpat?.k ?? "—"}</div>
           </VerdictCard>
-          <VerdictCard title="Absolute" verdict={param.absolute?.verdict ?? null}>
+          <VerdictCard title="Absolute limit" verdict={param.absolute?.verdict ?? null}>
             <div className="font-mono text-caption text-text-2">
               {param.absolute?.limit_high ?? param.absolute?.limit_low ?? "—"} {param.absolute?.limit_unit ?? param.unit}
             </div>
           </VerdictCard>
-          <VerdictCard title="Severity" verdict={param.severity ?? null}>
+          <VerdictCard title="Overall for this measurement" verdict={param.severity ?? null}>
             <div className="font-mono text-caption text-text-3">
               cohort n {param.cohort?.n ?? stats?.n ?? "—"} · {stats?.estimator ?? ""} · {stats?.scope ?? ""}
             </div>
@@ -460,9 +505,9 @@ function ParameterEvidenceView({
 
         <DataTable
           testId="s3-readings"
-          caption={`Read-points for ${param.parameter} in ${param.unit} (screening-visible only)`}
+          caption={`Every reading taken for ${parameterLabel(param.parameter).toLowerCase()}, in ${param.unit}`}
           columns={[
-            { header: "t (h)", numeric: true, render: (r) => String(r.elapsed_hours) },
+            { header: "Hours elapsed", numeric: true, render: (r) => String(r.elapsed_hours) },
             {
               header: "Value",
               numeric: true,
@@ -473,7 +518,12 @@ function ParameterEvidenceView({
                   <span className="text-text-3">—</span>
                 ),
             },
-            { header: "Status", render: (r) => <SeverityChip value={r.status === "OK" ? "PASS" : "INDETERMINATE"} /> },
+            {
+              header: "Reading usable",
+              render: (r) => (
+                <StatusBadge value={r.status === "OK" ? "PASS" : "INDETERMINATE"} withHelp />
+              ),
+            },
           ]}
           rows={param.readings ?? []}
           keyOf={(r) => `${r.elapsed_hours}`}
@@ -494,11 +544,26 @@ function ParameterEvidenceView({
             <Metric traced={dpat.limit_low} label="DPAT lower limit" />
           )}
         </div>
-        {dpat?.limit_high !== undefined && dpat.limit_high !== null && isTraced(dpat.limit_high) && (
-          <FormulaPanel traced={dpat.limit_high} testId="s3-limit-formula" />
-        )}
-        {dpat?.z !== undefined && dpat.z !== null && isTraced(dpat.z) && (
-          <FormulaPanel traced={dpat.z} testId="s3-z-formula" />
+        {/* The arithmetic itself, one level down (Phase 36). A reader who
+            only wants the finding never meets a formula; an engineer opens
+            this and sees the expression with its operands substituted. */}
+        {((dpat?.limit_high !== undefined &&
+          dpat.limit_high !== null &&
+          isTraced(dpat.limit_high)) ||
+          (dpat?.z !== undefined && dpat.z !== null && isTraced(dpat.z))) && (
+          <TechnicalDetails
+            label="Show the calculation"
+            hint="the exact arithmetic behind these limits"
+          >
+            {dpat?.limit_high !== undefined &&
+              dpat.limit_high !== null &&
+              isTraced(dpat.limit_high) && (
+                <FormulaPanel traced={dpat.limit_high} testId="s3-limit-formula" />
+              )}
+            {dpat?.z !== undefined && dpat.z !== null && isTraced(dpat.z) && (
+              <FormulaPanel traced={dpat.z} testId="s3-z-formula" />
+            )}
+          </TechnicalDetails>
         )}
 
         {members !== null ? (
@@ -517,7 +582,12 @@ function ParameterEvidenceView({
         )}
       </InvestigationSection>
 
-      <InvestigationSection index="02" title={`Attribution · ${param.parameter}`} testId="s3-attribution">
+      <InvestigationSection
+        index="02"
+        title={`Is it the component, or the test setup? · ${parameterLabel(param.parameter)}`}
+        hint="A setup-attributed result means retest, not rejection."
+        testId="s3-attribution"
+      >
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           <span className="text-body text-text-2">Evidence points at</span>
           <AttributionVerdict verdict={param.attribution?.verdict ?? null} />
@@ -537,11 +607,21 @@ function ParameterEvidenceView({
 
       <ForecastSection param={param} horizon={horizon} testId="s3-forecast" index="03" />
 
-      <InvestigationSection index="04" title={`Data quality & sensor state · ${param.parameter}`} testId="s3-quality">
+      <InvestigationSection
+        index="04"
+        title={`Can we trust these readings? · ${parameterLabel(param.parameter)}`}
+        hint="How complete and well-behaved the raw measurements were."
+        testId="s3-quality"
+      >
         <QualityView param={param} />
       </InvestigationSection>
 
-      <InvestigationSection index="05" title={`Explanation layers · ${param.parameter}`} testId="s3-narratives">
+      <InvestigationSection
+        index="05"
+        title={`The backend's own account · ${parameterLabel(param.parameter)}`}
+        hint="Written by the analysis itself, not by the interface."
+        testId="s3-narratives"
+      >
         <NarrativesView param={param} />
       </InvestigationSection>
     </>
@@ -552,7 +632,7 @@ function AttributionVerdict({ verdict }: { verdict: string | null }): React.JSX.
   if (verdict === "PART")
     return (
       <span className="inline-flex items-center gap-2 text-body">
-        <SeverityChip value="FAIL" />
+        <StatusBadge value="FAIL" withHelp />
         <span className="font-mono text-text-1">PART — the anomaly belongs to the component</span>
       </span>
     );
@@ -567,7 +647,7 @@ function AttributionVerdict({ verdict }: { verdict: string | null }): React.JSX.
         </span>
       </span>
     );
-  return <SeverityChip value={verdict} />;
+  return <StatusBadge value={verdict} showTechnical withHelp />;
 }
 
 function EnsembleMembers({ param }: { param: ParameterEvidence }): React.JSX.Element {
@@ -581,17 +661,17 @@ function EnsembleMembers({ param }: { param: ParameterEvidence }): React.JSX.Ele
       </FieldLabel>
       <DataTable
         testId="s3-members"
-        caption="Per-member positions (max-severity aggregate; disagreement is reported, not averaged)"
+        caption="Each method's own answer. The strongest severity wins; disagreement is reported, never averaged away."
         columns={[
-          { header: "Member", render: (r) => <span className="font-mono">{r.name}</span> },
-          { header: "Verdict", render: (r) => <SeverityChip value={r.verdict} /> },
-          { header: "Position", render: (r) => <span className="font-mono">{r.position}</span> },
+          { header: "Method", render: (r) => <span className="text-text-1">{r.name}</span> },
+          { header: "Its answer", render: (r) => <StatusBadge value={r.verdict} withHelp /> },
+          { header: "Where it sits", render: (r) => <span className="text-text-2">{r.position}</span> },
         ]}
         rows={[
-          { name: "DPAT", verdict: m.dpat?.verdict ?? null, position: m.dpat?.position ?? "—" },
-          { name: "Tukey", verdict: m.tukey?.verdict ?? null, position: m.tukey?.position ?? "—" },
+          { name: "Peer comparison", verdict: m.dpat?.verdict ?? null, position: m.dpat?.position ?? "—" },
+          { name: "Spread check", verdict: m.tukey?.verdict ?? null, position: m.tukey?.position ?? "—" },
           {
-            name: "Adjusted boxplot",
+            name: "Skew-aware spread check",
             verdict: m.adjusted_boxplot?.verdict ?? null,
             position: m.adjusted_boxplot?.position ?? "—",
           },
@@ -637,7 +717,7 @@ function QualityView({ param }: { param: ParameterEvidence }): React.JSX.Element
   return (
     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
       <div className="space-y-3 rounded-sm border border-border-1 bg-surface-2 p-3">
-        <FieldLabel>Measurement quality</FieldLabel>
+        <FieldLabel>How good were the readings?</FieldLabel>
         {q?.score !== undefined && q.score !== null ? (
           <div>
             <div
@@ -656,12 +736,12 @@ function QualityView({ param }: { param: ParameterEvidence }): React.JSX.Element
         {(q?.findings ?? []).length > 0 && (
           <DataTable
             testId="s3-quality-findings"
-            caption="Itemised quality deductions"
+            caption="Every deduction taken against the reading quality"
             columns={[
-              { header: "Code", render: (r) => <span className="font-mono">{r.code}</span> },
-              { header: "Count", numeric: true, render: (r) => String(r.count) },
+              { header: "Finding", render: (r) => <span className="font-mono text-text-num">{r.code}</span> },
+              { header: "Times seen", numeric: true, render: (r) => String(r.count) },
               { header: "Detail", render: (r) => r.detail },
-              { header: "Action", render: (r) => r.action },
+              { header: "What was done", render: (r) => r.action },
             ]}
             rows={q?.findings ?? []}
             keyOf={(r) => `${r.code}-${r.detail.slice(0, 24)}`}
@@ -674,16 +754,16 @@ function QualityView({ param }: { param: ParameterEvidence }): React.JSX.Element
         )}
       </div>
       <div className="space-y-3 rounded-sm border border-border-1 bg-surface-2 p-3">
-        <FieldLabel>CUSUM persistent-shift evidence (advisory)</FieldLabel>
+        <FieldLabel>Slow build-up detector (advisory only)</FieldLabel>
         {cusum === undefined || cusum === null ? (
           <span className="text-text-3">No CUSUM evidence returned.</span>
         ) : (
           <>
             <div className="flex items-center gap-2">
               {cusum.signal_high === true || cusum.signal_low === true ? (
-                <SeverityChip value="ANOMALOUS" />
+                <StatusBadge value="ANOMALOUS" withHelp />
               ) : (
-                <SeverityChip value="PASS" />
+                <StatusBadge value="PASS" withHelp />
               )}
               <span className="font-mono text-caption text-text-2">
                 {cusum.n_observations ?? 0} observations · {cusum.n_gaps ?? 0} gaps
@@ -730,7 +810,7 @@ function NarrativesView({ param }: { param: ParameterEvidence }): React.JSX.Elem
       {(param.recommendation?.action ?? "") !== "" && (
         <div className="flex flex-wrap items-center gap-2 text-body">
           <span className="font-mono text-caption text-text-3">Parameter recommendation</span>
-          <SeverityChip value={param.recommendation?.action ?? null} />
+          <StatusBadge value={param.recommendation?.action ?? null} showTechnical withHelp />
           {param.recommendation?.trigger !== undefined && param.recommendation.trigger !== null && (
             <span className="text-caption text-text-3">{param.recommendation.trigger}</span>
           )}
@@ -761,11 +841,23 @@ function ProvenanceDetail({ data }: { data: InvestigationData }): React.JSX.Elem
       <Badge tone="synthetic">data_provenance: {prov?.data_provenance ?? "SYNTHETIC"}</Badge>
       <DataTable
         testId="s3-formulas"
-        caption={`Formula registry entries referenced by this payload (${formulas.length})`}
+        caption={`Every formula this result was built from (${formulas.length})`}
         columns={[
-          { header: "formula_id", render: (r) => <span className="font-mono">{r.formula_id}</span> },
-          { header: "Expression", render: (r) => <span className="font-mono text-caption">{r.expression}</span> },
-          { header: "Source", render: (r) => <span className="font-mono text-caption">{r.source_ref ?? "—"}</span> },
+          {
+            header: "Formula",
+            rowHeader: true,
+            render: (r) => <span className="font-mono text-text-num">{r.formula_id}</span>,
+          },
+          {
+            header: "Arithmetic",
+            render: (r) => <span className="font-mono text-caption">{r.expression}</span>,
+          },
+          {
+            header: "Where it comes from",
+            render: (r) => (
+              <span className="font-mono text-caption">{r.source_ref ?? "—"}</span>
+            ),
+          },
         ]}
         rows={formulas}
         keyOf={(r) => r.formula_id}
@@ -779,3 +871,91 @@ function ProvenanceDetail({ data }: { data: InvestigationData }): React.JSX.Elem
   );
 }
 
+/**
+ * The finding, stated before any evidence is shown.
+ *
+ * A first-time reader should learn what LATENTIS concluded and why it
+ * matters without parsing a single statistic. When the two screening methods
+ * disagree, that disagreement *is* the finding, so it is rendered as a
+ * deliberate pair rather than as two chips in a row. Everything here comes
+ * from the payload the backend already returned.
+ */
+function ComponentHeadline({ data }: { data: InvestigationData }): React.JSX.Element | null {
+  const worst = data.worst;
+  if (worst === undefined || worst === null) return null;
+  const block = (data.parameters ?? []).find((p) => p.parameter === worst.parameter);
+  if (block === undefined) return null;
+
+  const peer = block.dpat?.verdict ?? null;
+  const absolute = block.absolute?.verdict ?? null;
+  const measurement = parameterLabel(worst.parameter);
+  const term = parameterTerm(worst.parameter);
+
+  // The escape case: conventional screening would release a part its own lot
+  // rejects. Anything else is described in its own terms rather than forced
+  // into that narrative.
+  const isEscape = peer === "FAIL" && absolute === "PASS";
+  const agree = peer !== null && absolute !== null && peer === absolute;
+
+  const body = isEscape ? (
+    <>
+      <p>
+        On {measurement.toLowerCase()} this component sits{" "}
+        <strong className="font-semibold text-text-1">inside</strong> the fixed limit that applies
+        to every part, so conventional screening would release it. Measured against the other
+        components in its own lot, it is a clear outlier.
+      </p>
+      <p className="mt-2">
+        That combination is what LATENTIS exists to find: a part that looks acceptable on its own
+        but not against the batch it came from.
+      </p>
+    </>
+  ) : agree ? (
+    <p>
+      Both screening methods reach the same conclusion on {measurement.toLowerCase()}, the
+      measurement the backend ranked as most affected for this component.
+    </p>
+  ) : (
+    <p>
+      The screening methods do not agree on {measurement.toLowerCase()}. LATENTIS reports the
+      disagreement rather than averaging it away, so an engineer can judge it.
+    </p>
+  );
+
+  return (
+    <InsightCard
+      testId="s3-headline"
+      tone={isEscape ? "severe" : agree ? "nominal" : "info"}
+      eyebrow={isEscape ? "Latent escape" : "Most affected measurement"}
+      title={measurement}
+      body={
+        <>
+          {body}
+          {term !== null && (
+            <p className="mt-3 text-caption text-text-3">{term.explain}</p>
+          )}
+          <div className="mt-4">
+            <VerdictContrast
+              testId="s3-headline-contrast"
+              leftLabel="Absolute limit (all parts)"
+              leftValue={absolute}
+              leftHint="The fixed pass/fail limit, identical for every component."
+              rightLabel="Peer comparison (this lot)"
+              rightValue={peer}
+              rightHint="Measured against the other components in this same lot."
+            />
+          </div>
+        </>
+      }
+      facts={[
+        { label: "Lot", value: data.component.lot_id },
+        { label: "Part type", value: data.component.component_type.replace(/_/g, " ") },
+        {
+          label: "LATENTIS recommends",
+          value: verdictLabel(data.recommendation?.action ?? null),
+          tone: isEscape ? "severe" : undefined,
+        },
+      ]}
+    />
+  );
+}

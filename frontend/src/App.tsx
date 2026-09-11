@@ -1,9 +1,9 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   Activity,
-  BarChart2,
+  ClipboardCheck,
   Cpu,
-  FileCheck,
+  Database,
   Layers,
   Menu,
   Moon,
@@ -11,13 +11,14 @@ import {
   PanelLeftClose,
   Rows2,
   Rows3,
-  Settings,
-  ShieldAlert,
+  Sigma,
+  SlidersHorizontal,
   Sun,
-  UploadCloud,
+  TrendingUp,
   X,
 } from "lucide-react";
 import { SEVERITY_CONFIGS } from "@/design/tokens";
+import { SURFACE_COPY, type SurfaceGroup } from "@/design/vocabulary";
 import { useHashRoute, navigate, hasRouteId, type Route } from "@/router";
 import { LedgerProvider } from "@/design/LedgerContext";
 import { PreferencesProvider } from "@/design/PreferencesContext";
@@ -38,70 +39,58 @@ import { ComponentPicker, LotPicker } from "@/features/select/Pickers";
 
 interface SurfaceDef {
   id: string;
+  /** Navigation label. Kept stable — the shell test asserts these. */
   name: string;
-  /** What the surface answers — shown as the nav tooltip. */
-  purpose: string;
+  /** The question this surface answers, in the reader's words. */
+  question: string;
+  /** Semantic group heading in the sidebar. */
+  group: SurfaceGroup;
   icon: React.ComponentType<{ className?: string }>;
   to: Route;
 }
 
-const SURFACES: readonly SurfaceDef[] = [
-  {
-    id: "S1",
-    name: "Mission Control",
-    purpose: "Fleet state, lot summaries and the escape-risk spotlight.",
-    icon: Activity,
-    to: { surface: "S1" },
-  },
-  {
-    id: "S2",
-    name: "Lot Explorer",
-    purpose: "Lot distribution with DPAT limits drawn on it.",
-    icon: Layers,
-    to: { surface: "S2", lotId: "" },
-  },
-  {
-    id: "S3",
-    name: "Component Investigation",
-    purpose: "The forensic workspace for one part.",
-    icon: Cpu,
-    to: { surface: "S3", componentId: "" },
-  },
-  {
-    id: "S4",
-    name: "Drift Studio",
-    purpose: "Trajectory, forecast, conformal band and fitted shape.",
-    icon: BarChart2,
-    to: { surface: "S4", componentId: "" },
-  },
-  {
-    id: "S5",
-    name: "Screening Profile",
-    purpose: "Limits, k, α, margin reserve and PDA — versioned.",
-    icon: Settings,
-    to: { surface: "S5", profileId: null },
-  },
-  {
-    id: "S6",
-    name: "Model Info",
-    purpose: "Calibration identity and conformal ladder capacity.",
-    icon: ShieldAlert,
-    to: { surface: "S6" },
-  },
-  {
-    id: "S7",
-    name: "Ingest & Quality",
-    purpose: "Dataset intake with the four-class rejection report.",
-    icon: UploadCloud,
-    to: { surface: "S7" },
-  },
-  {
-    id: "S8",
-    name: "Disposition & Report",
-    purpose: "Engineer decision and the audit-grade report.",
-    icon: FileCheck,
-    to: { surface: "S8", componentId: "" },
-  },
+/**
+ * Surfaces in demonstration order.
+ *
+ * `name` is the navigation label and stays as-is: the shell test asserts
+ * these strings, and INV-6 forbids weakening a test to suit new copy. The
+ * plain-English `question` is what actually makes the nav understandable,
+ * and it is rendered as a second line rather than replacing the label. The
+ * S-numbers stay visible but subordinate, since the specification and the
+ * team refer to the screens by them.
+ */
+interface SurfaceBase {
+  id: string;
+  icon: React.ComponentType<{ className?: string }>;
+  to: Route;
+}
+
+const SURFACE_BASE: readonly SurfaceBase[] = [
+  { id: "S1", icon: Activity, to: { surface: "S1" } },
+  { id: "S2", icon: Layers, to: { surface: "S2", lotId: "" } },
+  { id: "S3", icon: Cpu, to: { surface: "S3", componentId: "" } },
+  { id: "S4", icon: TrendingUp, to: { surface: "S4", componentId: "" } },
+  { id: "S5", icon: SlidersHorizontal, to: { surface: "S5", profileId: null } },
+  { id: "S6", icon: Sigma, to: { surface: "S6" } },
+  { id: "S7", icon: Database, to: { surface: "S7" } },
+  { id: "S8", icon: ClipboardCheck, to: { surface: "S8", componentId: "" } },
+];
+
+const SURFACES: readonly SurfaceDef[] = SURFACE_BASE.map((base) => {
+  const copy = SURFACE_COPY[base.id];
+  if (copy === undefined) throw new Error(`No surface copy for ${base.id}`);
+  return { ...base, name: copy.name, question: copy.question, group: copy.group };
+});
+
+/** Sidebar group order. */
+const NAV_GROUPS: readonly SurfaceGroup[] = [
+  "Mission",
+  "Lots",
+  "Investigate",
+  "Forecast",
+  "Configuration",
+  "Data",
+  "Decision",
 ];
 
 type BackendStatus = "ready" | "degraded" | "offline";
@@ -264,8 +253,11 @@ function Shell(): React.JSX.Element {
           </div>
         )}
 
-        <main id="main" className="min-w-0 flex-1 bg-surface-0 px-4 py-6 md:px-6 lg:px-8">
-          <div className="mx-auto max-w-content space-y-6">
+        <main
+          id="main"
+          className="min-w-0 flex-1 bg-transparent px-4 py-7 md:px-6 lg:px-8 lg:py-8"
+        >
+          <div className="mx-auto max-w-content space-y-8">
             <RouteView route={route} />
           </div>
         </main>
@@ -290,7 +282,19 @@ function AppHeader({
   const status = BACKEND_COPY[backend];
 
   return (
-    <header className="sticky top-0 z-nav flex h-header shrink-0 flex-wrap content-center items-center gap-x-3 gap-y-1 border-b border-border-1 bg-surface-1 px-3 md:px-4">
+    <header
+      className={cn(
+        "sticky top-0 z-nav flex h-header shrink-0 flex-wrap content-center items-center",
+        "gap-x-3 gap-y-1 border-b border-border-1 px-3 md:px-4",
+        "[background:linear-gradient(180deg,var(--surface-2),var(--surface-1))]",
+        "shadow-sticky backdrop-blur-sm",
+        // A lit edge along the bottom: the accent, at the one place where
+        // every surface shares a boundary.
+        "after:pointer-events-none after:absolute after:inset-x-0 after:-bottom-px after:h-px",
+        "after:bg-accent after:opacity-40",
+        "relative",
+      )}
+    >
       <IconButton
         label="Open navigation"
         icon={<Menu className="h-4 w-4" />}
@@ -304,7 +308,10 @@ function AppHeader({
         className="flex min-w-0 items-center gap-3 rounded-sm px-1 transition-colors duration-fast hover:bg-hover"
         aria-label="LATENTIS home"
       >
-        <span className="font-mono text-h2 font-bold tracking-tight text-text-1">LATENTIS</span>
+        <span className="font-mono text-h2 font-bold tracking-tight text-text-1">
+          LATENTIS
+        </span>
+        <span aria-hidden="true" className="h-2 w-2 shrink-0 rounded-full bg-accent shadow-accent" />
         <span className="hidden font-mono text-caption text-text-3 sm:inline">
           v0.1.0 · SIH26170
         </span>
@@ -381,20 +388,41 @@ function SurfaceNav({
     <nav
       aria-label="Surfaces Navigation"
       className={cn(
-        "flex shrink-0 flex-col justify-between gap-6 border-border-1 bg-surface-1 p-3",
+        "flex shrink-0 flex-col gap-6 border-border-1 p-3",
+        // Slightly recessed relative to the panels it sits beside, so the
+        // reading column is unmistakably the foreground.
+        "[background:linear-gradient(180deg,var(--surface-1),var(--surface-0))]",
         variant === "static"
           ? "sticky top-[var(--h-header)] h-[calc(100vh-var(--h-header))] overflow-y-auto border-r"
           : "h-[calc(100%-var(--h-header))] overflow-y-auto",
         isRail ? "w-rail" : "w-sidebar",
       )}
     >
-      <ul className="space-y-1">
-        {!isRail && (
-          <li className="eyebrow px-2 py-2" aria-hidden="true">
-            Surfaces
-          </li>
-        )}
-        {SURFACES.map((surface) => {
+      <ul className="space-y-6">
+        {NAV_GROUPS.map((group) => {
+          const inGroup = SURFACES.filter((s) => s.group === group);
+          if (inGroup.length === 0) return null;
+          return (
+            <li key={group}>
+              {!isRail && (
+                <p className="eyebrow px-2 pb-2 text-accent-hi" aria-hidden="true">
+                  {group}
+                </p>
+              )}
+              <ul className="space-y-1">{inGroup.map(renderItem)}</ul>
+            </li>
+          );
+        })}
+      </ul>
+
+      <div className="mt-auto pt-2">
+        <SeverityLegend collapsed={isRail} />
+      </div>
+    </nav>
+  );
+
+  function renderItem(surface: SurfaceDef): React.JSX.Element {
+    {
           const Icon = surface.icon;
           const isActive = active === surface.id;
           const link = (
@@ -407,66 +435,72 @@ function SurfaceNav({
                 "group flex w-full items-center gap-3 rounded-sm text-left text-body",
                 "transition-colors duration-fast",
                 "[@media(pointer:coarse)]:min-h-touch",
-                isRail ? "h-control-lg justify-center px-0" : "min-h-control-lg px-2 py-2",
+                isRail ? "h-control-lg justify-center px-0" : "min-h-control-lg px-2 py-2 items-start",
                 isActive
-                  ? "bg-surface-2 text-text-num"
+                  ? "bg-accent-soft text-text-num shadow-panel"
                   : "text-text-2 hover:bg-hover hover:text-text-1",
               )}
             >
-              {/* Active marker is a rule, not a colour fill: the nav must not
-                  compete with the severity chips inside the surface. */}
+              {/* Accent rail on the active surface. At 1px this was
+                  invisible; the nav can carry the interaction colour because
+                  the accent is not a severity hue. */}
               <span
                 aria-hidden="true"
                 className={cn(
-                  "h-4 w-px shrink-0 rounded-full transition-colors duration-fast",
-                  isActive ? "bg-accent" : "bg-transparent",
+                  "w-1 shrink-0 rounded-full transition-all duration-fast",
+                  isActive ? "h-5 bg-accent" : "h-4 bg-transparent",
                 )}
               />
               <Icon
                 className={cn(
                   "h-4 w-4 shrink-0 transition-colors duration-fast",
-                  isActive ? "text-text-1" : "text-text-3 group-hover:text-text-2",
+                  isActive ? "text-accent-hi" : "text-text-3 group-hover:text-text-2",
                 )}
               />
               {isRail ? (
                 <span className="sr-only">
-                  {surface.id} {surface.name}
+                  {surface.name} — {surface.question}
                 </span>
               ) : (
-                <span className="flex min-w-0 flex-1 items-baseline gap-2">
-                  <span className="shrink-0 font-mono text-caption text-text-3">{surface.id}</span>
-                  <span className="truncate">{surface.name}</span>
+                <span className="flex min-w-0 flex-1 flex-col">
+                  <span className="flex items-baseline gap-2">
+                    <span className="min-w-0 flex-1 truncate font-medium">{surface.name}</span>
+                    <span className="shrink-0 font-mono text-caption text-text-3">
+                      {surface.id}
+                    </span>
+                  </span>
+                  <span className="text-caption leading-snug text-text-3">
+                    {surface.question}
+                  </span>
                 </span>
               )}
             </button>
           );
 
-          return (
-            <li key={surface.id}>
-              {isRail ? (
-                <Tooltip
-                  content={
-                    <span>
-                      <span className="font-mono">{surface.id}</span> {surface.name}
-                      <br />
-                      <span className="text-text-3">{surface.purpose}</span>
-                    </span>
-                  }
-                  align="start"
-                >
-                  {link}
-                </Tooltip>
-              ) : (
-                link
-              )}
-            </li>
-          );
-        })}
-      </ul>
-
-      <SeverityLegend collapsed={isRail} />
-    </nav>
-  );
+      return (
+        <li key={surface.id}>
+          {isRail ? (
+            <Tooltip
+              content={
+                <span>
+                  <span className="font-medium text-text-1">{surface.name}</span>
+                  <br />
+                  <span className="text-text-3">{surface.question}</span>
+                  <br />
+                  <span className="font-mono text-text-3">{surface.id}</span>
+                </span>
+              }
+              align="start"
+            >
+              {link}
+            </Tooltip>
+          ) : (
+            link
+          )}
+        </li>
+      );
+    }
+  }
 }
 
 /**
@@ -477,7 +511,7 @@ function SurfaceNav({
 function SeverityLegend({ collapsed }: { collapsed: boolean }): React.JSX.Element {
   return (
     <details
-      open={!collapsed}
+      open={false}
       className={cn(
         "rounded-md border border-border-1 bg-surface-2",
         collapsed && "sr-only",

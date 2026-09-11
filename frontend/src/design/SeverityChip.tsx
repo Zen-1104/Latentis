@@ -27,7 +27,7 @@ export function SeverityChip({ value, testId, className }: SeverityChipProps): R
     return (
       <span
         data-testid={testId}
-        className={cn(CHIP_BASE, "border-border-2 bg-surface-3 text-text-2", className)}
+        className={cn(CHIP_BASE, "border-border-2 bg-surface-0 text-text-2", className)}
       >
         {label}
       </span>
@@ -39,7 +39,7 @@ export function SeverityChip({ value, testId, className }: SeverityChipProps): R
         data-testid={testId}
         className={cn(
           CHIP_BASE,
-          "border-evidence-weak bg-surface-3 text-evidence-weak",
+          "border-evidence-weak bg-surface-0 text-evidence-weak",
           className,
         )}
       >
@@ -52,7 +52,7 @@ export function SeverityChip({ value, testId, className }: SeverityChipProps): R
   return (
     <span
       data-testid={testId}
-      className={cn(CHIP_BASE, "bg-surface-3", cfg.tailwindBorder, cfg.tailwindText, className)}
+      className={cn(CHIP_BASE, "bg-surface-0", cfg.tailwindBorder, cfg.tailwindText, className)}
     >
       <span aria-hidden="true">{cfg.glyph}</span>
       <span>{label}</span>
@@ -62,7 +62,7 @@ export function SeverityChip({ value, testId, className }: SeverityChipProps): R
 
 export function GuardVoidChip({ label }: { label: string }): React.JSX.Element {
   return (
-    <span className={cn(CHIP_BASE, "border-guard-void bg-surface-3 text-guard-void")}>
+    <span className={cn(CHIP_BASE, "border-guard-void bg-surface-0 text-guard-void")}>
       <span aria-hidden="true">{GUARD_VOID_CONFIG.glyph}</span>
       <span>{label}</span>
     </span>

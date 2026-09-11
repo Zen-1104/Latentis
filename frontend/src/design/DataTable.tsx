@@ -34,6 +34,12 @@ interface DataTableProps<T> {
   emptyText?: string;
   /** Caps the body height and scrolls, keeping the header pinned. */
   maxBodyHeight?: boolean;
+  /**
+   * Drop the table's own border and caption bar when it sits inside a panel
+   * that already frames it — a bordered table inside a bordered body reads
+   * as a box in a box.
+   */
+  bare?: boolean;
   className?: string;
 }
 
@@ -54,6 +60,7 @@ export function DataTable<T>({
   testId,
   emptyText = "No rows.",
   maxBodyHeight = false,
+  bare = false,
   className,
 }: DataTableProps<T>): React.JSX.Element {
   const [sort, setSort] = useState<SortState>(null);
@@ -95,14 +102,27 @@ export function DataTable<T>({
   };
 
   return (
-    <div className={cn("overflow-hidden rounded-md border border-border-1", className)}>
-      <p className="border-b border-border-1 bg-surface-2 px-3 py-2 text-caption text-text-3">
-        {caption}
-      </p>
+    <div
+      className={cn(
+        "overflow-hidden",
+        !bare && "rounded-md border border-border-1",
+        className,
+      )}
+    >
+      {bare ? (
+        <p className="pb-3 text-caption leading-normal text-text-3">{caption}</p>
+      ) : (
+        <p className="border-b border-border-1 bg-surface-2 px-3 py-2 text-caption text-text-3">
+          {caption}
+        </p>
+      )}
       <div className={cn("overflow-auto", maxBodyHeight && "max-h-list")}>
         <table
           data-testid={testId}
-          className="w-full border-collapse bg-surface-1 text-body"
+          className={cn(
+            "w-full border-collapse text-body",
+            bare ? "bg-transparent" : "bg-surface-1",
+          )}
         >
           <caption className="sr-only">{caption}</caption>
           <thead className="sticky-head">

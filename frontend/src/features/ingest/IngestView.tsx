@@ -12,6 +12,8 @@ import { EmptyState, Notice } from "../../design/ui/Feedback";
 import { PageHeader } from "../../design/ui/PageHeader";
 import { FieldLabel } from "../../design/ui/Panel";
 import { cn } from "../../design/ui/cn";
+import { KeyTakeaway, TechnicalDetails } from "../../design/ui/Disclosure";
+import { REJECTION_CLASSES, SURFACE_COPY } from "../../design/vocabulary";
 
 interface IngestReport {
   ingest_id: string;
@@ -104,15 +106,17 @@ export function IngestView(): React.JSX.Element {
   return (
     <div className="space-y-6">
       <PageHeader
+        question={SURFACE_COPY.S7?.question ?? ""}
+        crumbs={[{ label: "Mission Control", to: { surface: "S1" } }, { label: "Data & quality" }]}
         eyebrow="S7 · #/ingest"
         title="Ingest & Quality"
-        description="Raw dataset intake with the four-class rejection report. Transactional: no partial commit. Identical content replays idempotently and becomes the active dataset."
+        description={SURFACE_COPY.S7?.summary ?? ""}
       />
 
       <InvestigationSection
-        index="U"
-        title="Upload screening data"
-        hint="Re-ingest after every backend restart — the active selection is in-memory."
+        index="1"
+        title="Choose a screening dataset"
+        hint="Nothing is committed until every row has been checked. A dataset must be loaded again after the backend restarts."
         testId="s7-upload"
       >
         {/* Drop zone. The visible control is the label, so the whole target
@@ -137,13 +141,16 @@ export function IngestView(): React.JSX.Element {
             ref={inputRef}
             type="file"
             accept={ACCEPTED}
+            // Visually replaced by the button below, but it is still the real
+            // control: without a name it is announced only as "file input".
+            aria-label="Choose a screening dataset file (CSV or Parquet)"
             className="sr-only"
             data-testid="s7-file"
             onChange={(e) => acceptFile(e.target.files?.[0])}
           />
           <div className="space-y-3">
             <p className="font-mono text-caption text-text-3">
-              Drop a CSV or Parquet file here
+              Drop a CSV or Parquet file here to check it
             </p>
             <div className="flex flex-wrap items-center justify-center gap-2">
               <Button variant="secondary" onClick={() => inputRef.current?.click()}>
@@ -171,8 +178,8 @@ export function IngestView(): React.JSX.Element {
         </div>
 
         <p className="max-w-prose text-caption text-text-3">
-          Demo corpus: <span className="font-mono text-text-2">data/generated/screening.parquet</span>{" "}
-          (74,126 rows).
+          The demo dataset lives at{" "}
+          <span className="font-mono text-text-2">data/generated/screening.parquet</span>.
         </p>
 
         {uploadError !== null && (
@@ -184,9 +191,9 @@ export function IngestView(): React.JSX.Element {
 
       {report !== null && (
         <InvestigationSection
-          index="Q"
-          title="Rejection report"
-          hint="Four-class validation over the submitted rows. Nothing was partially committed."
+          index="2"
+          title="What was accepted, and what was not"
+          hint="Every row was checked before anything was stored. A file is either fully accepted or fully rejected."
           testId="s7-report"
           actions={<Badge tone="accent">{report.file_name}</Badge>}
         >
@@ -201,12 +208,12 @@ export function IngestView(): React.JSX.Element {
               tone="nominal"
             />
             <StatTile
-              label="Rows rejected"
+              label="Readings rejected"
               value={report.rows_rejected}
               tone={report.rows_rejected > 0 ? "severe" : "nominal"}
             />
             <StatTile
-              label="Quality score"
+              label="Overall data quality"
               value={report.quality_score !== null ? formatPlain(report.quality_score, 4) : "—"}
             />
             <StatTile
@@ -215,6 +222,45 @@ export function IngestView(): React.JSX.Element {
               hint={`version ${report.profile_version}`}
             />
           </section>
+
+          {report.rows_rejected > 0 && (
+            <>
+              <div className="space-y-2">
+                <FieldLabel>Why rows were rejected</FieldLabel>
+                <dl className="grid grid-cols-1 gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                  {Object.entries(report.rejection_classes).map(([cls, count]) => {
+                    const term = REJECTION_CLASSES[cls];
+                    return (
+                      <div
+                        key={cls}
+                        className="min-w-0 rounded-md border border-border-1 bg-surface-1 p-3"
+                      >
+                        <dt className="eyebrow truncate">{term?.label ?? cls}</dt>
+                        <dd
+                          className={cn(
+                            "mt-2 font-mono text-num-lg font-semibold tnum",
+                            count > 0 ? "text-sev-elevated" : "text-text-3",
+                          )}
+                          data-tabular-nums="true"
+                        >
+                          {count}
+                        </dd>
+                        {term !== undefined && (
+                          <p className="mt-1 text-caption text-text-3">{term.explain}</p>
+                        )}
+                      </div>
+                    );
+                  })}
+                </dl>
+              </div>
+              <KeyTakeaway tone={report.rows_rejected > 0 ? "weak" : "nominal"}>
+                {report.rows_accepted.toLocaleString()} of{" "}
+                {report.rows_total.toLocaleString()} readings were accepted. The{" "}
+                {report.rows_rejected.toLocaleString()} rejected readings were left out
+                entirely — no value was guessed or filled in for them.
+              </KeyTakeaway>
+            </>
+          )}
 
           <div className="space-y-2">
             <FieldLabel>Dataset identity</FieldLabel>
@@ -236,7 +282,7 @@ export function IngestView(): React.JSX.Element {
 
           <DataTable
             testId="s7-findings"
-            caption="Itemised validation findings (code, count, action taken)"
+            caption="Every check that found something, and what was done about it"
             maxBodyHeight
             columns={[
               {
@@ -257,7 +303,7 @@ export function IngestView(): React.JSX.Element {
                 render: (r) => String(r.count),
               },
               { header: "Detail", render: (r) => r.detail },
-              { header: "Action", render: (r) => r.action },
+              { header: "What was done", render: (r) => r.action },
             ]}
             rows={report.findings}
             keyOf={(r) => `${r.code}-${r.column ?? ""}-${r.detail.slice(0, 24)}`}
@@ -265,7 +311,7 @@ export function IngestView(): React.JSX.Element {
 
           <DataTable
             testId="s7-lots"
-            caption="Per-lot intake summary"
+            caption="How much data arrived for each manufacturing lot"
             maxBodyHeight
             columns={[
               {
@@ -313,16 +359,23 @@ export function IngestView(): React.JSX.Element {
       >
         {datasets.data !== null && (
           <InvestigationSection
-            index="D"
-            title="Ingested datasets"
-            hint="Select a dataset hash to validate it and read its manifest."
+            index="3"
+            title="Datasets already loaded"
+            hint="Identified by content, not filename — re-uploading the same file is recognised rather than duplicated."
             testId="s7-dataset-list"
             actions={<Badge tone="outline">{datasets.data.length} datasets</Badge>}
           >
-            {datasets.meta !== null && <ProvenanceHeader meta={datasets.meta} />}
+            {datasets.meta !== null && (
+              <TechnicalDetails
+                label="Data & calculation history"
+                hint="dataset, screening profile and model versions"
+              >
+                <ProvenanceHeader meta={datasets.meta} />
+              </TechnicalDetails>
+            )}
             <DataTable
               testId="s7-dataset-table"
-              caption="Datasets identified by content hash, never by filename"
+              caption="Datasets already loaded, identified by their content"
               columns={[
                 {
                   header: "Dataset",
@@ -331,7 +384,7 @@ export function IngestView(): React.JSX.Element {
                     <button
                       type="button"
                       onClick={() => validate(String(r["dataset_hash"] ?? ""))}
-                      className="rounded-sm font-mono text-text-num underline decoration-border-2 decoration-dotted underline-offset-4 transition-colors duration-fast hover:decoration-text-num"
+                      className="rounded-sm font-mono text-accent-hi underline decoration-accent-line decoration-dotted underline-offset-4 transition-colors duration-fast hover:text-text-num hover:decoration-accent-hi"
                       data-testid="s7-validate"
                     >
                       {shortHash(String(r["dataset_hash"] ?? ""), 12)}
@@ -385,14 +438,16 @@ export function IngestView(): React.JSX.Element {
         >
           {manifest.data !== null && (
             <InvestigationSection
-              index="M"
-              title="Manifest & validation"
-              hint={shortHash(manifestHash, 16)}
+              index="4"
+              title="Full record for this dataset"
+              hint="Everything stored about how it was checked."
               testId="s7-manifest-detail"
             >
-              <pre className="max-h-panel overflow-auto whitespace-pre-wrap rounded-sm border border-border-1 bg-surface-2 p-3 font-mono text-caption text-text-2">
-                {JSON.stringify(manifest.data, null, 1)}
-              </pre>
+              <TechnicalDetails label="Raw manifest" hint="as returned by the backend" defaultOpen>
+                <pre className="max-h-panel overflow-auto whitespace-pre-wrap rounded-sm border border-border-1 bg-surface-2 p-3 font-mono text-caption text-text-2">
+                  {JSON.stringify(manifest.data, null, 1)}
+                </pre>
+              </TechnicalDetails>
             </InvestigationSection>
           )}
         </StateBlock>

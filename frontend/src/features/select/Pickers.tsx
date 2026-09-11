@@ -50,6 +50,7 @@ export function LotPicker({ testId }: { testId: string }): React.JSX.Element {
           />
           <PanelBody>
             <DataTable
+              bare
               testId={`${testId}-table`}
               caption="Lots from the active dataset — select one to explore"
               columns={[

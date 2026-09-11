@@ -36,7 +36,12 @@ export function Panel({
     <Tag
       data-testid={testId}
       aria-label={ariaLabel}
-      className={cn("rounded-md border bg-surface-1", TONES[tone], className)}
+      className={cn(
+        "rounded-md border shadow-card",
+        "[background:linear-gradient(180deg,var(--surface-2),var(--surface-1)_38%)]",
+        TONES[tone],
+        className,
+      )}
     >
       {children}
     </Tag>
@@ -71,7 +76,8 @@ export function PanelHeader({
   return (
     <header
       className={cn(
-        "flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border-1 px-4 py-3",
+        "flex flex-wrap items-center gap-x-3 gap-y-2 border-b border-border-1 px-5 py-4",
+        "[background:linear-gradient(180deg,rgba(140,166,255,0.05),transparent)]",
         className,
       )}
     >
@@ -84,10 +90,15 @@ export function PanelHeader({
         </span>
       )}
       <div className="min-w-0 flex-1">
-        <Heading id={id} className="truncate text-h2 font-semibold text-text-1">
+        <Heading
+          id={id}
+          className="truncate text-h2 font-semibold tracking-tight text-text-1"
+        >
           {title}
         </Heading>
-        {hint !== undefined && <div className="mt-1 text-caption text-text-3">{hint}</div>}
+        {hint !== undefined && (
+          <div className="mt-1 max-w-measure text-caption leading-normal text-text-3">{hint}</div>
+        )}
       </div>
       {actions !== undefined && (
         <div className="flex flex-wrap items-center gap-2">{actions}</div>
@@ -107,7 +118,7 @@ export function PanelBody({
   /** Drop the inset — for tables and maps that supply their own edges. */
   flush?: boolean;
 }): React.JSX.Element {
-  return <div className={cn(!flush && "space-y-4 p-4", className)}>{children}</div>;
+  return <div className={cn(!flush && "space-y-5 p-5", className)}>{children}</div>;
 }
 
 /**

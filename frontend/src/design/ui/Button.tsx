@@ -18,10 +18,12 @@ interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "chi
 }
 
 const VARIANTS: Readonly<Record<ButtonVariant, string>> = {
-  // The one filled control on a surface. Achromatic: a green "primary"
-  // would read as a PASS verdict rather than as the main action.
+  // The one filled control on a surface, in the interaction accent with a
+  // coloured glow — so the main action is obvious without relying on the
+  // reader knowing which corner it lives in. Indigo is not a severity hue,
+  // so a filled primary cannot be misread as a PASS.
   primary:
-    "bg-accent text-accent-fg border border-transparent font-medium hover:opacity-90 active:opacity-100",
+    "bg-accent text-accent-fg shadow-accent shadow-accent border border-transparent font-medium hover:brightness-110 active:brightness-95",
   secondary:
     "bg-surface-2 text-text-1 border border-border-2 hover:bg-surface-3 hover:border-text-3 active:bg-active",
   ghost:
