@@ -1,87 +1,149 @@
-# SIH26170 — AI-Driven Anomaly Detection in Component Burn-In & Screening
+# LATENTIS
 
-**Smart India Hackathon 2026 · Problem Statement SIH26170 · Indian Space Research Organisation (ISRO) · Category: Smart Automation · Deadline: 30 September 2026**
-
----
-
-## One-paragraph pitch
-
-Static pass/fail limits let *latent defects* escape: a part reading 45 µA of leakage against a
-50 µA datasheet maximum is a **PASS** by absolute screening, yet it sits 4–5 robust standard
-deviations above its own lot. **LATENTIS** is a screening decision-support system that
-(A) detects components statistically abnormal **relative to their own lot** using the
-aerospace/automotive-standard *Dynamic Part Average Testing* method, extended with a
-multivariate ensemble; (B) forecasts each part's **168 h** parametric value from its **0 h** and
-**24 h** readings and rejects on a **conformal upper prediction bound** rather than a point
-estimate — so the reject rule carries a distribution-free false-negative guarantee; and
-(C) makes **every number on screen re-derivable** by a QA inspector through a provenance
-ledger. Nothing is a black box, and nothing is a hard-coded demo value.
-
-System codename: **LATENTIS** (LATENT-defect Inspection & Screening).
+A screening decision-support platform that catches latent defects in electronic components during burn-in testing — the ones that pass a static datasheet limit but are already behaving abnormally relative to their own production lot.
 
 ---
 
-## What makes this submission different
+## The problem
 
-| # | Differentiator | Why judges care |
+Burn-in and screening tests compare each part against a fixed absolute limit. A part reading 45 µA of leakage against a 50 µA datasheet maximum is a **pass** — even if every other part in its lot is sitting at 8–12 µA, which would put that part 4–5 robust standard deviations outside its own cohort. Static limits can't see that. LATENTIS can.
+
+## What it does
+
+LATENTIS ingests parametric burn-in readings (0 h, 24 h, and onward) for a lot of components and evaluates each part through three independent lenses, plus a separate data-quality signal:
+
+**Lens 1 — Anomaly.** Is this part statistically unusual *relative to its own lot*, right now? Combines lot-relative robust statistics (median ± a scaled IQR, in the spirit of AEC-Q001 Dynamic Part Average Testing), a multivariate Mahalanobis distance across parameters, and CUSUM drift-in-mean detection — with Isolation Forest available as a secondary, advisory-only check that can never independently produce a verdict.
+
+**Lens 2 — Degradation.** Is the part's behavior drifting over time, independent of whether it has tripped a point-in-time anomaly threshold? Uses a Shape–Amplitude decomposition of the measurement trajectory so a smooth, progressive drift shows up even when no single reading looks abnormal.
+
+**Lens 3 — Projected Risk.** Given the trend so far, will this part cross its safety envelope by the end of the burn-in window? Forecasts the 168-hour value from early readings and rejects on a **conformal prediction upper bound**, not a bare point estimate — so the reject rule carries a distribution-free, finite-sample guarantee rather than an assumed one. Risk is decomposed into interpretable, additive terms (safety margin, observed slope, projected slope, slope ratio) rather than delivered as a single opaque score. A Neyman–Pearson-style threshold selection process is used so the system can state, explicitly, what false-negative rate a given cutoff implies.
+
+**Sensor Confidence.** A rule-based fault-detection pass over the incoming telemetry itself — flatlines, impossible values, out-of-range gaps. This never gets folded into the Anomaly, Degradation, or Risk scores; it travels alongside them as its own signal, all the way to the UI, so a sensor problem is never mistaken for a component problem.
+
+All three lens scores, plus every intermediate number that feeds a disposition decision, are wrapped in a **traced value** — a structure that carries the value itself, its units, the formula version that produced it, and the exact inputs that went in. Every number shown to an inspector is re-derivable, not just displayed.
+
+## Design principles
+
+| # | Principle | Why it matters |
 |---|---|---|
-| 1 | Built on **AEC-Q001 DPAT** (`median ± 6 × IQR/1.35`), not an invented heuristic | Domain-standard, defensible to a reliability engineer |
-| 2 | **Conformal prediction** upper bound drives rejection | Distribution-free finite-sample guarantee on escapes |
-| 3 | **Neyman–Pearson** threshold selection | Bounds the *false-negative* rate explicitly — the metric ISRO says is catastrophic |
-| 4 | **Shape–Amplitude decomposition** for 2-point forecasting | Statistically honest: you *cannot* fit a per-part nonlinear curve from 2 points |
-| 5 | **Escape Set** evaluation protocol + **Latent Escape Recall** | Makes the flagship claim *measurable*, not rhetorical |
-| 6 | **Provenance Ledger** — click any number, see the arithmetic | Pre-defeats the "is this fabricated?" red-team attack |
-| 7 | **Part vs. socket vs. thermal-zone attribution** | Real test-floor failure mode no toy project handles |
-| 8 | **Lot-level disposition tied to PDA (5 %)** | Mirrors actual MIL-STD-883 Method 5004 workflow |
-| 9 | **Exchangeability guard** — declares when its own guarantee is void | Engineering maturity; honest under adversarial review |
-| 10 | **Counterfactual explanations** — "would have passed if 24 h ≤ X µA" | Inspector-actionable, not just an attribution bar chart |
+| 1 | Standard, defensible statistics (lot-relative DPAT-style limits) instead of an invented heuristic | Something a reliability engineer can actually check the math on |
+| 2 | Conformal prediction drives the reject rule | A distribution-free guarantee on escapes, not a hand-tuned threshold |
+| 3 | Explicit false-negative rate targeting | The failure mode that actually matters is missed escapes, not false alarms |
+| 4 | Shape–Amplitude decomposition for two-point forecasting | Doesn't pretend to fit a nonlinear curve from two readings |
+| 5 | A defined evaluation protocol (an escape set + a named recall metric) | Makes the core claim measurable, not just asserted |
+| 6 | A provenance ledger behind every number | Click any figure, see the exact arithmetic that produced it |
+| 7 | Sensor confidence never merges into a component verdict | A flaky sensor and a bad part are never conflated |
+| 8 | Lot-level disposition against a percent-defective-allowed threshold | Mirrors how a real test floor actually dispositions a lot, not just one part |
+| 9 | An exchangeability guard that can decline its own guarantee | The system says when its statistical assumptions no longer hold, instead of answering anyway |
+| 10 | Counterfactual explanations ("would have passed if X ≤ value") | Gives an inspector something actionable, not just an attribution chart |
 
----
+## Architecture
 
-## Repository map
+The project is two independently runnable services plus a shared scientific core:
+
+**Backend** — FastAPI, with all decision-bearing computation isolated into a dependency-free scientific core (`backend/core`). The core is called once per computation; every route in `backend/app` reads the resulting traced value rather than recomputing anything, so the API, the on-screen numbers, and the generated reports can never quietly disagree. Storage is DuckDB over Parquet — a single embedded analytical engine rather than a networked database, since a burn-in dataset for a demo or a single test floor doesn't need one.
+
+**Frontend** — React 18 with TypeScript, built with Vite and styled with Tailwind. A small custom design-token system backs the UI components rather than a third-party component library. State and data-fetching are handled through a typed API client generated directly from the backend's OpenAPI schema, so the frontend and backend contracts can't silently drift apart.
+
+**Reporting** — Server-rendered HTML/PDF disposition reports (Jinja2) that carry the same traced values shown in the UI, including a provenance appendix that lists every formula actually used to produce that report.
+
+## Project structure
 
 ```
-SIH26170/
-├── PROJECT_MASTER_SPEC.md     Single source of truth
-├── ARCHITECTURE.md            System + data-flow architecture
-├── DECISIONS.md  CHANGELOG.md
-├── pyproject.toml  uv.lock    Python project + locked dependencies
-├── backend/                   FastAPI service, DuckDB store, report renderer
-├── frontend/                  React QA console (Vite + TypeScript)
-├── datagen/                   Synthetic dataset generator
-├── data/                      Dataset + generator specifications
-├── models/                    Anomaly, drift, conformal, risk specs
-├── research/                  Evidence base (5 docs, cited)
-├── tests/                     Strategy, matrix, registry, red team
-├── docs/                      API contract, explainability, UX, design system
-│   └── internal/              Working notes: TASKS, FINAL_STATUS,
-│                              INTEGRATION_STATUS, HUMAN_ACTIONS, reviews
-├── presentation/              SIH slide specification
-├── reports/                   Audits and generated artifacts
-└── scripts/                   Reproducibility + release tooling
+latentis/
+├── backend/
+│   ├── core/            # The scientific core — DPAT, multivariate stats, CUSUM,
+│   │                     shape-amplitude, conformal, safety/risk, attribution,
+│   │                     traced-value wrapper, formula registry
+│   ├── services/        # Ingest, calibration, investigation, provenance, reports
+│   ├── db/               # DuckDB/Parquet persistence layer
+│   ├── app/              # FastAPI routers, request/response envelope, error handling
+│   ├── reporting/        # HTML/PDF report templates
+│   └── tests/            # Unit, property-based, integration, and architecture tests
+├── frontend/
+│   └── src/
+│       ├── api/          # Generated typed client
+│       ├── design/       # Design tokens and shared UI primitives
+│       ├── features/     # commandCenter, investigation, lot, forecast, disposition, ...
+│       └── hooks/
+├── datagen/               # Seeded synthetic burn-in data generator
+├── docs/                  # Architecture, API, and design-system documentation
+├── scripts/                # Dataset generation, reproducibility checks, client codegen
+└── tests/                  # Cross-cutting checks (secrets, category coverage)
 ```
 
-## Status
+## API reference
 
-**Implementation in progress.** The FastAPI backend, DuckDB store, formula registry and
-disposition report renderer are built and covered by `backend/tests` (255 passing as of
-2026-09-11). The React console is built across its eight surfaces with its own unit tests.
+The API is versioned under `/api/v1`. A representative slice:
 
-Every figure shown in the product is computed from the loaded synthetic dataset and carries
-its formula and operands; every figure in the specification documents is either a cited
-external fact, a stated design target, or an explicitly labelled assumption. Verify with:
+| Endpoint | Description |
+|---|---|
+| `POST /api/v1/datasets` | Ingest a burn-in dataset |
+| `GET /api/v1/components/{id}/investigation` | Full anomaly/degradation/risk investigation for one part |
+| `GET /api/v1/components/{id}/explanation` | Attribution + counterfactual explanation for a part |
+| `POST /api/v1/components/{id}/disposition` | Record an inspector's disposition decision |
+| `GET /api/v1/lots/{lot_id}/statistics` | Lot-level summary statistics |
+| `GET /api/v1/lots/{lot_id}/disposition` | Lot-level pass/fail/PDA disposition |
+| `GET /api/v1/formulas` / `GET /api/v1/models` | The formula and model registry backing every traced value |
+| `POST /api/v1/reports` / `GET /api/v1/reports/{id}/pdf` | Generate and retrieve a disposition report |
+
+Every response is wrapped in a common envelope carrying a request ID, the dataset hash it was computed against, and the model/formula versions used — so any number returned by the API can be traced back to exactly how it was produced.
+
+## Running locally
+
+### Prerequisites
+- Python 3.11+
+- Node.js 18+
+
+### Backend
 
 ```bash
-pytest backend/tests          # backend contract + integration suite
-cd frontend && npm test       # console unit tests
+pip install -e .
+scripts/generate_demo_dataset.sh   # seeds a synthetic dataset to work against
+uvicorn backend.app.main:app --reload
 ```
 
-See `docs/internal/FINAL_STATUS.md` for the phase-by-phase picture and
-`reports/FOUNDATION_AUDIT.md` for known gaps.
+The API will be available at `http://localhost:8000`.
+
+### Frontend
+
+```bash
+cd frontend
+npm install
+npm run dev
+```
+
+The app will be available at `http://localhost:5173`.
+
+### Tests
+
+```bash
+pytest backend/tests        # unit, property-based, integration, and architecture tests
+cd frontend && npm test      # frontend unit tests
+```
+
+## Tech stack
+
+| Layer | Technology |
+|---|---|
+| Backend framework | FastAPI |
+| ASGI server | Uvicorn |
+| Validation | Pydantic |
+| Storage | DuckDB + Parquet |
+| Data processing | Polars, NumPy, SciPy |
+| Statistical/ML methods | scikit-learn (Isolation Forest, robust covariance) |
+| Report rendering | Jinja2 (HTML → PDF) |
+| Frontend framework | React 18 + TypeScript |
+| Build tool | Vite |
+| Styling | Tailwind CSS |
+| Testing | pytest, Hypothesis (property-based), Vitest, Playwright (E2E) |
 
 ## Data honesty statement
 
-**No real ISRO data is used anywhere in this project.** All data is synthetic, generated by a
-documented and seeded simulator (`data/DATA_GENERATION_SPEC.md`). Every dataset file, API
-response, UI screen, and report artifact carries a `SYNTHETIC` provenance marker that cannot
-be disabled. See `PROJECT_MASTER_SPEC.md § 14`.
+No proprietary or real component test data is used anywhere in this project. All data is synthetic, generated by a documented, seeded simulator (`datagen/`). Every dataset file, API response, UI screen, and report artifact carries a non-removable synthetic-data marker, so it's never possible to mistake a demonstration result for a real measurement.
+
+## Known limitations
+
+- The forecast in Lens 3 is built from two early readings (0 h and 24 h); it is explicitly a linear/shape-based extrapolation, not a learned per-part trajectory model, and the conformal bound is what makes that honest rather than a curve-fit that overclaims precision.
+- Isolation Forest, and any other benchmark model included for comparison, is advisory only and never permitted to independently produce or override a disposition verdict.
+- The exchangeability guard can decline to issue a guaranteed bound when its statistical assumptions are violated (e.g., too few parts in a lot) — in that state the system reports reduced confidence rather than a number it can't stand behind.
